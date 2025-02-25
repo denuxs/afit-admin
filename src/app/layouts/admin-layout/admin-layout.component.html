@@ -1,0 +1,30 @@
+<nav class="bg-gray-200 border-b border-gray-300">
+  <div class="container md:container md:mx-auto py-4 px-4 flex justify-between">
+    <!-- <img src="logo.png" alt="logo" class="w-10 h-10" /> -->
+
+    <ul class="flex flex-wrap">
+      @for (item of menus; track item.id) {
+        <li>
+          <a href="#" [routerLink]="item.link" class="link me-6">{{
+            item.label
+          }}</a>
+        </li>
+      }
+    </ul>
+
+    <ul class="flex flex-wrap text-gray-900 dark:text-white">
+      <li>
+        <a href="#" routerLink="/admin/users" class="link me-6">Usuarios</a>
+      </li>
+      <li>
+        <a href="#" (click)="logout()" class="link me-4 hover:underline md:me-6"
+          >Salir ({{ user.username }})</a
+        >
+      </li>
+    </ul>
+  </div>
+</nav>
+
+<main class="container md:container px-4 py-6 md:mx-auto">
+  <router-outlet />
+</main>

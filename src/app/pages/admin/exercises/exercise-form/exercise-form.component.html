@@ -1,0 +1,78 @@
+<div class="md:w-2/4">
+  <h1 class="mb-4">Nuevo ejercicio</h1>
+
+  <form [formGroup]="exerciseForm" (ngSubmit)="handleSubmit()">
+    <div class="mb-2">
+      <label for="name" class="form-label">Nombre</label>
+      <input
+        type="text"
+        id="name"
+        name="name"
+        class="form-input"
+        formControlName="name"
+      />
+      <p class="form-error">{{ checkErrors("name") }}</p>
+    </div>
+
+    <div class="flex gap-2 mb-2">
+      <div class="flex-auto">
+        <label for="sets" class="form-label">Series</label>
+        <input
+          type="text"
+          id="sets"
+          name="sets"
+          class="form-input"
+          formControlName="sets"
+        />
+        <p class="form-error">{{ checkErrors("sets") }}</p>
+      </div>
+      <div class="flex-auto">
+        <label for="repts" class="form-label">Repeticiones</label>
+        <input
+          type="text"
+          id="repts"
+          name="repts"
+          class="form-input"
+          formControlName="repts"
+        />
+        <p class="form-error">{{ checkErrors("repts") }}</p>
+      </div>
+    </div>
+
+    <div class="mb-2">
+      <label for="equipment" class="form-label">Equipo</label>
+      <select
+        name="equipment"
+        id="equipment"
+        formControlName="equipment"
+        class="form-input"
+      >
+        @for (item of equipments$ | async; track item.id) {
+          <option value="{{ item.id }}">
+            {{ item.name }}
+          </option>
+        }
+      </select>
+      <p class="form-error">{{ checkErrors("equipment") }}</p>
+    </div>
+
+    <div class="mb-2">
+      <label for="muscle" class="form-label">Musculo</label>
+      <select
+        name="muscle"
+        id="muscle"
+        formControlName="muscle"
+        class="form-input"
+      >
+        @for (item of muscles$ | async; track item.id) {
+          <option value="{{ item.id }}">
+            {{ item.name }}
+          </option>
+        }
+      </select>
+      <p class="form-error">{{ checkErrors("muscle") }}</p>
+    </div>
+
+    <button class="btn-primary mt-4" type="submit">Guardar</button>
+  </form>
+</div>

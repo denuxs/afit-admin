@@ -1,0 +1,19 @@
+<div class="md:w-2/4">
+  <form [formGroup]="routineForm" (ngSubmit)="handleSubmit()">
+    <h1 class="mb-4">Nueva Rutina</h1>
+    <div class="mb-10">
+      <label for="name" class="form-label">Nombre</label>
+      <input
+        type="text"
+        id="name"
+        name="name"
+        class="form-input"
+        formControlName="name"
+      />
+      <p class="form-error">{{ checkErrors("name") }}</p>
+    </div>
+
+    <h2 class="text-red-500 mb-2">Agregar Ejercicios pendientes</h2>
+    <button class="btn-primary mt-10" type="submit">Guardar</button>
+  </form>
+</div>

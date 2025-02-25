@@ -1,0 +1,88 @@
+<div class="md:w-2/4">
+  <h1 class="mb-4">Nuevo Usuario</h1>
+
+  <form [formGroup]="userForm" (ngSubmit)="handleSubmit()">
+    <div class="flex gap-2 mb-2">
+      <div class="flex-auto">
+        <label for="first_name" class="form-label">Nombres</label>
+        <input
+          type="text"
+          id="first_name"
+          name="first_name"
+          class="form-input"
+          formControlName="first_name"
+        />
+        <p class="form-error">{{ checkErrors("first_name") }}</p>
+      </div>
+      <div class="flex-auto">
+        <label for="last_name" class="form-label">Apellidos</label>
+        <input
+          type="text"
+          id="last_name"
+          name="last_name"
+          class="form-input"
+          formControlName="last_name"
+        />
+        <p class="form-error">{{ checkErrors("last_name") }}</p>
+      </div>
+    </div>
+    <div class="mb-2">
+      <label for="username" class="form-label">Usuario</label>
+      <input
+        type="text"
+        id="username"
+        name="username"
+        class="form-input"
+        formControlName="username"
+      />
+      <p class="form-error">{{ checkErrors("username") }}</p>
+    </div>
+
+    <div class="mb-2">
+      <label for="email" class="form-label">Correo</label>
+      <input
+        type="text"
+        id="email"
+        name="email"
+        class="form-input"
+        formControlName="email"
+      />
+      <p class="form-error">{{ checkErrors("email") }}</p>
+    </div>
+
+    <div class="mb-4">
+      <label for="password" class="form-label">Contraseña</label>
+      <input
+        type="password"
+        id="password"
+        name="password"
+        class="form-input"
+        formControlName="password"
+      />
+      <p class="form-error">{{ checkErrors("password") }}</p>
+    </div>
+
+    <div class="flex gap-2 mb-2">
+      <div class="flex flex-auto items-start mb-2">
+        <div class="flex items-center h-5">
+          <input
+            id="is_active"
+            name="is_active"
+            formControlName="is_active"
+            type="checkbox"
+            class="w-4 h-4 border border-gray-300 rounded-sm bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800"
+          />
+        </div>
+        <label
+          for="is_active"
+          class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+          >Es Activo?</label
+        >
+        <p class="form-error">{{ checkErrors("is_active") }}</p>
+      </div>
+
+    </div>
+
+    <button class="btn-primary mt-4" type="submit">Guardar</button>
+  </form>
+</div>
