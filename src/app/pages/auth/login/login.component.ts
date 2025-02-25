@@ -33,8 +33,8 @@ export class LoginComponent implements OnInit {
 
   constructor() {
     this.loginForm = this._formBuilder.group({
-      username: ['', [Validators.required]],
-      password: ['', [Validators.required]],
+      username: ['admin', [Validators.required]],
+      password: ['endurance', [Validators.required]],
     });
   }
 
