@@ -1,0 +1,31 @@
+<div class="md:w-2/4">
+  <h1 class="mb-4">Nueva Medida</h1>
+
+  <form [formGroup]="measureForm" (ngSubmit)="handleSubmit()">
+    <div class="mb-2">
+      <label for="user" class="form-label">Usuario</label>
+      <select name="user" id="user" formControlName="user" class="form-input">
+        @for (item of users$ | async; track item.id) {
+          <option value="{{ item.id }}">
+            {{ item.username }}
+          </option>
+        }
+      </select>
+      <p class="form-error">{{ checkErrors("user") }}</p>
+    </div>
+
+    <div class="mb-2">
+      <label for="abdomen" class="form-label">Abdomen</label>
+      <input
+        type="text"
+        id="abdomen"
+        name="abdomen"
+        class="form-input"
+        formControlName="abdomen"
+      />
+      <p class="form-error">{{ checkErrors("abdomen") }}</p>
+    </div>
+
+    <button class="btn-primary mt-4" type="submit">Guardar</button>
+  </form>
+</div>
