@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { catchError, Observable, throwError } from 'rxjs';
 
 import { environment } from '../../environments/environment';
-import { Measure } from 'app/domain';
+import { Measure, MeasureDto } from 'app/domain';
 
 @Injectable({
   providedIn: 'root',
@@ -26,6 +26,22 @@ export class MeasuresService {
     return this._httpClient.get<Measure>(this._api + `${id}/`).pipe(
       catchError(() => {
         return throwError(() => new Error('Error getting measure'));
+      }),
+    );
+  }
+
+  saveMeasure(form: MeasureDto): Observable<Measure> {
+    return this._httpClient.post<Measure>(this._api, form).pipe(
+      catchError(() => {
+        return throwError(() => new Error('Error saving measure'));
+      }),
+    );
+  }
+
+  updateMeasure(id: number, form: MeasureDto): Observable<Measure> {
+    return this._httpClient.put<Measure>(this._api + `${id}/`, form).pipe(
+      catchError(() => {
+        return throwError(() => new Error('Error updating measure'));
       }),
     );
   }

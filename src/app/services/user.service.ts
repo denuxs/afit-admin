@@ -33,16 +33,24 @@ export class UserService {
   }
 
   getUsers(): Observable<User[]> {
-    return this._httpClient.get<User[]>(this._api);
+    return this._httpClient.get<User[]>(this._api).pipe(
+      catchError(() => {
+        return throwError(() => new Error('Error getting users'));
+      }),
+    );
   }
 
   getUser(userId: number): Observable<User> {
-    return this._httpClient.get<User>(this._api + `${userId}/`);
+    return this._httpClient.get<User>(this._api + `${userId}/`).pipe(
+      catchError(() => {
+        return throwError(() => new Error('Error getting user'));
+      }),
+    );
   }
 
   saveUser(form: UserDto): Observable<User> {
     return this._httpClient
-      .post<User>(environment.BACKEND_API + '/auth/register/', form)
+      .post<User>(this._api, form)
       .pipe(
         catchError(() => {
           return throwError(() => new Error('Error saving user'));
