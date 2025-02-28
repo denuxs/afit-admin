@@ -1,7 +1,8 @@
 export interface User {
   id: number;
   username: string;
-  email: string;
+  phone: string;
+  age: string;
   password: string;
   first_name: string;
   last_name: string;
@@ -12,7 +13,8 @@ export interface User {
 
 export interface UserDto {
   username: string;
-  email: string;
+  phone: string;
+  age: string;
   first_name: string;
   last_name: string;
   password: string;
