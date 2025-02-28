@@ -31,10 +31,12 @@ export class UserFormComponent implements OnInit {
   constructor() {
     this.userForm = this._formBuilder.group({
       username: ['', [Validators.required]],
-      email: ['', [Validators.required]],
+      // email: ['', [Validators.required]],
       first_name: ['', [Validators.required]],
       last_name: ['', [Validators.required]],
       password: ['', [Validators.required]],
+      phone: [0, [Validators.required]],
+      age: [0, [Validators.required]],
       is_active: [true, []],
       // is_superuser: ['', []],
     });
@@ -56,7 +58,8 @@ export class UserFormComponent implements OnInit {
         next: (user: User) => {
           const form = {
             username: user.username,
-            email: user.email,
+            phone: user.phone,
+            age: user.age,
             first_name: user.first_name,
             last_name: user.last_name,
             is_active: user.is_active,
@@ -79,7 +82,8 @@ export class UserFormComponent implements OnInit {
 
     const {
       username,
-      email,
+      age,
+      phone,
       password,
       first_name,
       last_name,
@@ -89,7 +93,8 @@ export class UserFormComponent implements OnInit {
 
     const form: UserDto = {
       username,
-      email,
+      age,
+      phone,
       password,
       first_name,
       last_name,
