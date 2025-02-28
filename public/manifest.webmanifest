@@ -1,6 +1,6 @@
 {
-  "name": "afit_spa",
-  "short_name": "afit_spa",
+  "name": "aift",
+  "short_name": "AFit",
   "theme_color": "#1976d2",
   "background_color": "#fafafa",
   "display": "standalone",

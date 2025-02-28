@@ -2,6 +2,8 @@
 
 SPA para crear rutinas de gimnasio. (**En desarrollo**)
 
+El API esta esta desarrollado en Django 5.
+
 ### Paquetes
 
 - Angular 18

@@ -44,8 +44,23 @@ export class AdminLayoutComponent implements OnInit {
     },
     {
       id: 4,
+      link: '/admin/measures',
+      label: 'Medidas',
+    },
+    {
+      id: 5,
       link: '/admin/exercises',
       label: 'Ejercicios',
+    },
+    {
+      id: 6,
+      link: '/admin/equipments',
+      label: 'Equipos',
+    },
+    {
+      id: 7,
+      link: '/admin/muscles',
+      label: 'Músculos',
     },
   ];
 
