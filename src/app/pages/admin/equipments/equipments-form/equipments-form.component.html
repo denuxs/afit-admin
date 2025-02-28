@@ -1,0 +1,19 @@
+<div class="md:w-2/4">
+  <h1 class="mb-4">Nuevo Equipo</h1>
+
+  <form [formGroup]="equipmentForm" (ngSubmit)="handleSubmit()">
+    <div class="mb-2">
+      <label for="name" class="form-label">Nombre</label>
+      <input
+        type="text"
+        id="name"
+        name="name"
+        class="form-input"
+        formControlName="name"
+      />
+      <p class="form-error">{{ checkErrors("name") }}</p>
+    </div>
+
+    <button class="btn-primary mt-4" type="submit">Guardar</button>
+  </form>
+</div>

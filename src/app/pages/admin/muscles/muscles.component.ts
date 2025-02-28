@@ -1,12 +1,15 @@
 import { Component, inject, OnInit } from '@angular/core';
+import { AsyncPipe, DatePipe, NgIf } from '@angular/common';
+import { Observable } from 'rxjs';
+import { RouterLink } from '@angular/router';
+
 import { Muscle } from 'app/domain';
 import { MuscleService } from 'app/services';
-import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-muscles',
   standalone: true,
-  imports: [],
+  imports: [NgIf, AsyncPipe, DatePipe, RouterLink],
   templateUrl: './muscles.component.html',
   styleUrl: './muscles.component.scss',
 })
