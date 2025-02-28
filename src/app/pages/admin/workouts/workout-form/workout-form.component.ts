@@ -3,18 +3,21 @@ import {
   FormBuilder,
   FormGroup,
   ReactiveFormsModule,
+  UntypedFormArray,
   Validators,
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subject, takeUntil } from 'rxjs';
+import { Observable, Subject, takeUntil } from 'rxjs';
 
-import { RoutineDto } from 'app/domain';
-import { WorkoutService } from 'app/services';
+import { Routine, User, WorkoutDto } from 'app/domain';
+import { RoutineService, UserService, WorkoutService } from 'app/services';
+import { AsyncPipe } from '@angular/common';
+import { FormControlPipe } from 'app/pipes/form-control.pipe';
 
 @Component({
   selector: 'app-workout-form',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, AsyncPipe, FormControlPipe],
   templateUrl: './workout-form.component.html',
   styleUrl: './workout-form.component.scss',
 })
@@ -24,24 +27,55 @@ export class WorkoutFormComponent implements OnInit {
   private readonly _formBuilder = inject(FormBuilder);
 
   private readonly _workoutService = inject(WorkoutService);
+  private readonly _routineService = inject(RoutineService);
+  private readonly _userService = inject(UserService);
   private readonly _unsubscribeAll: Subject<any> = new Subject<any>();
 
   workoutForm!: FormGroup;
+  users$!: Observable<User[]>;
+  routines$!: Observable<Routine[]>;
+
+  workoutId: number = 0;
+
+  days = [
+    { value: 1, label: 'Lunes' },
+    { value: 2, label: 'Martes' },
+    { value: 3, label: 'Miercoles' },
+    { value: 4, label: 'Jueves' },
+    { value: 5, label: 'Viernes' },
+    { value: 6, label: 'Sabado' },
+    { value: 7, label: 'Domingo' },
+  ];
 
   constructor() {
     this.workoutForm = this._formBuilder.group({
       name: ['', [Validators.required]],
+      user: ['', [Validators.required]],
+      day: ['', [Validators.required]],
+      routines: this._formBuilder.array([]),
     });
   }
 
   ngOnInit(): void {
+    this.getUsers();
+    this.getRoutines();
+
     const workoutId = this._route.snapshot.paramMap.get('id');
     if (workoutId) {
-      this.getRoutine(+workoutId);
+      this.workoutId = +workoutId;
+      this.getWorkout(+workoutId);
     }
   }
 
-  getRoutine(workoutId: number) {
+  getUsers(): void {
+    this.users$ = this._userService.getUsers();
+  }
+
+  getRoutines() {
+    this.routines$ = this._routineService.fetchRoutines();
+  }
+
+  getWorkout(workoutId: number) {
     this._workoutService
       .showWorkout(workoutId)
       .pipe(takeUntil(this._unsubscribeAll))
@@ -49,8 +83,12 @@ export class WorkoutFormComponent implements OnInit {
         next: (response: any) => {
           const form = {
             name: response.name,
+            user: response.user.id,
+            day: response.day,
           };
-          this.workoutForm.setValue(form);
+          this.workoutForm.patchValue(form);
+
+          this.setRoutines(response.routines);
         },
         error: (err) => {
           console.log(err);
@@ -64,14 +102,40 @@ export class WorkoutFormComponent implements OnInit {
       return;
     }
 
-    const { name } = this.workoutForm.value;
+    const { name, user, day, routines } = this.workoutForm.value;
+    const routineIds = routines.map((item: any) => item.id);
 
-    const form: RoutineDto = {
+    const form: WorkoutDto = {
       name,
+      user,
+      day,
+      routines: routineIds,
     };
 
+    if (this.workoutId) {
+      this.update(form);
+    } else {
+      this.save(form);
+    }
+  }
+
+  save(form: WorkoutDto) {
     this._workoutService
       .saveWorkout(form)
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe({
+        next: () => {
+          this._router.navigateByUrl('/admin/workouts');
+        },
+        error: (err) => {
+          console.log(err);
+        },
+      });
+  }
+
+  update(form: WorkoutDto) {
+    this._workoutService
+      .updateWorkout(this.workoutId, form)
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe({
         next: () => {
@@ -96,6 +160,42 @@ export class WorkoutFormComponent implements OnInit {
       // }
     }
     return '';
+  }
+
+  // routines form array
+
+  get routines(): UntypedFormArray {
+    return this.workoutForm.get('routines') as UntypedFormArray;
+  }
+
+  setRoutines(data: any) {
+    const formGroups: any = [];
+
+    if (data.length > 0) {
+      data.forEach((item: any) => {
+        formGroups.push(
+          this._formBuilder.group({
+            id: [item.id],
+          }),
+        );
+      });
+    }
+
+    formGroups.forEach((item: any) => {
+      this.routines.push(item);
+    });
+  }
+
+  addRoutine(): void {
+    const formGroup = this._formBuilder.group({
+      id: ['', [Validators.required]],
+    });
+
+    this.routines.push(formGroup);
+  }
+
+  removeRoutine(index: number): void {
+    this.routines.removeAt(index);
   }
 
   ngOnDestroy(): void {
