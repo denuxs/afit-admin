@@ -1,7 +1,7 @@
 <div class="md:w-2/4">
   <form [formGroup]="routineForm" (ngSubmit)="handleSubmit()">
     <h1 class="mb-4">Nueva Rutina</h1>
-    <div class="mb-10">
+    <div class="mb-2">
       <label for="name" class="form-label">Nombre</label>
       <input
         type="text"
@@ -12,8 +12,50 @@
       />
       <p class="form-error">{{ checkErrors("name") }}</p>
     </div>
+    <div class="mb-10">
+      <label for="description" class="form-label">Descripción</label>
+      <quill-editor
+        class="w-full"
+        format="html"
+        formControlName="description"
+      />
+    </div>
 
-    <h2 class="text-red-500 mb-2">Agregar Ejercicios pendientes</h2>
+    <h2 class="mb-2">Agregar Ejercicios</h2>
+
+    @for (item of exercises.controls; track $index; let index = $index) {
+      <div class="flex mb-4">
+        <div class="flex-auto">
+          <select
+            id="exercise"
+            name="exercise"
+            class="form-input w-full"
+            [formControl]="item.get('id') | formControl"
+          >
+            @for (e of exercises$ | async; track e.id) {
+              <option [value]="e.id">
+                {{ e.name }}
+              </option>
+            }
+          </select>
+        </div>
+        <div class="flex w-10 pl-2">
+          <button
+            class="btn-primary"
+            type="button"
+            (click)="removeExercise(index)"
+          >
+            Borrar
+          </button>
+        </div>
+      </div>
+    }
+    <div class="mb-2">
+      <button class="btn-primary" type="button" (click)="addExercise()">
+        Agregar
+      </button>
+    </div>
+
     <button class="btn-primary mt-10" type="submit">Guardar</button>
   </form>
 </div>
