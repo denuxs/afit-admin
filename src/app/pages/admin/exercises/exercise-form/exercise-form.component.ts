@@ -7,14 +7,16 @@ import {
   Validators,
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Equipment, Exercise, ExerciseDto, Muscle } from 'app/domain';
+import { Equipment, ExerciseDto, Muscle } from 'app/domain';
 import { EquipmentService, ExerciseService, MuscleService } from 'app/services';
 import { Observable, Subject, takeUntil } from 'rxjs';
+import { QuillEditorComponent } from 'ngx-quill';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-exercise-form',
   standalone: true,
-  imports: [ReactiveFormsModule, AsyncPipe],
+  imports: [ReactiveFormsModule, AsyncPipe, QuillEditorComponent],
   templateUrl: './exercise-form.component.html',
   styleUrl: './exercise-form.component.scss',
 })
@@ -26,6 +28,7 @@ export class ExerciseFormComponent implements OnInit {
   private readonly _exerciseService = inject(ExerciseService);
   private readonly _equipmentService = inject(EquipmentService);
   private readonly _muscleService = inject(MuscleService);
+  private readonly _sanitizer = inject(DomSanitizer);
 
   private readonly _unsubscribeAll: Subject<any> = new Subject<any>();
 
@@ -38,6 +41,7 @@ export class ExerciseFormComponent implements OnInit {
   constructor() {
     this.exerciseForm = this._formBuilder.group({
       name: ['', [Validators.required]],
+      description: [''],
       equipment: ['', []],
       muscle: ['', [Validators.required]],
       sets: [4],
@@ -64,13 +68,13 @@ export class ExerciseFormComponent implements OnInit {
         next: (response: any) => {
           const form = {
             name: response.name,
-            // description: response.description,
-            equipment: response.equipment.id,
+            description: response.description,
+            equipment: response.equipment?.id,
             muscle: response.muscle.id,
             sets: response.sets,
             repts: response.repts,
           };
-          this.exerciseForm.setValue(form);
+          this.exerciseForm.patchValue(form);
         },
         error: (err) => {
           console.log(err);
@@ -92,10 +96,12 @@ export class ExerciseFormComponent implements OnInit {
       return;
     }
 
-    const { name, equipment, muscle, sets, repts } = this.exerciseForm.value;
+    const { name, description, equipment, muscle, sets, repts } =
+      this.exerciseForm.value;
 
     const form: ExerciseDto = {
       name,
+      description,
       equipment,
       muscle,
       sets,
@@ -150,6 +156,10 @@ export class ExerciseFormComponent implements OnInit {
       // }
     }
     return '';
+  }
+
+  byPassHTML(html: string) {
+    return this._sanitizer.bypassSecurityTrustHtml(html);
   }
 
   ngOnDestroy(): void {

@@ -14,6 +14,17 @@
       <p class="form-error">{{ checkErrors("name") }}</p>
     </div>
 
+    <div class="mb-2">
+      <label for="description" class="form-label">Descripción</label>
+      <quill-editor
+        class="w-full"
+        format="html"
+        formControlName="description"
+      />
+    </div>
+
+    <!-- <div [innerHTML]="byPassHTML(exerciseForm.get('description')!.value)"></div> -->
+
     <div class="flex gap-2 mb-2">
       <div class="flex-auto">
         <label for="sets" class="form-label">Series</label>
@@ -57,7 +68,7 @@
     </div>
 
     <div class="mb-2">
-      <label for="muscle" class="form-label">Musculo</label>
+      <label for="muscle" class="form-label">Músculo</label>
       <select
         name="muscle"
         id="muscle"
