@@ -14,8 +14,8 @@ export class WorkoutService {
 
   constructor() {}
 
-  fetchWorkouts(): Observable<Workout[]> {
-    return this._httpClient.get<Workout[]>(this._api).pipe(
+  fetchWorkouts(params?: any): Observable<Workout[]> {
+    return this._httpClient.get<Workout[]>(this._api, { params }).pipe(
       catchError(() => {
         return throwError(() => new Error('Error getting workouts'));
       }),

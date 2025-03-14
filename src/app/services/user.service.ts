@@ -48,14 +48,12 @@ export class UserService {
     );
   }
 
-  saveUser(form: UserDto): Observable<User> {
-    return this._httpClient
-      .post<User>(this._api, form)
-      .pipe(
-        catchError(() => {
-          return throwError(() => new Error('Error saving user'));
-        }),
-      );
+  saveUser(form: FormData): Observable<User> {
+    return this._httpClient.post<User>(this._api, form).pipe(
+      catchError(() => {
+        return throwError(() => new Error('Error saving user'));
+      }),
+    );
   }
 
   updateUser(id: number, form: UserDto): Observable<User> {

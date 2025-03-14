@@ -1,18 +1,20 @@
-import { Routine } from './routine';
+import { Exercise } from './exercise';
 import { User } from './user';
 
 export interface Workout {
   id: number;
   day: string;
   name: string;
-  routines: Routine[];
+  description: string;
+  exercises: Exercise[];
   user: User;
   created: Date;
 }
 
 export interface WorkoutDto {
   name: string;
+  description?: string;
   user: number;
   day: number;
-  routines: [];
+  exercises: [];
 }

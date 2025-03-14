@@ -1,17 +1,17 @@
+import { Catalog } from './catalog';
 import { Comment } from './comment';
-import { Equipment } from './equipment';
-import { Muscle } from './muscle';
 
 export interface Exercise {
   id: number;
   name: string;
   description: string;
   photo: string;
-  equipment: Equipment;
-  muscle: Muscle;
+  equipment: Catalog | null;
+  muscle: Catalog;
   exercises_count: number;
   sets: number;
   repts: number;
+  weight: number;
   comments: Comment[];
   created: Date;
 }
@@ -23,4 +23,5 @@ export interface ExerciseDto {
   muscle: number;
   sets: number;
   repts: number;
+  weight: number;
 }

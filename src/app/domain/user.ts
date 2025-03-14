@@ -19,5 +19,5 @@ export interface UserDto {
   last_name: string;
   password: string;
   is_active: boolean;
-  is_superuser: boolean;
+  // is_superuser: boolean;
 }

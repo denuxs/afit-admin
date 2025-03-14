@@ -30,7 +30,7 @@ export class MeasuresService {
     );
   }
 
-  saveMeasure(form: MeasureDto): Observable<Measure> {
+  saveMeasure(form: FormData): Observable<Measure> {
     return this._httpClient.post<Measure>(this._api, form).pipe(
       catchError(() => {
         return throwError(() => new Error('Error saving measure'));
@@ -42,6 +42,14 @@ export class MeasuresService {
     return this._httpClient.put<Measure>(this._api + `${id}/`, form).pipe(
       catchError(() => {
         return throwError(() => new Error('Error updating measure'));
+      }),
+    );
+  }
+
+  saveImage(id: number, form: FormData): Observable<Measure> {
+    return this._httpClient.patch<Measure>(this._api + `${id}/`, form).pipe(
+      catchError(() => {
+        return throwError(() => new Error('Error updating measure photo'));
       }),
     );
   }
