@@ -30,8 +30,12 @@ export const routes: Routes = [
           ),
       },
       {
-        path: 'workouts',
-        loadChildren: () => import('./pages/admin/workouts/workouts.routes'),
+        path: 'posts',
+        loadChildren: () => import('./pages/admin/posts/posts.routes'),
+      },
+      {
+        path: 'comments',
+        loadChildren: () => import('./pages/admin/comments/comments.routes'),
       },
       {
         path: 'routines',
@@ -50,14 +54,14 @@ export const routes: Routes = [
         loadChildren: () => import('./pages/admin/users/users.routes'),
       },
       {
-        path: 'muscles',
-        loadChildren: () => import('./pages/admin/muscles/muscles.routes'),
+        path: 'catalogs',
+        loadChildren: () => import('./pages/admin/catalogs/catalogs.routes'),
       },
-      {
-        path: 'equipments',
-        loadChildren: () =>
-          import('./pages/admin/equipments/equipments.routes'),
-      },
+      // {
+      //   path: 'equipments',
+      //   loadChildren: () =>
+      //     import('./pages/admin/equipments/equipments.routes'),
+      // },
     ],
   },
   {

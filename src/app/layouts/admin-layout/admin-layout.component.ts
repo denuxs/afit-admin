@@ -34,18 +34,18 @@ export class AdminLayoutComponent implements OnInit {
     },
     {
       id: 2,
-      link: '/admin/workouts',
-      label: 'Entrenos',
+      link: '/admin/posts',
+      label: 'Publicaciones',
     },
     {
       id: 3,
-      link: '/admin/routines',
-      label: 'Rutinas',
+      link: '/admin/comments',
+      label: 'Comentarios',
     },
     {
       id: 4,
-      link: '/admin/measures',
-      label: 'Medidas',
+      link: '/admin/routines',
+      label: 'Rutinas',
     },
     {
       id: 5,
@@ -54,13 +54,13 @@ export class AdminLayoutComponent implements OnInit {
     },
     {
       id: 6,
-      link: '/admin/equipments',
-      label: 'Equipos',
+      link: '/admin/measures',
+      label: 'Medidas',
     },
     {
       id: 7,
-      link: '/admin/muscles',
-      label: 'Músculos',
+      link: '/admin/catalogs',
+      label: 'Catálogos',
     },
   ];
 
