@@ -1,0 +1,42 @@
+<div class="md:w-2/4">
+  <h1 class="mb-4">Nuevo Catálogo</h1>
+
+  <form [formGroup]="catalogForm" (ngSubmit)="handleSubmit()">
+    <div class="mb-2">
+      <label for="name" class="form-label">Nombre</label>
+      <input
+        type="text"
+        id="name"
+        name="name"
+        class="form-input"
+        formControlName="name"
+      />
+      <p class="form-error">{{ checkErrors("name") }}</p>
+    </div>
+
+    @if (catalogTypes) {
+      <div class="mb-2">
+        <label for="muscles" class="form-label">Tipo</label>
+        <p-select
+          [options]="catalogTypes"
+          optionLabel="name"
+          optionValue="id"
+          [filter]="true"
+          filterBy="name"
+          [showClear]="true"
+          formControlName="key"
+          class="w-full"
+        >
+          <ng-template #selectedItem let-selectedOption>
+            <div>{{ selectedOption.name }}</div>
+          </ng-template>
+          <ng-template let-item #item>
+            <div>{{ item.name }}</div>
+          </ng-template>
+        </p-select>
+      </div>
+    }
+
+    <button class="btn-primary mt-4" type="submit">Guardar</button>
+  </form>
+</div>
