@@ -15,11 +15,19 @@ import {
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, Subject, takeUntil } from 'rxjs';
 
-import { Exercise, RoutineDto } from 'app/domain';
-import { ExerciseService, RoutineService } from 'app/services';
+import {
+  Exercise,
+  Routine,
+  RoutineDto,
+  User,
+  Workout,
+  WorkoutDto,
+} from 'app/domain';
+import { ExerciseService, UserService, WorkoutService } from 'app/services';
 import { AsyncPipe } from '@angular/common';
 import { FormControlPipe } from 'app/pipes/form-control.pipe';
 import { QuillEditorComponent } from 'ngx-quill';
+import { SelectModule } from 'primeng/select';
 
 @Component({
   selector: 'app-routine-form',
@@ -29,6 +37,7 @@ import { QuillEditorComponent } from 'ngx-quill';
     AsyncPipe,
     FormControlPipe,
     QuillEditorComponent,
+    SelectModule,
   ],
   templateUrl: './routine-form.component.html',
   styleUrl: './routine-form.component.scss',
@@ -38,26 +47,40 @@ export class RoutineFormComponent implements OnInit {
   private readonly _route = inject(ActivatedRoute);
   private readonly _formBuilder = inject(UntypedFormBuilder);
 
-  private readonly _routineService = inject(RoutineService);
+  private readonly _workoutService = inject(WorkoutService);
   private readonly _exerciseService = inject(ExerciseService);
+  private readonly _userService = inject(UserService);
   private readonly _unsubscribeAll: Subject<any> = new Subject<any>();
 
   routineForm!: UntypedFormGroup;
   exercises$!: Observable<Exercise[]>;
+  users$!: Observable<User[]>;
 
   routineId: number = 0;
+
+  days = [
+    { value: 1, label: 'Lunes' },
+    { value: 2, label: 'Martes' },
+    { value: 3, label: 'Miercoles' },
+    { value: 4, label: 'Jueves' },
+    { value: 5, label: 'Viernes' },
+    { value: 6, label: 'Sabado' },
+    { value: 7, label: 'Domingo' },
+  ];
 
   constructor() {
     this.routineForm = this._formBuilder.group({
       name: ['', [Validators.required]],
       description: ['', []],
+      day: ['', []],
+      user: ['', []],
       exercises: this._formBuilder.array([]),
     });
   }
 
   ngOnInit(): void {
+    this.getUsers();
     this.getExercises();
-
     const routineId = this._route.snapshot.paramMap.get('id');
     if (routineId) {
       this.routineId = +routineId;
@@ -65,19 +88,25 @@ export class RoutineFormComponent implements OnInit {
     }
   }
 
+  getUsers(): void {
+    this.users$ = this._userService.getUsers();
+  }
+
   getExercises() {
     this.exercises$ = this._exerciseService.fetchExercises();
   }
 
   getRoutine(routineId: number) {
-    this._routineService
-      .showRoutine(routineId)
+    this._workoutService
+      .showWorkout(routineId)
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe({
-        next: (response: any) => {
+        next: (response: Workout) => {
           const form = {
             name: response.name,
             description: response.description,
+            day: response.day,
+            user: response.user.id,
           };
           this.routineForm.patchValue(form);
 
@@ -95,13 +124,15 @@ export class RoutineFormComponent implements OnInit {
       return;
     }
 
-    const { name, description, exercises } = this.routineForm.value;
+    const { name, description, day, user, exercises } = this.routineForm.value;
 
     const exercisesIds = exercises.map((item: any) => item.id);
 
-    const form: RoutineDto = {
+    const form: WorkoutDto = {
       name,
       description,
+      day,
+      user,
       exercises: exercisesIds,
     };
 
@@ -112,9 +143,9 @@ export class RoutineFormComponent implements OnInit {
     }
   }
 
-  save(form: RoutineDto) {
-    this._routineService
-      .saveRoutine(form)
+  save(form: WorkoutDto) {
+    this._workoutService
+      .saveWorkout(form)
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe({
         next: () => {
@@ -126,9 +157,9 @@ export class RoutineFormComponent implements OnInit {
       });
   }
 
-  update(form: RoutineDto) {
-    this._routineService
-      .updateRoutine(this.routineId, form)
+  update(form: WorkoutDto) {
+    this._workoutService
+      .updateWorkout(this.routineId, form)
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe({
         next: () => {

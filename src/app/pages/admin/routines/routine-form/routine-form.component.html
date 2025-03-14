@@ -12,6 +12,40 @@
       />
       <p class="form-error">{{ checkErrors("name") }}</p>
     </div>
+    <div class="mb-2">
+      <label for="name" class="form-label">Dia</label>
+      <select name="day" id="day" formControlName="day" class="form-input">
+        @for (item of days; track item.value) {
+          <option [value]="item.value">
+            {{ item.label }}
+          </option>
+        }
+      </select>
+      <p class="form-error">{{ checkErrors("day") }}</p>
+    </div>
+
+    @if (users$ | async; as users) {
+      <div class="mb-2">
+        <label for="user" class="form-label">Usuario</label>
+        <p-select
+          [options]="users"
+          optionLabel="username"
+          optionValue="id"
+          [filter]="true"
+          filterBy="username"
+          [showClear]="true"
+          formControlName="user"
+          class="w-full"
+        >
+          <ng-template #selectedItem let-selectedOption>
+            <div>{{ selectedOption.username }}</div>
+          </ng-template>
+          <ng-template let-item #item>
+            <div>{{ item.username }}</div>
+          </ng-template>
+        </p-select>
+      </div>
+    }
     <div class="mb-10">
       <label for="description" class="form-label">Descripción</label>
       <quill-editor
@@ -33,9 +67,7 @@
             [formControl]="item.get('id') | formControl"
           >
             @for (e of exercises$ | async; track e.id) {
-              <option [value]="e.id">
-                {{ e.name }}
-              </option>
+              <option [value]="e.id">{{ e.muscle.name }} / {{ e.name }}</option>
             }
           </select>
         </div>

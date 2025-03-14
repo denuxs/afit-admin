@@ -5,7 +5,7 @@
   </div>
 </div>
 
-<ng-container *ngIf="routines$ | async as data; else loading">
+<ng-container *ngIf="workoust$ | async as data; else loading">
   <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
     <table
       class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400"
@@ -15,6 +15,8 @@
       >
         <tr>
           <th scope="col" class="px-6 py-3">Nombre</th>
+          <th scope="col" class="px-6 py-3">Dia</th>
+          <th scope="col" class="px-6 py-3">Usuario</th>
           <th scope="col" class="px-6 py-3">Ejercicios</th>
           <th scope="col" class="px-6 py-3">Creado</th>
           <th scope="col" class="px-6 py-3"></th>
@@ -31,6 +33,12 @@
             >
               {{ item.name }}
             </th>
+            <td class="px-6 py-4">
+              {{ item.day }}
+            </td>
+            <td class="px-6 py-4">
+              {{ item.user.username }}
+            </td>
             <td class="px-6 py-4">
               {{ item.exercises.length }}
             </td>

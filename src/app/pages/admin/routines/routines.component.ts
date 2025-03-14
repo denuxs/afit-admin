@@ -1,6 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { Routine } from 'app/domain';
-import { RoutineService } from 'app/services';
+import { Workout } from 'app/domain';
+import { WorkoutService } from 'app/services';
 import { Observable } from 'rxjs';
 import { AsyncPipe, DatePipe, NgIf } from '@angular/common';
 import { RouterLink } from '@angular/router';
@@ -13,11 +13,11 @@ import { RouterLink } from '@angular/router';
   styleUrl: './routines.component.scss',
 })
 export class RoutinesComponent implements OnInit {
-  private readonly _routineService = inject(RoutineService);
+  private readonly _workoutService = inject(WorkoutService);
 
-  routines$!: Observable<Routine[]>;
+  workoust$!: Observable<Workout[]>;
 
   ngOnInit(): void {
-    this.routines$ = this._routineService.fetchRoutines();
+    this.workoust$ = this._workoutService.fetchWorkouts();
   }
 }
