@@ -7,16 +7,17 @@ import {
   Validators,
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Equipment, ExerciseDto, Muscle } from 'app/domain';
-import { EquipmentService, ExerciseService, MuscleService } from 'app/services';
+import { Catalog, Exercise, ExerciseDto } from 'app/domain';
+import { CatalogService, ExerciseService } from 'app/services';
 import { Observable, Subject, takeUntil } from 'rxjs';
 import { QuillEditorComponent } from 'ngx-quill';
 import { DomSanitizer } from '@angular/platform-browser';
+import { SelectModule } from 'primeng/select';
 
 @Component({
   selector: 'app-exercise-form',
   standalone: true,
-  imports: [ReactiveFormsModule, AsyncPipe, QuillEditorComponent],
+  imports: [ReactiveFormsModule, AsyncPipe, QuillEditorComponent, SelectModule],
   templateUrl: './exercise-form.component.html',
   styleUrl: './exercise-form.component.scss',
 })
@@ -26,15 +27,15 @@ export class ExerciseFormComponent implements OnInit {
   private readonly _formBuilder = inject(FormBuilder);
 
   private readonly _exerciseService = inject(ExerciseService);
-  private readonly _equipmentService = inject(EquipmentService);
-  private readonly _muscleService = inject(MuscleService);
+  private readonly _catalogService = inject(CatalogService);
+
   private readonly _sanitizer = inject(DomSanitizer);
 
   private readonly _unsubscribeAll: Subject<any> = new Subject<any>();
 
   exerciseForm: FormGroup;
-  equipments$!: Observable<Equipment[]>;
-  muscles$!: Observable<Muscle[]>;
+  equipments$!: Observable<Catalog[]>;
+  muscles$!: Observable<Catalog[]>;
 
   exerciseId: number = 0;
 
@@ -44,8 +45,9 @@ export class ExerciseFormComponent implements OnInit {
       description: [''],
       equipment: ['', []],
       muscle: ['', [Validators.required]],
-      sets: [4],
-      repts: [10],
+      sets: [3],
+      repts: [12],
+      weight: [0],
     });
   }
 
@@ -65,7 +67,7 @@ export class ExerciseFormComponent implements OnInit {
       .showExercise(exerciseId)
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe({
-        next: (response: any) => {
+        next: (response: Exercise) => {
           const form = {
             name: response.name,
             description: response.description,
@@ -73,6 +75,7 @@ export class ExerciseFormComponent implements OnInit {
             muscle: response.muscle.id,
             sets: response.sets,
             repts: response.repts,
+            weight: response.weight,
           };
           this.exerciseForm.patchValue(form);
         },
@@ -83,11 +86,17 @@ export class ExerciseFormComponent implements OnInit {
   }
 
   getMuscles() {
-    this.muscles$ = this._muscleService.fetchMuscles();
+    const params = {
+      key: 'muscle',
+    };
+    this.muscles$ = this._catalogService.fetchCatalogs(params);
   }
 
   getEquipments() {
-    this.equipments$ = this._equipmentService.fetchEquipments();
+    const params = {
+      key: 'equipment',
+    };
+    this.equipments$ = this._catalogService.fetchCatalogs(params);
   }
 
   handleSubmit(): void {
@@ -96,7 +105,7 @@ export class ExerciseFormComponent implements OnInit {
       return;
     }
 
-    const { name, description, equipment, muscle, sets, repts } =
+    const { name, description, equipment, muscle, sets, repts, weight } =
       this.exerciseForm.value;
 
     const form: ExerciseDto = {
@@ -106,6 +115,7 @@ export class ExerciseFormComponent implements OnInit {
       muscle,
       sets,
       repts,
+      weight,
     };
 
     if (this.exerciseId) {

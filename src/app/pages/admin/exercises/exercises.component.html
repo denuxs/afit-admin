@@ -1,9 +1,7 @@
 <div class="flex justify-between mb-4">
   <h1>Ejercicios</h1>
   <div>
-    <a href="#" routerLink="create" class="btn-primary"
-      >Nuevo Ejercicio</a
-    >
+    <a href="#" routerLink="create" class="btn-primary">Nuevo Ejercicio</a>
   </div>
 </div>
 
@@ -19,6 +17,8 @@
           <th scope="col" class="px-6 py-3">Nombre</th>
           <th scope="col" class="px-6 py-3">Series</th>
           <th scope="col" class="px-6 py-3">Repeticiones</th>
+          <th scope="col" class="px-6 py-3">Musculo</th>
+          <th scope="col" class="px-6 py-3">Equipo</th>
           <th scope="col" class="px-6 py-3">Creado</th>
           <th scope="col" class="px-6 py-3"></th>
         </tr>
@@ -40,6 +40,8 @@
             <td class="px-6 py-4">
               {{ item.repts }}
             </td>
+            <td class="px-6 py-4">{{ item.muscle.name }}</td>
+            <td class="px-6 py-4">{{ item.equipment?.name }}</td>
             <td class="px-6 py-4">
               {{ item.created | date: "mediumDate" }}
             </td>
