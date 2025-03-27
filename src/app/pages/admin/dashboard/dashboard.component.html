@@ -1,14 +1,10 @@
-<h1 class="mb-4">Dashboard</h1>
+<h1 class="mb-4">Inicio</h1>
 
-<ng-container *ngIf="dashboard$ | async as data; else loading">
+@if (dashboard$ | async; as data) {
   <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
     <div class="bg-gray-300 px-6 py-4 rounded flex flex-col items-center">
-      <h2 class="uppercase">Entrenos</h2>
-      <h1>{{ data.workouts }}</h1>
-    </div>
-    <div class="bg-gray-300 px-6 py-4 rounded flex flex-col items-center">
       <h2 class="uppercase">Rutinas</h2>
-      <h1>{{ data.routines }}</h1>
+      <h1>{{ data.workouts }}</h1>
     </div>
     <div class="bg-gray-300 px-6 py-4 rounded flex flex-col items-center">
       <h2 class="uppercase">Ejercicios</h2>
@@ -19,7 +15,6 @@
       <h1>{{ data.users }}</h1>
     </div>
   </div>
-</ng-container>
-<ng-template #loading>
+} @else {
   <p class="text-center">Cargando...</p>
-</ng-template>
+}
