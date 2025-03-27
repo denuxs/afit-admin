@@ -8,31 +8,27 @@
       <label for="username" class="form-label">Usuario</label>
       <input
         type="text"
-        id="username"
-        name="username"
-        class="form-input w-full"
+        fluid="true"
+        pInputText
         formControlName="username"
+        class="ng-invalid"
+        pSize="large"
       />
       <p class="form-error">{{ checkErrors("username") }}</p>
     </div>
 
     <div class="mb-2">
       <label for="password" class="form-label">Contraseña</label>
-      <input
-        type="password"
-        id="password"
-        name="password"
-        class="form-input w-full"
+      <p-password
         formControlName="password"
+        fluid="true"
+        [toggleMask]="true"
+        class="ng-invalid"
+        [feedback]="false"
+        size="large"
       />
       <p class="form-error">{{ checkErrors("password") }}</p>
     </div>
-
-    @if (!unauthenticated) {
-      <p class="form-error text-center mt-2">
-        Usuario o contraseña incorrectos
-      </p>
-    }
 
     <button class="btn-primary mt-4 w-full" type="submit">
       <span *ngIf="!loginForm.disabled">Iniciar Sesión</span>
@@ -40,3 +36,4 @@
     </button>
   </form>
 </div>
+<p-toast />

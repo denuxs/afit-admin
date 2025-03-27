@@ -1,15 +1,14 @@
-<div class="md:w-2/4">
-  <h1 class="mb-4">Nuevo Catálogo</h1>
-
+<h1 class="mb-4">Nuevo Catálogo</h1>
+<div class="md:w-2/4 card">
   <form [formGroup]="catalogForm" (ngSubmit)="handleSubmit()">
     <div class="mb-2">
       <label for="name" class="form-label">Nombre</label>
       <input
         type="text"
-        id="name"
-        name="name"
-        class="form-input"
+        fluid="true"
+        pInputText
         formControlName="name"
+        class="ng-invalid"
       />
       <p class="form-error">{{ checkErrors("name") }}</p>
     </div>
@@ -23,7 +22,6 @@
           optionValue="id"
           [filter]="true"
           filterBy="name"
-          [showClear]="true"
           formControlName="key"
           class="w-full"
         >

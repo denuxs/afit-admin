@@ -13,11 +13,11 @@ import { Observable, Subject, takeUntil } from 'rxjs';
 import { QuillEditorComponent } from 'ngx-quill';
 import { DomSanitizer } from '@angular/platform-browser';
 import { SelectModule } from 'primeng/select';
-
+import { EditorModule } from 'primeng/editor';
 @Component({
   selector: 'app-exercise-form',
   standalone: true,
-  imports: [ReactiveFormsModule, AsyncPipe, QuillEditorComponent, SelectModule],
+  imports: [ReactiveFormsModule, AsyncPipe, EditorModule, SelectModule],
   templateUrl: './exercise-form.component.html',
   styleUrl: './exercise-form.component.scss',
 })
@@ -38,6 +38,10 @@ export class ExerciseFormComponent implements OnInit {
   muscles$!: Observable<Catalog[]>;
 
   exerciseId: number = 0;
+
+  modules = {
+    toolbar: [['bold'], [{ list: 'ordered' }, { list: 'bullet' }]],
+  };
 
   constructor() {
     this.exerciseForm = this._formBuilder.group({
@@ -86,17 +90,15 @@ export class ExerciseFormComponent implements OnInit {
   }
 
   getMuscles() {
-    const params = {
+    this.muscles$ = this._catalogService.fetchCatalogs({
       key: 'muscle',
-    };
-    this.muscles$ = this._catalogService.fetchCatalogs(params);
+    });
   }
 
   getEquipments() {
-    const params = {
+    this.equipments$ = this._catalogService.fetchCatalogs({
       key: 'equipment',
-    };
-    this.equipments$ = this._catalogService.fetchCatalogs(params);
+    });
   }
 
   handleSubmit(): void {

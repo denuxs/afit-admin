@@ -8,14 +8,22 @@ import {
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, Subject, takeUntil } from 'rxjs';
 
-import { MeasureDto, User } from 'app/domain';
+import { Measure, MeasureDto, User } from 'app/domain';
 import { MeasuresService, UserService } from 'app/services';
-import { AsyncPipe } from '@angular/common';
+import { AsyncPipe, NgIf } from '@angular/common';
+import { SelectModule } from 'primeng/select';
+import { MeasureImagesComponent } from '../measure-images/measure-images.component';
 
 @Component({
   selector: 'app-measures-form',
   standalone: true,
-  imports: [ReactiveFormsModule, AsyncPipe],
+  imports: [
+    ReactiveFormsModule,
+    AsyncPipe,
+    SelectModule,
+    MeasureImagesComponent,
+    MeasureImagesComponent,
+  ],
   templateUrl: './measures-form.component.html',
   styleUrl: './measures-form.component.scss',
 })
@@ -32,11 +40,28 @@ export class MeasuresFormComponent implements OnInit {
   users$!: Observable<User[]>;
 
   measureId: number = 0;
+  avatarField: any;
+  avatarPreview: any = '';
+
+  photoPreview: string = 'https://placehold.co/200x200';
+  photoField!: File;
 
   constructor() {
     this.measureForm = this._formBuilder.group({
       user: ['', [Validators.required]],
-      abdomen: ['', [Validators.required]],
+      comment: ['', []],
+      abdomen: [0, []],
+      arm_left: [0, []],
+      arm_right: [0, []],
+      back: [0, []],
+      chest: [0, []],
+      forearm: [0, []],
+      glutes: [0, []],
+      hips: [0, []],
+      leg_left: [0, []],
+      leg_right: [0, []],
+      waist: [0, []],
+      weight: [0, []],
     });
   }
 
@@ -46,7 +71,7 @@ export class MeasuresFormComponent implements OnInit {
     const measureId = this._route.snapshot.paramMap.get('id');
     if (measureId) {
       this.measureId = +measureId;
-      this.getMeasure(+measureId);
+      this.getMeasure(Number(measureId));
     }
   }
 
@@ -55,11 +80,26 @@ export class MeasuresFormComponent implements OnInit {
       .showMeasure(measureId)
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe({
-        next: (response: any) => {
+        next: (response: Measure) => {
+          const { measures } = response;
+
           const form = {
             user: response.user.id,
-            abdomen: response.abdomen,
+            comment: response.comment,
+            abdomen: measures.abdomen,
+            arm_left: measures.arm_left,
+            arm_right: measures.arm_right,
+            back: measures.back,
+            chest: measures.chest,
+            forearm: measures.forearm,
+            glutes: measures.glutes,
+            hips: measures.hips,
+            leg_left: measures.leg_left,
+            leg_right: measures.leg_right,
+            waist: measures.waist,
+            weight: measures.weight,
           };
+
           this.measureForm.patchValue(form);
         },
         error: (err) => {
@@ -78,46 +118,48 @@ export class MeasuresFormComponent implements OnInit {
       return;
     }
 
-    const { user, abdomen } = this.measureForm.value;
+    const form = this.measureForm.getRawValue();
 
-    const form: MeasureDto = {
-      user,
-      abdomen,
+    const body: MeasureDto = {
+      comment: form.comment,
+      user: form.user,
+      measures: {
+        abdomen: form.abdomen,
+        arm_left: form.arm_left,
+        arm_right: form.arm_right,
+        back: form.back,
+        chest: form.chest,
+        forearm: form.forearm,
+        glutes: form.glutes,
+        hips: form.hips,
+        leg_left: form.leg_left,
+        leg_right: form.leg_right,
+        waist: form.waist,
+        weight: form.weight,
+      },
     };
 
-    if (this.measureId) {
-      this.update(form);
-    } else {
-      this.save(form);
-    }
+    const http = this.measureId
+      ? this.update(body, this.measureId)
+      : this.save(body);
+
+    http.subscribe({
+      next: (response: Measure) => {
+        const url = `/admin/measures/${response.id}`;
+        this._router.navigateByUrl(url);
+      },
+      error: (err) => {
+        console.log(err);
+      },
+    });
   }
 
   save(form: MeasureDto) {
-    this._measureService
-      .saveMeasure(form)
-      .pipe(takeUntil(this._unsubscribeAll))
-      .subscribe({
-        next: () => {
-          this._router.navigateByUrl('/admin/measures');
-        },
-        error: (err) => {
-          console.log(err);
-        },
-      });
+    return this._measureService.saveMeasure(form);
   }
 
-  update(form: MeasureDto) {
-    this._measureService
-      .updateMeasure(this.measureId, form)
-      .pipe(takeUntil(this._unsubscribeAll))
-      .subscribe({
-        next: () => {
-          this._router.navigateByUrl('/admin/measures');
-        },
-        error: (err) => {
-          console.log(err);
-        },
-      });
+  update(form: MeasureDto, measureId: number) {
+    return this._measureService.updateMeasure(measureId, form);
   }
 
   checkErrors(field: string): string {

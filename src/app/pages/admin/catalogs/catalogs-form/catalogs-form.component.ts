@@ -10,12 +10,13 @@ import { Subject, takeUntil } from 'rxjs';
 
 import { CatalogDto } from 'app/domain';
 import { CatalogService } from 'app/services';
-import { SelectModule } from 'primeng/select';
 
+import { SelectModule } from 'primeng/select';
+import { InputTextModule } from 'primeng/inputtext';
 @Component({
   selector: 'app-catalogs-form',
   standalone: true,
-  imports: [ReactiveFormsModule, SelectModule],
+  imports: [ReactiveFormsModule, InputTextModule, SelectModule],
   templateUrl: './catalogs-form.component.html',
   styleUrl: './catalogs-form.component.scss',
 })
