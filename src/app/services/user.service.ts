@@ -56,7 +56,7 @@ export class UserService {
     );
   }
 
-  updateUser(id: number, form: UserDto): Observable<User> {
+  updateUser(id: number, form: FormData): Observable<User> {
     return this._httpClient.put<User>(this._api + `${id}/`, form).pipe(
       catchError(() => {
         return throwError(() => new Error('Error updating user'));

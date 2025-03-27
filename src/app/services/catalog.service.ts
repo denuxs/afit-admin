@@ -3,7 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { catchError, Observable, throwError } from 'rxjs';
 
 import { environment } from '../../environments/environment';
-import { Catalog, CatalogDto } from 'app/domain';
+import { Catalog, CatalogDto, CatalogParams } from 'app/domain';
+
 @Injectable({
   providedIn: 'root',
 })
@@ -13,7 +14,7 @@ export class CatalogService {
 
   constructor() {}
 
-  fetchCatalogs(params?: any): Observable<Catalog[]> {
+  fetchCatalogs(params: Partial<CatalogParams>): Observable<Catalog[]> {
     return this._httpClient.get<Catalog[]>(this._api, { params }).pipe(
       catchError(() => {
         return throwError(() => new Error('Error getting catalogs'));

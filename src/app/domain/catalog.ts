@@ -5,7 +5,10 @@ export interface Catalog {
   created: Date;
 }
 
-export interface CatalogDto {
-  name: string;
+export type CatalogDto = Omit<Catalog, 'id' | 'created'>;
+
+export interface CatalogParams {
+  search: string;
+  ordering: string;
   key: string;
 }

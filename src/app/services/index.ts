@@ -6,3 +6,4 @@ export * from './routine.service';
 export * from './user.service';
 export * from './workout.service';
 export * from './catalog.service';
+export * from './image.service';

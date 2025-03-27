@@ -16,5 +16,10 @@ export interface WorkoutDto {
   description?: string;
   user: number;
   day: number;
-  exercises: [];
+  exercises: {
+    workout: number;
+    exercise: number;
+    sets: number;
+    repts: number;
+  };
 }

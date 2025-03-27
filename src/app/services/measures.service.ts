@@ -30,7 +30,7 @@ export class MeasuresService {
     );
   }
 
-  saveMeasure(form: FormData): Observable<Measure> {
+  saveMeasure(form: MeasureDto): Observable<Measure> {
     return this._httpClient.post<Measure>(this._api, form).pipe(
       catchError(() => {
         return throwError(() => new Error('Error saving measure'));
