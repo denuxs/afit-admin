@@ -7,14 +7,14 @@
         type="text"
         id="name"
         name="name"
-        class="form-input"
+        class="w-full"
         formControlName="name"
       />
       <p class="form-error">{{ checkErrors("name") }}</p>
     </div>
     <div class="mb-2">
       <label for="name" class="form-label">Dia</label>
-      <select name="day" id="day" formControlName="day" class="form-input">
+      <select name="day" id="day" formControlName="day" class="w-full">
         @for (item of days; track item.value) {
           <option [value]="item.value">
             {{ item.label }}
@@ -33,7 +33,6 @@
           optionValue="id"
           [filter]="true"
           filterBy="username"
-          [showClear]="true"
           formControlName="user"
           class="w-full"
         >
@@ -48,44 +47,67 @@
     }
     <div class="mb-10">
       <label for="description" class="form-label">Descripción</label>
-      <quill-editor
-        class="w-full"
-        format="html"
+      <p-editor
         formControlName="description"
-      />
+        class="w-full"
+        [modules]="modules"
+      >
+        <ng-template pTemplate="header"> </ng-template>
+      </p-editor>
     </div>
 
     <h2 class="mb-2">Agregar Ejercicios</h2>
 
     @for (item of exercises.controls; track $index; let index = $index) {
-      <div class="flex mb-4">
-        <div class="flex-auto">
-          <select
-            id="exercise"
-            name="exercise"
-            class="form-input w-full"
-            [formControl]="item.get('id') | formControl"
+      <div class="flex gap-2 mb-4">
+        <div class="basis-1/2">
+          <p-select
+            [options]="exercisesList"
+            optionLabel="name"
+            optionValue="id"
+            [filter]="true"
+            filterBy="name"
+            [formControl]="item.get('exercise') | formControl"
+            class="w-full"
           >
-            @for (e of exercises$ | async; track e.id) {
-              <option [value]="e.id">{{ e.muscle.name }} / {{ e.name }}</option>
-            }
-          </select>
+            <ng-template #selectedItem let-selectedOption>
+              <div>{{ selectedOption.name }}</div>
+            </ng-template>
+            <ng-template let-item #item>
+              <div>{{ item.name }}</div>
+            </ng-template>
+          </p-select>
         </div>
-        <div class="flex w-10 pl-2">
-          <button
-            class="btn-primary"
-            type="button"
+        <div class="basis-1/4">
+          <input
+            type="number"
+            id="sets"
+            name="sets"
+            class="w-full"
+            [formControl]="item.get('sets') | formControl"
+          />
+        </div>
+        <div class="basis-1/4">
+          <input
+            type="number"
+            id="repts"
+            name="repts"
+            class="w-full"
+            [formControl]="item.get('repts') | formControl"
+          />
+        </div>
+        <div class="flex">
+          <p-button
+            icon="pi pi-times"
+            aria-label="remove"
             (click)="removeExercise(index)"
-          >
-            Borrar
-          </button>
+            severity="danger"
+          />
         </div>
       </div>
     }
     <div class="mb-2">
-      <button class="btn-primary" type="button" (click)="addExercise()">
-        Agregar
-      </button>
+      <p-button icon="pi pi-plus" aria-label="remove" (click)="addExercise()" />
     </div>
 
     <button class="btn-primary mt-10" type="submit">Guardar</button>

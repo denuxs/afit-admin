@@ -1,7 +1,17 @@
 <div class="flex justify-between mb-4">
   <h1>Entrenos</h1>
-  <div>
-    <a href="#" routerLink="create" class="btn-primary">Nuevo Entreno</a>
+  <div class="flex gap-2 items-center">
+    <div>
+      <input
+        type="text"
+        class="form-input"
+        placeholder="Buscar usuario..."
+        [formControl]="searchControl"
+      />
+    </div>
+    <div>
+      <a href="#" routerLink="create" class="btn-primary">Nuevo Entreno</a>
+    </div>
   </div>
 </div>
 
@@ -14,8 +24,8 @@
         class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"
       >
         <tr>
-          <th scope="col" class="px-6 py-3">Nombre</th>
           <th scope="col" class="px-6 py-3">Usuario</th>
+          <th scope="col" class="px-6 py-3">Dia</th>
           <th scope="col" class="px-6 py-3">Rutinas</th>
           <th scope="col" class="px-6 py-3">Creado</th>
           <th scope="col" class="px-6 py-3"></th>
@@ -30,10 +40,10 @@
               scope="row"
               class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
             >
-              {{ item.name }}
+              {{ item.user.username }}
             </th>
             <td class="px-6 py-4">
-              {{ item.user.username }}
+              {{ item.day }}
             </td>
             <td class="px-6 py-4">
               {{ item.routines.length }}

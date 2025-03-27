@@ -26,8 +26,9 @@ import {
 import { ExerciseService, UserService, WorkoutService } from 'app/services';
 import { AsyncPipe } from '@angular/common';
 import { FormControlPipe } from 'app/pipes/form-control.pipe';
-import { QuillEditorComponent } from 'ngx-quill';
 import { SelectModule } from 'primeng/select';
+import { EditorModule } from 'primeng/editor';
+import { ButtonModule } from 'primeng/button';
 
 @Component({
   selector: 'app-routine-form',
@@ -36,8 +37,9 @@ import { SelectModule } from 'primeng/select';
     ReactiveFormsModule,
     AsyncPipe,
     FormControlPipe,
-    QuillEditorComponent,
+    ButtonModule,
     SelectModule,
+    EditorModule,
   ],
   templateUrl: './routine-form.component.html',
   styleUrl: './routine-form.component.scss',
@@ -53,10 +55,13 @@ export class RoutineFormComponent implements OnInit {
   private readonly _unsubscribeAll: Subject<any> = new Subject<any>();
 
   routineForm!: UntypedFormGroup;
-  exercises$!: Observable<Exercise[]>;
+  exercisesList!: Exercise[];
   users$!: Observable<User[]>;
 
   routineId: number = 0;
+  modules = {
+    toolbar: [['bold'], [{ list: 'ordered' }, { list: 'bullet' }]],
+  };
 
   days = [
     { value: 1, label: 'Lunes' },
@@ -72,8 +77,8 @@ export class RoutineFormComponent implements OnInit {
     this.routineForm = this._formBuilder.group({
       name: ['', [Validators.required]],
       description: ['', []],
-      day: ['', []],
-      user: ['', []],
+      day: ['', [Validators.required]],
+      user: ['', [Validators.required]],
       exercises: this._formBuilder.array([]),
     });
   }
@@ -93,7 +98,14 @@ export class RoutineFormComponent implements OnInit {
   }
 
   getExercises() {
-    this.exercises$ = this._exerciseService.fetchExercises();
+    this._exerciseService.fetchExercises().subscribe({
+      next: (response: Exercise[]) => {
+        this.exercisesList = response;
+      },
+      error: (err) => {
+        console.log(err);
+      },
+    });
   }
 
   getRoutine(routineId: number) {
@@ -126,15 +138,15 @@ export class RoutineFormComponent implements OnInit {
 
     const { name, description, day, user, exercises } = this.routineForm.value;
 
-    const exercisesIds = exercises.map((item: any) => item.id);
-
     const form: WorkoutDto = {
       name,
       description,
       day,
       user,
-      exercises: exercisesIds,
+      exercises,
     };
+
+    console.log(exercises);
 
     if (this.routineId) {
       this.update(form);
@@ -186,8 +198,6 @@ export class RoutineFormComponent implements OnInit {
     return '';
   }
 
-  // exercises form array
-
   get exercises(): UntypedFormArray {
     return this.routineForm.get('exercises') as UntypedFormArray;
   }
@@ -197,9 +207,15 @@ export class RoutineFormComponent implements OnInit {
 
     if (data.length > 0) {
       data.forEach((item: any) => {
+        const { exercise, sets, repts, weight, workout } = item;
         formGroups.push(
           this._formBuilder.group({
             id: [item.id],
+            workout: [workout],
+            exercise: [exercise.id],
+            sets: [sets],
+            repts: [repts],
+            weight: [weight],
           }),
         );
       });
@@ -212,7 +228,12 @@ export class RoutineFormComponent implements OnInit {
 
   addExercise(): void {
     const formGroup = this._formBuilder.group({
-      id: ['', [Validators.required]],
+      id: [null],
+      workout: [this.routineId, []],
+      exercise: ['', []],
+      sets: [4],
+      repts: [12],
+      weight: [0],
     });
 
     this.exercises.push(formGroup);
