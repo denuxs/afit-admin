@@ -1,0 +1,93 @@
+<div class="md:w-2/4">
+  <h1 class="mb-4">Nuevo ejercicio</h1>
+
+  <form [formGroup]="exerciseForm" (ngSubmit)="handleSubmit()">
+    <div class="mb-6">
+      <label for="image" class="form-label">Subir Imagen</label>
+      <input
+        type="file"
+        accept="image/*"
+        (change)="uploadImage($event)"
+        id="image"
+        name="image"
+        class="w-full"
+      />
+
+      @if (photoPreview) {
+        <div class="mt-2 w-52">
+          <img [src]="photoPreview" class="w-full object-cover" alt="avatar" />
+        </div>
+      }
+    </div>
+
+    <div class="mb-2">
+      <label for="name" class="form-label">Nombre</label>
+      <input
+        type="text"
+        id="name"
+        name="name"
+        class="w-full"
+        formControlName="name"
+      />
+      <p class="form-error">{{ checkErrors("name") }}</p>
+    </div>
+
+    @if (equipments$ | async; as equipments) {
+      <div class="mb-2">
+        <label for="equipments" class="form-label">Equipo</label>
+        <p-select
+          [options]="equipments"
+          optionLabel="name"
+          optionValue="id"
+          [filter]="true"
+          filterBy="name"
+          formControlName="equipment"
+          class="w-full"
+        >
+          <ng-template #selectedItem let-selectedOption>
+            <div>{{ selectedOption.name }}</div>
+          </ng-template>
+          <ng-template let-item #item>
+            <div>{{ item.name }}</div>
+          </ng-template>
+        </p-select>
+      </div>
+    }
+
+    @if (muscles$ | async; as muscles) {
+      <div class="mb-2">
+        <label for="muscles" class="form-label">Músculo</label>
+        <p-select
+          [options]="muscles"
+          optionLabel="name"
+          optionValue="id"
+          [filter]="true"
+          filterBy="name"
+          formControlName="muscle"
+          class="w-full"
+        >
+          <ng-template #selectedItem let-selectedOption>
+            <div>{{ selectedOption.name }}</div>
+          </ng-template>
+          <ng-template let-item #item>
+            <div>{{ item.name }}</div>
+          </ng-template>
+        </p-select>
+      </div>
+    }
+
+    <div class="mb-2">
+      <label for="description" class="form-label">Instrucciones</label>
+
+      <p-editor
+        formControlName="description"
+        class="w-full"
+        [modules]="modules"
+      >
+        <ng-template pTemplate="header"> </ng-template>
+      </p-editor>
+    </div>
+
+    <button class="btn-primary mt-4" type="submit">Guardar</button>
+  </form>
+</div>

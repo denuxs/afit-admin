@@ -1,0 +1,24 @@
+<h1 class="mb-4">Inicio</h1>
+
+@if (dashboard$ | async; as data) {
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+    <div class="bg-gray-300 px-6 py-4 rounded flex flex-col items-center">
+      <h2 class="uppercase">Rutinas</h2>
+      <h1>{{ data.workouts }}</h1>
+    </div>
+    <div class="bg-gray-300 px-6 py-4 rounded flex flex-col items-center">
+      <h2 class="uppercase">Comentarios</h2>
+      <h1>{{ data.comments }}</h1>
+    </div>
+    <div class="bg-gray-300 px-6 py-4 rounded flex flex-col items-center">
+      <h2 class="uppercase">Ejercicios</h2>
+      <h1>{{ data.exercises }}</h1>
+    </div>
+    <div class="bg-gray-300 px-6 py-4 rounded flex flex-col items-center">
+      <h2 class="uppercase">Usuarios</h2>
+      <h1>{{ data.users }}</h1>
+    </div>
+  </div>
+} @else {
+  <p class="text-center">Cargando...</p>
+}

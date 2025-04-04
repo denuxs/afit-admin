@@ -1,0 +1,21 @@
+<h1 class="mb-4">Editar Medida</h1>
+
+@if (loading) {
+  <div>
+    <p-progressSpinner></p-progressSpinner>
+  </div>
+}
+
+@if (!loading) {
+  <div class="grid grid-cols-2 gap-2">
+    <div>
+      <app-measure-form
+        [measure]="measure"
+        (formChange)="onFormChange($event)"
+      ></app-measure-form>
+    </div>
+    <div>
+      <measure-images [measureId]="measureId"></measure-images>
+    </div>
+  </div>
+}
