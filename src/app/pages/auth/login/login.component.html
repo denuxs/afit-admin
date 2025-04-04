@@ -3,40 +3,6 @@
     <img src="logo.png" alt="Logo" />
   </div>
 
-  <form [formGroup]="loginForm" (ngSubmit)="handleSubmit()">
-    <div class="mb-2">
-      <label for="username" class="form-label">Usuario</label>
-      <input
-        type="text"
-        fluid="true"
-        pInputText
-        formControlName="username"
-        class="ng-invalid"
-        pSize="large"
-      />
-      <p class="form-error">{{ checkErrors("username") }}</p>
-    </div>
-
-    <div class="mb-2">
-      <label for="password" class="form-label">Contraseña</label>
-      <p-password
-        formControlName="password"
-        fluid="true"
-        [toggleMask]="true"
-        class="ng-invalid"
-        [feedback]="false"
-        size="large"
-      />
-      <p class="form-error">{{ checkErrors("password") }}</p>
-    </div>
-
-    <button
-      class="btn-primary mt-4 w-full"
-      type="submit"
-      [disabled]="loginForm.invalid"
-    >
-      Iniciar Sesión
-    </button>
-  </form>
+  <app-login-form (formChange)="onFormChange($event)" />
 </div>
 <p-toast />
