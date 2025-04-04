@@ -22,8 +22,10 @@ import Aura from '@primeng/themes/aura';
 
 import localeEs from '@angular/common/locales/es';
 import { registerLocaleData } from '@angular/common';
-
 registerLocaleData(localeEs, 'es');
+
+import { TranslocoHttpLoader } from './transloco-loader';
+import { provideTransloco } from '@jsverse/transloco';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -49,15 +51,25 @@ export const appConfig: ApplicationConfig = {
       enabled: !isDevMode(),
       registrationStrategy: 'registerWhenStable:30000',
     }),
-    provideQuillConfig({
-      modules: {
-        toolbar: [
-          ['bold'],
-          [{ list: 'ordered' }, { list: 'bullet' }],
-          [{ color: [] }, { background: [] }],
-          [{ align: [] }],
-        ],
+    // provideQuillConfig({
+    //   modules: {
+    //     toolbar: [
+    //       ['bold'],
+    //       [{ list: 'ordered' }, { list: 'bullet' }],
+    //       [{ color: [] }, { background: [] }],
+    //       [{ align: [] }],
+    //     ],
+    //   },
+    // }),
+    provideTransloco({
+      config: {
+        availableLangs: ['en', 'es'],
+        defaultLang: 'es',
+        // Remove this option if your application doesn't support changing language in runtime.
+        reRenderOnLangChange: true,
+        prodMode: !isDevMode(),
       },
+      loader: TranslocoHttpLoader,
     }),
   ],
 };

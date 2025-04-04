@@ -1,0 +1,9 @@
+{
+    "login": {
+        "username": "Username",
+        "password": "Password",
+        "login": "Login",
+        "error": "Username or password incorrect",
+        "unauthorized": "Unauthorized user"
+    }
+}

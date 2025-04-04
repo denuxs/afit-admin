@@ -1,0 +1,9 @@
+{
+    "login": {
+        "username": "Usuario",
+        "password": "Contraseña",
+        "login": "Iniciar Sesión",
+        "error": "Usuario o contraseña incorrectos",
+        "unauthorized": "Usuario no autorizado"
+    }
+}
