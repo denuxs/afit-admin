@@ -57,7 +57,7 @@ export class CatalogsFormComponent implements OnInit {
   constructor() {
     this.catalogForm = this._formBuilder.group({
       name: ['', [Validators.required]],
-      key: ['', []],
+      key: ['', [Validators.required]],
     });
   }
 
@@ -161,7 +161,7 @@ export class CatalogsFormComponent implements OnInit {
 
     if (form.invalid && (form.dirty || form.touched)) {
       if (form?.hasError('required')) {
-        return 'Campo es requerido';
+        return 'Campo requerido';
       }
 
       // if (form?.hasError('error')) {
