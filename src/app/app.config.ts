@@ -19,6 +19,17 @@ import { httpErrorInterceptor } from './core/interceptors/http-error.interceptor
 import { provideQuillConfig } from 'ngx-quill';
 import { providePrimeNG } from 'primeng/config';
 import Aura from '@primeng/themes/aura';
+import { definePreset } from '@primeng/themes';
+
+const MyPreset = definePreset(Aura, {
+  components: {
+    button: {
+      root: {
+        borderRadius: '0px',
+      },
+    },
+  },
+});
 
 import localeEs from '@angular/common/locales/es';
 import { registerLocaleData } from '@angular/common';
