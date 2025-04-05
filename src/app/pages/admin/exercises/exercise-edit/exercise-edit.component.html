@@ -1,0 +1,8 @@
+<h1 class="mb-4">Editar Ejercicio</h1>
+
+@if (exercise$ | async; as exercise) {
+  <app-exercise-form
+    (formChange)="onFormChange($event)"
+    [exercise]="exercise"
+  />
+}

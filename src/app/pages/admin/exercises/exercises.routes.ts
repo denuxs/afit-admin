@@ -1,7 +1,9 @@
 import { Routes } from '@angular/router';
 
 import { ExercisesComponent } from './exercises.component';
-import { ExerciseFormComponent } from './exercise-form/exercise-form.component';
+
+import { ExerciseCreateComponent } from './exercise-create/exercise-create.component';
+import { ExerciseEditComponent } from './exercise-edit/exercise-edit.component';
 
 export default [
   {
@@ -10,10 +12,10 @@ export default [
   },
   {
     path: 'create',
-    component: ExerciseFormComponent,
+    component: ExerciseCreateComponent,
   },
   {
     path: ':id/edit',
-    component: ExerciseFormComponent,
+    component: ExerciseEditComponent,
   },
 ] as Routes;

@@ -1,102 +1,103 @@
-import { AsyncPipe } from '@angular/common';
-import { Component, inject, OnInit } from '@angular/core';
+import { AsyncPipe, NgStyle } from '@angular/common';
+import {
+  Component,
+  EventEmitter,
+  inject,
+  Input,
+  OnInit,
+  Output,
+} from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
-import { Catalog, Exercise, ExerciseDto, User } from 'app/domain';
-import { CatalogService, ExerciseService, UserService } from 'app/services';
-import { Observable, Subject, takeUntil } from 'rxjs';
+import { map, Observable, Subject, takeUntil, tap } from 'rxjs';
 import { DomSanitizer } from '@angular/platform-browser';
+import { forkJoin } from 'rxjs';
+
+import { Catalog, Exercise, User } from 'app/domain';
+import { CatalogService, UserService } from 'app/services';
+
 import { SelectModule } from 'primeng/select';
 import { EditorModule } from 'primeng/editor';
+import { InputTextModule } from 'primeng/inputtext';
+
+import { FileUploadComponent } from 'app/components/file-upload/file-upload.component';
 @Component({
   selector: 'app-exercise-form',
   standalone: true,
-  imports: [ReactiveFormsModule, AsyncPipe, EditorModule, SelectModule],
+  imports: [
+    ReactiveFormsModule,
+    AsyncPipe,
+    NgStyle,
+    EditorModule,
+    SelectModule,
+    FileUploadComponent,
+    InputTextModule,
+  ],
   templateUrl: './exercise-form.component.html',
   styleUrl: './exercise-form.component.scss',
 })
 export class ExerciseFormComponent implements OnInit {
-  private readonly _router = inject(Router);
-  private readonly _route = inject(ActivatedRoute);
   private readonly _formBuilder = inject(FormBuilder);
-
-  private readonly _exerciseService = inject(ExerciseService);
-  private readonly _catalogService = inject(CatalogService);
-
-  private readonly _userService = inject(UserService);
-
   private readonly _sanitizer = inject(DomSanitizer);
+
+  private readonly _catalogService = inject(CatalogService);
+  private readonly _userService = inject(UserService);
 
   private readonly _unsubscribeAll: Subject<any> = new Subject<any>();
 
   exerciseForm: FormGroup;
+
   equipments$!: Observable<Catalog[]>;
   muscles$!: Observable<Catalog[]>;
 
   exerciseId: number = 0;
+  photoField!: File;
   user!: User;
 
   modules = {
     toolbar: [['bold'], [{ list: 'ordered' }, { list: 'bullet' }]],
   };
 
-  photoPreview: string = 'https://placehold.co/200x160';
-  photoField!: File;
+  @Input() exercise: Exercise | null = null;
+  @Output() formChange: EventEmitter<any> = new EventEmitter<any>();
 
   constructor() {
     this.exerciseForm = this._formBuilder.group({
       name: ['', [Validators.required]],
       description: [''],
-      equipment: ['', []],
+      equipment: ['', [Validators.required]],
       muscle: ['', [Validators.required]],
     });
+
+    this.getUser();
   }
 
   ngOnInit(): void {
     this.getEquipments();
     this.getMuscles();
-    this.getUser();
 
-    const exerciseId = this._route.snapshot.paramMap.get('id');
-    if (exerciseId) {
-      this.exerciseId = +exerciseId;
-      this.getExercise(+exerciseId);
+    if (this.exercise) {
+      const { name, description, equipment, muscle } = this.exercise;
+
+      const form = {
+        name,
+        description,
+        equipment: equipment.id,
+        muscle: muscle.id,
+      };
+
+      this.exerciseForm.patchValue(form);
     }
-  }
-
-  getExercise(exerciseId: number) {
-    this._exerciseService
-      .showExercise(exerciseId)
-      .pipe(takeUntil(this._unsubscribeAll))
-      .subscribe({
-        next: (response: Exercise) => {
-          const form = {
-            name: response.name,
-            description: response.description,
-            equipment: response.equipment?.id,
-            muscle: response.muscle.id,
-          };
-          this.exerciseForm.patchValue(form);
-          this.photoPreview = response.image;
-        },
-        error: (err) => {
-          console.log(err);
-        },
-      });
   }
 
   getUser() {
     this._userService.user$.subscribe({
       next: (response: User) => {
         this.user = response;
-      },
-      error: (err) => {
-        console.log('error getting user');
       },
     });
   }
@@ -134,39 +135,7 @@ export class ExerciseFormComponent implements OnInit {
       formData.append('image', this.photoField);
     }
 
-    if (this.exerciseId) {
-      this.update(formData);
-    } else {
-      this.save(formData);
-    }
-  }
-
-  save(form: FormData) {
-    this._exerciseService
-      .saveExercise(form)
-      .pipe(takeUntil(this._unsubscribeAll))
-      .subscribe({
-        next: () => {
-          this._router.navigateByUrl('/admin/exercises');
-        },
-        error: (err) => {
-          console.log(err);
-        },
-      });
-  }
-
-  update(form: FormData) {
-    this._exerciseService
-      .updateExercise(this.exerciseId, form)
-      .pipe(takeUntil(this._unsubscribeAll))
-      .subscribe({
-        next: () => {
-          this._router.navigateByUrl('/admin/exercises');
-        },
-        error: (err) => {
-          console.log(err);
-        },
-      });
+    this.formChange.emit(formData);
   }
 
   checkErrors(field: string): string {
@@ -174,7 +143,7 @@ export class ExerciseFormComponent implements OnInit {
 
     if (form.invalid && (form.dirty || form.touched)) {
       if (form?.hasError('required')) {
-        return 'Value is required';
+        return 'Campo requerido';
       }
 
       // if (form?.hasError('email')) {
@@ -188,37 +157,11 @@ export class ExerciseFormComponent implements OnInit {
     return this._sanitizer.bypassSecurityTrustHtml(html);
   }
 
-  uploadImage(event: any): void {
-    const file: File = event.target.files[0];
-    if (!file) {
-      return;
-    }
-
+  onUploadImage(file: File): void {
     this.photoField = file;
-
-    this._readAsDataURL(file).then((data) => {
-      this.photoPreview = data;
-    });
-  }
-
-  private _readAsDataURL(file: File): Promise<any> {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-
-      reader.onload = (): void => {
-        resolve(reader.result);
-      };
-
-      reader.onerror = (e): void => {
-        reject(e);
-      };
-
-      reader.readAsDataURL(file);
-    });
   }
 
   ngOnDestroy(): void {
-    // Unsubscribe from all subscriptions
     this._unsubscribeAll.next(null);
     this._unsubscribeAll.complete();
   }
