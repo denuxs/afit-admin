@@ -1,7 +1,9 @@
 import { Routes } from '@angular/router';
 
 import { UsersComponent } from './users.component';
-import { UserFormComponent } from './user-form/user-form.component';
+
+import { UserCreateComponent } from './user-create/user-create.component';
+import { UserEditComponent } from './user-edit/user-edit.component';
 
 export default [
   {
@@ -10,10 +12,10 @@ export default [
   },
   {
     path: 'create',
-    component: UserFormComponent,
+    component: UserCreateComponent,
   },
   {
     path: ':id/edit',
-    component: UserFormComponent,
+    component: UserEditComponent,
   },
 ] as Routes;

@@ -1,40 +1,51 @@
-import { Component, inject, DestroyRef, OnInit } from '@angular/core';
+import {
+  Component,
+  inject,
+  DestroyRef,
+  OnInit,
+  Input,
+  Output,
+  EventEmitter,
+} from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject } from 'rxjs';
 
-import { User, UserDto } from 'app/domain';
-import { UserService } from 'app/services';
+import { User } from 'app/domain';
+import { FileUploadComponent } from 'app/components/file-upload/file-upload.component';
 
 import { Password } from 'primeng/password';
 import { SelectModule } from 'primeng/select';
 import { CheckboxModule } from 'primeng/checkbox';
-
+import { InputTextModule } from 'primeng/inputtext';
 @Component({
   selector: 'app-user-form',
   standalone: true,
-  imports: [ReactiveFormsModule, SelectModule, CheckboxModule],
+  imports: [
+    ReactiveFormsModule,
+    SelectModule,
+    CheckboxModule,
+    FileUploadComponent,
+    InputTextModule,
+  ],
   templateUrl: './user-form.component.html',
   styleUrl: './user-form.component.scss',
 })
 export class UserFormComponent implements OnInit {
-  private readonly _router = inject(Router);
-  private readonly _route = inject(ActivatedRoute);
   private readonly _formBuilder = inject(FormBuilder);
 
-  private readonly _userService = inject(UserService);
   private readonly _unsubscribeAll: Subject<any> = new Subject<any>();
 
+  @Input() user: User | null = null;
+  @Output() formChange: EventEmitter<any> = new EventEmitter<any>();
+
   userForm: FormGroup;
-  userId: string | null = null;
   destroyRef = inject(DestroyRef);
 
-  photoPreview: string = 'https://placehold.co/200x160';
   photoField!: File;
 
   genders: any[] = [
@@ -49,8 +60,6 @@ export class UserFormComponent implements OnInit {
   ];
 
   constructor() {
-    this.userId = this._route.snapshot.paramMap.get('id');
-
     this.userForm = this._formBuilder.group({
       username: ['', [Validators.required]],
       // email: ['', [Validators.required]],
@@ -70,23 +79,9 @@ export class UserFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    if (this.userId) {
-      this.getUser(Number(this.userId));
+    if (this.user) {
+      this.setFormFields(this.user);
     }
-  }
-
-  getUser(userId: number) {
-    this._userService
-      .getUser(userId)
-      .pipe(takeUntil(this._unsubscribeAll))
-      .subscribe({
-        next: (user: User) => {
-          this.setFormFields(user);
-        },
-        error: (err) => {
-          console.log(err);
-        },
-      });
   }
 
   setFormFields(user: User) {
@@ -103,7 +98,6 @@ export class UserFormComponent implements OnInit {
     };
 
     this.userForm.patchValue(form);
-    this.photoPreview = user.photo;
   }
 
   generatePin() {
@@ -120,42 +114,26 @@ export class UserFormComponent implements OnInit {
       return;
     }
 
-    const form = this.userForm.getRawValue();
+    const form = this.userForm.value;
 
-    this.saveUser(form);
-  }
-
-  saveUser(user: UserDto): void {
     const formData = new FormData();
-    formData.append('username', user.username);
-    formData.append('age', user.age);
-    formData.append('phone', user.phone);
-    formData.append('first_name', user.first_name);
-    formData.append('last_name', user.last_name);
-    formData.append('gender', user.gender);
-    formData.append('is_active', Number(user.is_active).toString());
+    formData.append('username', form.username);
+    formData.append('age', form.age);
+    formData.append('phone', form.phone);
+    formData.append('first_name', form.first_name);
+    formData.append('last_name', form.last_name);
+    formData.append('gender', form.gender);
+    formData.append('is_active', Number(form.is_active).toString());
 
-    if (user.password) {
-      formData.append('password', user.password);
+    if (form.password) {
+      formData.append('password', form.password);
     }
 
     if (this.photoField) {
       formData.append('photo', this.photoField);
     }
 
-    let form = this._userService.saveUser(formData);
-    if (this.userId) {
-      form = this._userService.updateUser(Number(this.userId), formData);
-    }
-
-    form.pipe(takeUntil(this._unsubscribeAll)).subscribe({
-      next: () => {
-        this._router.navigateByUrl('/admin/users');
-      },
-      error: (err) => {
-        console.log(err);
-      },
-    });
+    this.formChange.emit(formData);
   }
 
   checkErrors(field: string): string {
@@ -173,37 +151,11 @@ export class UserFormComponent implements OnInit {
     return '';
   }
 
-  uploadImage(event: any): void {
-    const file: File = event.target.files[0];
-    if (!file) {
-      return;
-    }
-
+  onUploadImage(file: File): void {
     this.photoField = file;
-
-    this._readAsDataURL(file).then((data) => {
-      this.photoPreview = data;
-    });
-  }
-
-  private _readAsDataURL(file: File): Promise<any> {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-
-      reader.onload = (): void => {
-        resolve(reader.result);
-      };
-
-      reader.onerror = (e): void => {
-        reject(e);
-      };
-
-      reader.readAsDataURL(file);
-    });
   }
 
   ngOnDestroy(): void {
-    // Unsubscribe from all subscriptions
     this._unsubscribeAll.next(null);
     this._unsubscribeAll.complete();
   }

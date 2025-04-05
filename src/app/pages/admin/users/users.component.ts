@@ -40,17 +40,15 @@ export class UsersComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.users$ = this._userService.getUsers();
+    this.getUsers({ search: '' });
   }
 
-  getUsers(params?: { search?: string; key?: string }): void {
-    this.users$ = this._userService.getUsers({
-      ...params,
-    });
+  getUsers(params: { search: string }): void {
+    this.users$ = this._userService.getUsers(params);
   }
 
   handleFilter() {
-    const params = this.filterForm.value;
-    this.getUsers(params);
+    const { search } = this.filterForm.value;
+    this.getUsers({ search });
   }
 }

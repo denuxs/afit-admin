@@ -4,16 +4,12 @@
   <form [formGroup]="filterForm" (ngSubmit)="handleFilter()">
     <div class="flex space-x-2">
       <div>
-        <input
-          type="text"
-          placeholder="Buscar..."
-          class="rounded-md"
-          formControlName="search"
-        />
+        <input type="text" placeholder="Buscar..." formControlName="search" />
       </div>
       <div>
         <button class="btn-primary" type="submit">
           <i class="pi pi-search"></i>
+          Buscar
         </button>
       </div>
     </div>
@@ -39,7 +35,9 @@
     </ng-template>
     <ng-template #body let-item>
       <tr>
-        <td>{{ item.username }}</td>
+        <td>
+          {{ item.first_name }} {{ item.last_name }} ({{ item.username }})
+        </td>
         <td>{{ item.is_superuser | yesNo }}</td>
         <td>{{ item.is_active | yesNo }}</td>
         <td>{{ item.last_login | date: "dd MMM yyyy, hh:mm a" }}</td>
