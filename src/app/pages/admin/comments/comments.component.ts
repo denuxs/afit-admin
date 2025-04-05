@@ -2,7 +2,7 @@ import { AsyncPipe, DatePipe, NgIf } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 
 import { Comment } from 'app/domain';
 import { CommentService } from 'app/services';
@@ -11,6 +11,11 @@ import { TableModule } from 'primeng/table';
 import { TooltipModule } from 'primeng/tooltip';
 import { ConfirmationService } from 'primeng/api';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
+// import { DynamicDialog } from 'primeng/dynamicdialog';
+import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
+import { ButtonModule } from 'primeng/button';
+
+import { CommentViewComponent } from './comment-view/comment-view.component';
 
 @Component({
   selector: 'app-comments',
@@ -22,8 +27,10 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
     TableModule,
     TooltipModule,
     ConfirmDialogModule,
+    RouterLink,
+    ButtonModule,
   ],
-  providers: [ConfirmationService],
+  providers: [ConfirmationService, DialogService],
   templateUrl: './comments.component.html',
   styleUrl: './comments.component.scss',
 })
@@ -36,6 +43,9 @@ export class CommentsComponent implements OnInit {
 
   filterForm: FormGroup;
 
+  ref: DynamicDialogRef | undefined;
+  private readonly _dialogService = inject(DialogService);
+
   constructor() {
     this.filterForm = this._formBuilder.group({
       search: ['', []],
@@ -43,18 +53,37 @@ export class CommentsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.getComments();
+    this.getComments({ search: '' });
   }
 
-  getComments(params?: { search?: string; key?: string }): void {
-    this.comments$ = this._commentService.fetchComments({
-      ...params,
-    });
+  getComments(params: { search: string }): void {
+    this.comments$ = this._commentService.fetchComments(params).pipe(
+      map((response) => {
+        const groupedData = this.groupByUser(response);
+        return this.getLastCommentByUser(groupedData);
+      }),
+    );
+  }
+
+  groupByUser(data: any): any {
+    return data.reduce(
+      (acc: any, comment: any) => {
+        acc[comment.user.id] = [...(acc[comment.user.id] || []), comment];
+        return acc;
+      },
+      {} as Record<number, Comment[]>,
+    );
+  }
+
+  getLastCommentByUser(data: any): any {
+    return Object.values(data).map(
+      (item: any) => item.sort((a: any, b: any) => b.id - a.id)[0],
+    );
   }
 
   handleFilter() {
-    const params = this.filterForm.value;
-    this.getComments(params);
+    const { search } = this.filterForm.value;
+    this.getComments({ search });
   }
 
   handleDelete(id: number): void {
@@ -75,10 +104,23 @@ export class CommentsComponent implements OnInit {
   deleteComment(id: number): void {
     this._commentService.deleteComment(id).subscribe({
       next: () => {
-        this.getComments();
+        this.getComments({ search: '' });
       },
       error: () => {
         console.error('Error deleting comment');
+      },
+    });
+  }
+
+  showModal() {
+    this.ref = this._dialogService.open(CommentViewComponent, {
+      header: '',
+      modal: true,
+      closable: true,
+      // showHeader: false,
+      focusOnShow: false,
+      data: {
+        id: '51gF3',
       },
     });
   }
