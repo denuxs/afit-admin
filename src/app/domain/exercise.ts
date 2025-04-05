@@ -6,17 +6,16 @@ export interface Exercise {
   name: string;
   description: string;
   image: string;
-  equipment: Catalog | null;
+  user: number;
+  equipment: Catalog;
   muscle: Catalog;
-  exercises_count: number;
   comments: Comment[];
   created: Date;
-  user: number;
 }
 
 export interface ExerciseDto {
   name: string;
-  description?: string;
+  description: string;
   equipment: number;
   muscle: number;
   user: number;

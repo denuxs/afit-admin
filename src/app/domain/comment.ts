@@ -2,7 +2,6 @@ import { User } from './user';
 
 export interface Comment {
   id: number;
-  name: string;
   content: string;
   created: Date;
   user: User;
