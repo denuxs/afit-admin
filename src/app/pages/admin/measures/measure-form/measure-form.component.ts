@@ -20,11 +20,20 @@ import { MeasuresService, UserService } from 'app/services';
 
 import { SelectModule } from 'primeng/select';
 import { CheckboxModule } from 'primeng/checkbox';
+import { InputTextModule } from 'primeng/inputtext';
+import { TextareaModule } from 'primeng/textarea';
 
 @Component({
   selector: 'app-measure-form',
   standalone: true,
-  imports: [ReactiveFormsModule, AsyncPipe, SelectModule, CheckboxModule],
+  imports: [
+    ReactiveFormsModule,
+    AsyncPipe,
+    SelectModule,
+    CheckboxModule,
+    InputTextModule,
+    TextareaModule,
+  ],
   templateUrl: './measure-form.component.html',
   styleUrl: './measure-form.component.scss',
 })
@@ -73,7 +82,7 @@ export class MeasureFormComponent implements OnInit {
   }
 
   getUsers() {
-    this.users$ = this._userService.getUsers();
+    this.users$ = this._userService.getUsers({ search: '' });
   }
 
   handleSubmit(): void {

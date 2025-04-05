@@ -41,17 +41,15 @@ export class MeasuresComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.getMeasures();
+    this.getMeasures({ search: '' });
   }
 
-  getMeasures(params?: { search?: string; key?: string }): void {
-    this.measures$ = this._measureService.fetchMeasures({
-      ...params,
-    });
+  getMeasures(params: { search: string }): void {
+    this.measures$ = this._measureService.fetchMeasures(params);
   }
 
-  handleFilter() {
-    const params = this.filterForm.value;
-    this.getMeasures(params);
+  handleFilter(): void {
+    const { search } = this.filterForm.value;
+    this.getMeasures({ search });
   }
 }

@@ -20,6 +20,7 @@ import { ImageService } from 'app/services/image.service';
 export class MeasureImagesComponent {
   private readonly _imageService = inject(ImageService);
   private readonly _confirmationService = inject(ConfirmationService);
+
   private readonly _unsubscribeAll: Subject<any> = new Subject<any>();
 
   @Input() measureId!: number;
@@ -94,7 +95,6 @@ export class MeasureImagesComponent {
   }
 
   ngOnDestroy(): void {
-    // Unsubscribe from all subscriptions
     this._unsubscribeAll.next(null);
     this._unsubscribeAll.complete();
   }

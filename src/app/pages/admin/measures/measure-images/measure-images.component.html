@@ -1,59 +1,42 @@
-<div class="grid grid-cols-3 gap-1">
-  @for (image of images$ | async; track image.id) {
-    <div class="relative">
-      <p-image
-        [src]="image.photo"
-        alt="image-{{ image.id }}]"
-        [preview]="true"
-        imageClass="h-40 w-full object-cover"
-      />
-      <button
-        (click)="deleteImage(image.id, measureId)"
-        class="absolute right-2 top-2 rounded-full bg-red-500 p-1 text-white hover:bg-red-600"
-      >
-        <svg
-          class="h-4 w-4"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M6 18L18 6M6 6l12 12"
-          />
-        </svg>
-      </button>
-    </div>
-  }
-
+<div>
   <div>
     <input
       type="file"
       accept="image/*"
       (change)="uploadImage($event, measureId, contentType)"
+      id="image"
+      name="image"
       class="hidden"
       #filePost
     />
-
     <button
-      class="flex h-40 w-full flex-col items-center justify-center border border-gray-400"
+      type="button"
+      class="py-2.5 px-5 me-2 mb-2 text-sm font-medium inline-flex items-center text-gray-900 focus:outline-none bg-white border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100"
       (click)="filePost.click()"
     >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        height="32px"
-        viewBox="0 -960 960 960"
-        width="32px"
-        fill="#434343"
-      >
-        <path
-          d="M440-440ZM120-120q-33 0-56.5-23.5T40-200v-480q0-33 23.5-56.5T120-760h126l74-80h240v80H355l-73 80H120v480h640v-360h80v360q0 33-23.5 56.5T760-120H120Zm640-560v-80h-80v-80h80v-80h80v80h80v80h-80v80h-80ZM440-260q75 0 127.5-52.5T620-440q0-75-52.5-127.5T440-620q-75 0-127.5 52.5T260-440q0 75 52.5 127.5T440-260Zm0-80q-42 0-71-29t-29-71q0-42 29-71t71-29q42 0 71 29t29 71q0 42-29 71t-71 29Z"
-        />
-      </svg>
-      Subir foto
+      <i class="pi pi-camera me-2"></i>
+      <span>Subir Imagen</span>
     </button>
   </div>
+
+  <div class="grid grid-cols-2 gap-1">
+    @for (image of images$ | async; track image.id) {
+      <div class="relative">
+        <p-image
+          [src]="image.photo"
+          alt="image-{{ image.id }}]"
+          [preview]="true"
+          imageClass="w-full object-cover"
+        />
+        <button
+          (click)="deleteImage(image.id, measureId)"
+          class="absolute right-2 top-2 rounded-full bg-red-500 px-2 py-1 text-white hover:bg-red-600"
+        >
+          <i class="pi pi-trash"></i>
+        </button>
+      </div>
+    }
+  </div>
 </div>
+
 <p-confirmdialog />

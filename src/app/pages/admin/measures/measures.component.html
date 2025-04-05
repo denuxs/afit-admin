@@ -13,7 +13,7 @@
       </div>
       <div>
         <button class="btn-primary" type="submit">
-          <i class="pi pi-search"></i>
+          <i class="pi pi-search"></i> Buscar
         </button>
       </div>
     </div>
@@ -38,7 +38,11 @@
     </ng-template>
     <ng-template #body let-item>
       <tr>
-        <td>{{ item.user.username }}</td>
+        <td>
+          {{ item.user.first_name }} {{ item.user.last_name }} ({{
+            item.user.username
+          }})
+        </td>
         <td>{{ item.comment }}</td>
         <td>{{ item.is_active | yesNo }}</td>
         <td>{{ item.created | date: "mediumDate" }}</td>

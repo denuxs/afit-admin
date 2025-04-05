@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 
 import { Measure, MeasureDto } from 'app/domain';
 import { MeasuresService } from 'app/services';

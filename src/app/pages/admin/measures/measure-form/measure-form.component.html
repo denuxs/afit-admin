@@ -33,18 +33,20 @@
       name="comment"
       class="w-full"
       formControlName="comment"
+      pTextarea
     >
     </textarea>
     <p class="form-error">{{ checkErrors("comment") }}</p>
   </div>
 
-  <div class="grid grid-cols-4 gap-2">
+  <div class="grid grid-cols-3 gap-2">
     <div class="mb-2">
       <label for="weight" class="form-label">Peso</label>
       <input
         type="text"
         id="weight"
         name="weight"
+        pInputText
         class="w-full"
         formControlName="weight"
       />
@@ -56,6 +58,7 @@
         type="text"
         id="back"
         name="back"
+        pInputText
         class="w-full"
         formControlName="back"
       />
@@ -68,6 +71,7 @@
         type="text"
         id="chest"
         name="chest"
+        pInputText
         class="w-full"
         formControlName="chest"
       />
@@ -80,6 +84,7 @@
         type="text"
         id="arm_left"
         name="arm_left"
+        pInputText
         class="w-full"
         formControlName="arm_left"
       />
@@ -91,7 +96,8 @@
       <input
         type="text"
         id="arm_right"
-        name="abdomen"
+        name="arm_right"
+        pInputText
         class="w-full"
         formControlName="arm_right"
       />
@@ -104,6 +110,7 @@
         type="text"
         id="forearm"
         name="forearm"
+        pInputText
         class="w-full"
         formControlName="forearm"
       />
@@ -115,6 +122,7 @@
         type="text"
         id="abdomen"
         name="abdomen"
+        pInputText
         class="w-full"
         formControlName="abdomen"
       />
@@ -126,6 +134,7 @@
         type="text"
         id="waist"
         name="waist"
+        pInputText
         class="w-full"
         formControlName="waist"
       />
@@ -138,6 +147,7 @@
         type="text"
         id="hips"
         name="hips"
+        pInputText
         class="w-full"
         formControlName="hips"
       />
@@ -150,6 +160,7 @@
         type="text"
         id="leg_left"
         name="leg_left"
+        pInputText
         class="w-full"
         formControlName="leg_left"
       />
@@ -162,6 +173,7 @@
         type="text"
         id="leg_right"
         name="leg_right"
+        pInputText
         class="w-full"
         formControlName="leg_right"
       />
@@ -174,6 +186,7 @@
         type="text"
         id="glutes"
         name="glutes"
+        pInputText
         class="w-full"
         formControlName="glutes"
       />
@@ -192,11 +205,7 @@
     <p class="form-error">{{ checkErrors("is_active") }}</p>
   </div>
 
-  <button
-    class="btn-primary mt-4"
-    type="submit"
-    [disabled]="measureForm.invalid"
-  >
-    Guardar
-  </button>
+  <div class="flex justify-end">
+    <button class="btn-primary mt-4" type="submit">Guardar</button>
+  </div>
 </form>
