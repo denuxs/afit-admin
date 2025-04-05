@@ -2,13 +2,7 @@
   <form [formGroup]="loginForm" (ngSubmit)="handleSubmit()">
     <div class="mb-2">
       <label for="username" class="form-label">{{ t("login.username") }}</label>
-      <input
-        type="text"
-        fluid="true"
-        pInputText
-        formControlName="username"
-        class="w-full"
-      />
+      <input type="text" pInputText fluid="true" formControlName="username" />
       <p class="form-error">{{ checkErrors("username") }}</p>
     </div>
 
@@ -18,9 +12,7 @@
         formControlName="password"
         fluid="true"
         [toggleMask]="true"
-        class="ng-invalid"
         [feedback]="false"
-        size="large"
       />
       <p class="form-error">{{ checkErrors("password") }}</p>
     </div>
