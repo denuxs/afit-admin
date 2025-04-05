@@ -29,11 +29,11 @@
 // }
 
 body {
-  @apply bg-gray-100;
+  // @apply bg-gray-100;
 }
 
 h1 {
-  @apply font-poppins text-2xl font-semibold text-gray-800;
+  @apply font-poppins text-2xl  text-gray-800;
 }
 
 h2 {
@@ -44,9 +44,9 @@ h3 {
   @apply font-poppins text-lg font-semibold text-gray-600;
 }
 
-// .link {
-//   @apply font-poppins text-blue-600 hover:text-blue-800 hover:underline;
-// }
+.link {
+  @apply font-poppins text-blue-600 hover:text-blue-800 px-4 py-2 hover:underline;
+}
 
 // p {
 //   @apply font-poppins text-gray-500;
@@ -62,7 +62,7 @@ h3 {
 
 @layer components {
   .btn-primary {
-    @apply font-poppins bg-blue-700 hover:bg-blue-600 text-white rounded-md px-3 py-2;
+    @apply font-poppins bg-blue-700 hover:bg-blue-600 text-white  px-3 py-2;
   }
 
   .btn-secondary {
@@ -74,7 +74,7 @@ h3 {
   }
 
   .card {
-    @apply bg-white border border-gray-200 rounded-md px-4 py-6;
+    @apply bg-white border border-gray-200 rounded-md px-6 py-10;
   }
 }
 
