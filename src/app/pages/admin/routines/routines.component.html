@@ -13,7 +13,7 @@
       </div>
       <div>
         <button class="btn-primary" type="submit">
-          <i class="pi pi-search"></i>
+          <i class="pi pi-search"></i> Buscar
         </button>
       </div>
     </div>
@@ -42,7 +42,11 @@
       <tr>
         <td>{{ item.name }}</td>
         <td>{{ getDay(item.day) }}</td>
-        <td>{{ item.user.username }}</td>
+        <td>
+          {{ item.user.first_name }} {{ item.user.last_name }} ({{
+            item.user.username
+          }})
+        </td>
         <td>{{ item.exercises.length }}</td>
         <td>{{ item.is_active | yesNo }}</td>
         <td>{{ item.created | date: "mediumDate" }}</td>

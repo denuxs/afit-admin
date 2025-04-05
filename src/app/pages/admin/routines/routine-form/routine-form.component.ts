@@ -31,6 +31,8 @@ import { ButtonModule } from 'primeng/button';
 import { CheckboxModule } from 'primeng/checkbox';
 
 import { RoutineDetailComponent } from '../routine-detail/routine-detail.component';
+import { RadioButtonModule } from 'primeng/radiobutton';
+import { InputTextModule } from 'primeng/inputtext';
 
 @Component({
   selector: 'app-routine-form',
@@ -43,6 +45,8 @@ import { RoutineDetailComponent } from '../routine-detail/routine-detail.compone
     EditorModule,
     RoutineDetailComponent,
     CheckboxModule,
+    RadioButtonModule,
+    InputTextModule,
   ],
   templateUrl: './routine-form.component.html',
   styleUrl: './routine-form.component.scss',
@@ -104,7 +108,7 @@ export class RoutineFormComponent implements OnInit {
   }
 
   getUsers(): void {
-    this.users$ = this._userService.getUsers();
+    this.users$ = this._userService.getUsers({ search: '' });
   }
 
   handleSubmit(): void {

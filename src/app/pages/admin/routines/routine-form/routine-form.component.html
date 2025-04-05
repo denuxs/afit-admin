@@ -1,74 +1,91 @@
-<form [formGroup]="routineForm" (ngSubmit)="handleSubmit()">
-  <div class="mb-2">
-    <label for="name" class="form-label">Nombre</label>
-    <input
-      type="text"
-      id="name"
-      name="name"
-      class="w-full"
-      formControlName="name"
-    />
-    <p class="form-error">{{ checkErrors("name") }}</p>
-  </div>
-  <div class="mb-2">
-    <label for="name" class="form-label">Dia</label>
-    <select name="day" id="day" formControlName="day" class="w-full">
-      @for (item of days; track item.value) {
-        <option [value]="item.value">
-          {{ item.label }}
-        </option>
-      }
-    </select>
-    <p class="form-error">{{ checkErrors("day") }}</p>
-  </div>
-
-  @if (users$ | async; as users) {
-    <div class="mb-2">
-      <label for="user" class="form-label">Usuario</label>
-      <p-select
-        [options]="users"
-        optionLabel="username"
-        optionValue="id"
-        [filter]="true"
-        filterBy="username"
-        formControlName="user"
-        class="w-full"
-      >
-        <ng-template #selectedItem let-selectedOption>
-          <div>{{ selectedOption.username }}</div>
-        </ng-template>
-        <ng-template let-item #item>
-          <div>{{ item.username }}</div>
-        </ng-template>
-      </p-select>
-    </div>
-  }
-  <div class="mb-4">
-    <label for="description" class="form-label">Descripción</label>
-    <p-editor formControlName="description" class="w-full" [modules]="modules">
-      <ng-template pTemplate="header"> </ng-template>
-    </p-editor>
-  </div>
-
-  <div class="flex items-center mb-6">
-    <p-checkbox
-      inputId="is_active"
-      name="is_active"
-      [binary]="true"
-      formControlName="is_active"
-    />
-    <label for="is_active" class="ml-2">Es Activo?</label>
-    <p class="form-error">{{ checkErrors("is_active") }}</p>
-  </div>
-
-  <div class="mb-4">
-    @if (workout) {
-      <app-routine-detail
-        [workout]="workout"
-        [detailForm]="routineForm"
-      ></app-routine-detail>
+<div class="md:w-3/5">
+  <form [formGroup]="routineForm" (ngSubmit)="handleSubmit()">
+    @if (users$ | async; as users) {
+      <div class="mb-2">
+        <label for="user" class="form-label">Usuario</label>
+        <p-select
+          [options]="users"
+          optionLabel="username"
+          optionValue="id"
+          [filter]="true"
+          filterBy="username"
+          formControlName="user"
+          class="w-full"
+        >
+          <ng-template #selectedItem let-selectedOption>
+            <div>{{ selectedOption.username }}</div>
+          </ng-template>
+          <ng-template let-item #item>
+            <div>{{ item.username }}</div>
+          </ng-template>
+        </p-select>
+      </div>
     }
-  </div>
 
-  <button class="btn-primary" type="submit">Guardar</button>
-</form>
+    <div class="mb-2">
+      <label for="name" class="form-label">Nombre</label>
+      <input
+        type="text"
+        id="name"
+        name="name"
+        class="w-full"
+        pInputText
+        formControlName="name"
+      />
+      <p class="form-error">{{ checkErrors("name") }}</p>
+    </div>
+
+    <div class="mb-2">
+      <label for="day" class="form-label">Selecciona un día</label>
+      <div class="flex flex-wrap gap-4">
+        @for (item of days; track item.value) {
+          <div class="flex items-center">
+            <p-radioButton
+              name="day"
+              [value]="item.value"
+              formControlName="day"
+              inputId="name"
+            />
+            <label for="name" class="text-sm ml-2">{{ item.label }}</label>
+          </div>
+        }
+        <p class="form-error">{{ checkErrors("day") }}</p>
+      </div>
+    </div>
+
+    <div class="mb-4">
+      <label for="description" class="form-label">Descripción</label>
+      <p-editor
+        formControlName="description"
+        class="w-full"
+        [modules]="modules"
+      >
+        <ng-template pTemplate="header"> </ng-template>
+      </p-editor>
+    </div>
+
+    <div class="flex items-center mb-2">
+      <p-checkbox
+        inputId="is_active"
+        name="is_active"
+        [binary]="true"
+        formControlName="is_active"
+      />
+      <label for="is_active" class="ml-2">Es Activo?</label>
+      <p class="form-error">{{ checkErrors("is_active") }}</p>
+    </div>
+
+    <div class="mb-4 mt-6">
+      @if (workout) {
+        <app-routine-detail
+          [workout]="workout"
+          [detailForm]="routineForm"
+        ></app-routine-detail>
+      }
+    </div>
+
+    <div class="flex justify-end">
+      <button class="btn-primary" type="submit">Guardar</button>
+    </div>
+  </form>
+</div>

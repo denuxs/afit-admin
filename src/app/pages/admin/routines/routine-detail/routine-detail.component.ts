@@ -9,10 +9,10 @@ import {
 
 import { Exercise, Workout } from 'app/domain';
 import { ExerciseService, WorkoutService } from 'app/services';
+import { FormControlPipe } from 'app/pipes/form-control.pipe';
 
 import { SelectModule } from 'primeng/select';
 import { ButtonModule } from 'primeng/button';
-import { FormControlPipe } from 'app/pipes/form-control.pipe';
 
 @Component({
   selector: 'app-routine-detail',
