@@ -14,7 +14,11 @@ export class CommentService {
 
   constructor() {}
 
-  fetchComments(params?: any): Observable<Comment[]> {
+  fetchComments(params: {
+    search?: string;
+    user?: number;
+    content_type?: number;
+  }): Observable<Comment[]> {
     return this._httpClient.get<Comment[]>(this._api, { params }).pipe(
       catchError(() => {
         return throwError(() => new Error('Error getting comments'));

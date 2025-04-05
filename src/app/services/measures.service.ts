@@ -14,7 +14,7 @@ export class MeasuresService {
 
   constructor() {}
 
-  fetchMeasures(params?: any): Observable<Measure[]> {
+  fetchMeasures(params: { search: string }): Observable<Measure[]> {
     return this._httpClient.get<Measure[]>(this._api, { params }).pipe(
       catchError(() => {
         return throwError(() => new Error('Error getting measures'));

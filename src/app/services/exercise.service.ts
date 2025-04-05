@@ -38,8 +38,8 @@ export class ExerciseService {
     );
   }
 
-  updateExercise(id: number, form: FormData): Observable<Exercise> {
-    return this._httpClient.put<Exercise>(this._api + `${id}/`, form).pipe(
+  updateExercise(id: number, body: FormData): Observable<Exercise> {
+    return this._httpClient.put<Exercise>(this._api + `${id}/`, body).pipe(
       catchError(() => {
         return throwError(() => new Error('Error updating exercise'));
       }),
