@@ -56,9 +56,9 @@ h3 {
 //   @apply text-white underline;
 // }
 
-// .active-tab {
-//   @apply bg-gray-400 text-blue-400;
-// }
+.menu-active {
+  @apply text-blue-700;
+}
 
 @layer components {
   .btn-primary {

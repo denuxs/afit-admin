@@ -9,6 +9,7 @@ interface Menu {
   id: number;
   link: string;
   label: string;
+  icon: string;
 }
 
 @Component({
@@ -28,41 +29,49 @@ export class SidebarComponent implements OnInit {
       id: 1,
       link: '/admin/',
       label: 'Dasboard',
+      icon: 'pi pi-home',
     },
     {
       id: 2,
       link: '/admin/posts',
       label: 'Publicaciones',
+      icon: 'pi pi-image',
     },
     {
       id: 3,
       link: '/admin/comments',
       label: 'Comentarios',
+      icon: 'pi pi-comment',
     },
     {
       id: 4,
       link: '/admin/workouts',
       label: 'Rutinas',
+      icon: 'pi pi-bars',
     },
     {
       id: 5,
       link: '/admin/exercises',
       label: 'Ejercicios',
+      icon: 'pi pi-bars',
     },
     {
       id: 6,
       link: '/admin/measures',
       label: 'Medidas',
+      icon: 'pi pi-bars',
     },
     {
       id: 7,
       link: '/admin/catalogs',
       label: 'Catálogos',
+      icon: 'pi pi-bars',
     },
     {
       id: 8,
       link: '/admin/users',
       label: 'Usuarios',
+      icon: 'pi pi-user',
     },
   ];
 
