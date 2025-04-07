@@ -14,6 +14,7 @@ import { CatalogService } from 'app/services';
 
 import { TableModule } from 'primeng/table';
 import { TooltipModule } from 'primeng/tooltip';
+import { TranslocoDirective } from '@jsverse/transloco';
 
 @Component({
   selector: 'app-catalogs',
@@ -25,6 +26,7 @@ import { TooltipModule } from 'primeng/tooltip';
     ReactiveFormsModule,
     TableModule,
     TooltipModule,
+    TranslocoDirective,
   ],
   templateUrl: './catalogs.component.html',
   styleUrl: './catalogs.component.scss',
