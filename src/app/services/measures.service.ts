@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { catchError, Observable, throwError } from 'rxjs';
+import { Observable } from 'rxjs';
 
 import { environment } from '../../environments/environment';
 import { Measure, MeasureDto } from 'app/domain';
@@ -15,42 +15,22 @@ export class MeasuresService {
   constructor() {}
 
   fetchMeasures(params: { search: string }): Observable<Measure[]> {
-    return this._httpClient.get<Measure[]>(this._api, { params }).pipe(
-      catchError(() => {
-        return throwError(() => new Error('Error getting measures'));
-      }),
-    );
+    return this._httpClient.get<Measure[]>(this._api, { params });
   }
 
   showMeasure(id: number): Observable<Measure> {
-    return this._httpClient.get<Measure>(this._api + `${id}/`).pipe(
-      catchError(() => {
-        return throwError(() => new Error('Error getting measure'));
-      }),
-    );
+    return this._httpClient.get<Measure>(this._api + `${id}/`);
   }
 
   saveMeasure(form: MeasureDto): Observable<Measure> {
-    return this._httpClient.post<Measure>(this._api, form).pipe(
-      catchError(() => {
-        return throwError(() => new Error('Error saving measure'));
-      }),
-    );
+    return this._httpClient.post<Measure>(this._api, form);
   }
 
   updateMeasure(id: number, form: MeasureDto): Observable<Measure> {
-    return this._httpClient.put<Measure>(this._api + `${id}/`, form).pipe(
-      catchError(() => {
-        return throwError(() => new Error('Error updating measure'));
-      }),
-    );
+    return this._httpClient.put<Measure>(this._api + `${id}/`, form);
   }
 
   saveImage(id: number, form: FormData): Observable<Measure> {
-    return this._httpClient.patch<Measure>(this._api + `${id}/`, form).pipe(
-      catchError(() => {
-        return throwError(() => new Error('Error updating measure photo'));
-      }),
-    );
+    return this._httpClient.patch<Measure>(this._api + `${id}/`, form);
   }
 }

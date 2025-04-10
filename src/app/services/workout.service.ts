@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { catchError, Observable, throwError } from 'rxjs';
+import { Observable } from 'rxjs';
 
 import { environment } from '../../environments/environment';
 import { Workout, WorkoutDto } from 'app/domain';
@@ -15,44 +15,24 @@ export class WorkoutService {
   constructor() {}
 
   fetchWorkouts(params?: any): Observable<Workout[]> {
-    return this._httpClient.get<Workout[]>(this._api, { params }).pipe(
-      catchError(() => {
-        return throwError(() => new Error('Error getting workouts'));
-      }),
-    );
+    return this._httpClient.get<Workout[]>(this._api, { params });
   }
 
   showWorkout(id: number): Observable<Workout> {
-    return this._httpClient.get<Workout>(`${this._api}${id}/`).pipe(
-      catchError(() => {
-        return throwError(() => new Error('Error getting workout'));
-      }),
-    );
+    return this._httpClient.get<Workout>(`${this._api}${id}/`);
   }
 
   saveWorkout(form: WorkoutDto): Observable<Workout> {
-    return this._httpClient.post<Workout>(this._api, form).pipe(
-      catchError(() => {
-        return throwError(() => new Error('Error saving workout'));
-      }),
-    );
+    return this._httpClient.post<Workout>(this._api, form);
   }
 
   updateWorkout(id: number, form: WorkoutDto): Observable<Workout> {
-    return this._httpClient.put<Workout>(this._api + `${id}/`, form).pipe(
-      catchError(() => {
-        return throwError(() => new Error('Error updating workout'));
-      }),
-    );
+    return this._httpClient.put<Workout>(this._api + `${id}/`, form);
   }
 
   deleteDetailExercise(id: number) {
-    return this._httpClient
-      .delete(environment.BACKEND_API + `/workouts-detail/${id}/`)
-      .pipe(
-        catchError(() => {
-          return throwError(() => new Error('Error deleting exercise detail'));
-        }),
-      );
+    return this._httpClient.delete(
+      environment.BACKEND_API + `/workouts-detail/${id}/`,
+    );
   }
 }

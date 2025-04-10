@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { catchError, Observable, throwError } from 'rxjs';
+import { Observable } from 'rxjs';
 
 import { environment } from '../../environments/environment';
 import { Comment, CommentDto } from 'app/domain';
@@ -19,26 +19,14 @@ export class CommentService {
     user?: number;
     content_type?: number;
   }): Observable<Comment[]> {
-    return this._httpClient.get<Comment[]>(this._api, { params }).pipe(
-      catchError(() => {
-        return throwError(() => new Error('Error getting comments'));
-      }),
-    );
+    return this._httpClient.get<Comment[]>(this._api, { params });
   }
 
   saveComment(comment: CommentDto): Observable<Comment> {
-    return this._httpClient.post<Comment>(this._api, comment).pipe(
-      catchError(() => {
-        return throwError(() => new Error('Error saving comment'));
-      }),
-    );
+    return this._httpClient.post<Comment>(this._api, comment);
   }
 
   deleteComment(id: number): Observable<void> {
-    return this._httpClient.delete<void>(`${this._api}${id}/`).pipe(
-      catchError(() => {
-        return throwError(() => new Error('Error deleting comment'));
-      }),
-    );
+    return this._httpClient.delete<void>(`${this._api}${id}/`);
   }
 }

@@ -1,9 +1,9 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { catchError, Observable, throwError } from 'rxjs';
+import { Observable } from 'rxjs';
 
 import { environment } from '../../environments/environment';
-import { Exercise, ExerciseDto } from 'app/domain';
+import { Exercise } from 'app/domain';
 
 @Injectable({
   providedIn: 'root',
@@ -15,42 +15,22 @@ export class ExerciseService {
   constructor() {}
 
   fetchExercises(params?: any): Observable<Exercise[]> {
-    return this._httpClient.get<Exercise[]>(this._api, { params }).pipe(
-      catchError(() => {
-        return throwError(() => new Error('Error getting exercises'));
-      }),
-    );
+    return this._httpClient.get<Exercise[]>(this._api, { params });
   }
 
   showExercise(id: number): Observable<Exercise> {
-    return this._httpClient.get<Exercise>(this._api + `${id}/`).pipe(
-      catchError(() => {
-        return throwError(() => new Error('Error getting exercise'));
-      }),
-    );
+    return this._httpClient.get<Exercise>(this._api + `${id}/`);
   }
 
   saveExercise(body: FormData): Observable<Exercise> {
-    return this._httpClient.post<Exercise>(this._api, body).pipe(
-      catchError(() => {
-        return throwError(() => new Error('Error saving exercise'));
-      }),
-    );
+    return this._httpClient.post<Exercise>(this._api, body);
   }
 
   updateExercise(id: number, body: FormData): Observable<Exercise> {
-    return this._httpClient.put<Exercise>(this._api + `${id}/`, body).pipe(
-      catchError(() => {
-        return throwError(() => new Error('Error updating exercise'));
-      }),
-    );
+    return this._httpClient.put<Exercise>(this._api + `${id}/`, body);
   }
 
   deleteExercise(id: number) {
-    return this._httpClient.delete(this._api + `${id}/`).pipe(
-      catchError(() => {
-        return throwError(() => new Error('Error deleting exercise'));
-      }),
-    );
+    return this._httpClient.delete(this._api + `${id}/`);
   }
 }

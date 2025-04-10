@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { catchError, Observable, throwError } from 'rxjs';
+import { Observable } from 'rxjs';
 
 import { environment } from '../../environments/environment';
 import { Post } from 'app/domain';
@@ -15,34 +15,18 @@ export class PostService {
   constructor() {}
 
   fetchPosts(params?: any): Observable<Post[]> {
-    return this._httpClient.get<Post[]>(this._api, { params }).pipe(
-      catchError(() => {
-        return throwError(() => new Error('Error getting posts'));
-      }),
-    );
+    return this._httpClient.get<Post[]>(this._api, { params });
   }
 
   showPost(id: number): Observable<Post> {
-    return this._httpClient.get<Post>(this._api + `${id}/`).pipe(
-      catchError(() => {
-        return throwError(() => new Error('Error getting post'));
-      }),
-    );
+    return this._httpClient.get<Post>(this._api + `${id}/`);
   }
 
   deletePost(id: number): Observable<Post> {
-    return this._httpClient.delete<Post>(this._api + `${id}/`).pipe(
-      catchError(() => {
-        return throwError(() => new Error('Error deleting post'));
-      }),
-    );
+    return this._httpClient.delete<Post>(this._api + `${id}/`);
   }
 
   savePhoto(form: FormData): Observable<Post> {
-    return this._httpClient.post<Post>(this._api, form).pipe(
-      catchError(() => {
-        return throwError(() => new Error('Error saving post'));
-      }),
-    );
+    return this._httpClient.post<Post>(this._api, form);
   }
 }

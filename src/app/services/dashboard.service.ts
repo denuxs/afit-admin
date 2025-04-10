@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { catchError, Observable, throwError } from 'rxjs';
+import { Observable } from 'rxjs';
 
 import { environment } from '../../environments/environment';
 import { Dashboard } from 'app/domain/dashboard';
@@ -15,10 +15,6 @@ export class DashboardService {
   constructor() {}
 
   fetchDashboard(): Observable<Dashboard> {
-    return this._httpClient.get<Dashboard>(this._api).pipe(
-      catchError(() => {
-        return throwError(() => new Error('Error getting dashboard'));
-      }),
-    );
+    return this._httpClient.get<Dashboard>(this._api);
   }
 }

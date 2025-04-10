@@ -1,9 +1,9 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { catchError, Observable, throwError } from 'rxjs';
+import { Observable } from 'rxjs';
 
 import { environment } from '../../environments/environment';
-import { Image, CommentDto } from 'app/domain';
+import { Image } from 'app/domain';
 
 @Injectable({
   providedIn: 'root',
@@ -18,26 +18,14 @@ export class ImageService {
     object_id: number;
     content_type: number;
   }): Observable<Image[]> {
-    return this._httpClient.get<Image[]>(this._api, { params }).pipe(
-      catchError(() => {
-        return throwError(() => new Error('Error getting images'));
-      }),
-    );
+    return this._httpClient.get<Image[]>(this._api, { params });
   }
 
   saveImage(form: FormData): Observable<Image> {
-    return this._httpClient.post<Image>(this._api, form).pipe(
-      catchError(() => {
-        return throwError(() => new Error('Error saving image'));
-      }),
-    );
+    return this._httpClient.post<Image>(this._api, form);
   }
 
   deleteImage(id: number): Observable<Image> {
-    return this._httpClient.delete<Image>(this._api + `${id}/`).pipe(
-      catchError(() => {
-        return throwError(() => new Error('Error deleting image'));
-      }),
-    );
+    return this._httpClient.delete<Image>(this._api + `${id}/`);
   }
 }

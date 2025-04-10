@@ -1,16 +1,9 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import {
-  catchError,
-  Observable,
-  ReplaySubject,
-  tap,
-  throwError,
-  of,
-} from 'rxjs';
+import { Observable, ReplaySubject, tap } from 'rxjs';
 
 import { environment } from 'environments/environment';
-import { User, UserDto } from 'app/domain';
+import { User } from 'app/domain';
 
 @Injectable({
   providedIn: 'root',
@@ -20,8 +13,6 @@ export class UserService {
   private _api: string = environment.BACKEND_API + '/users/';
 
   private readonly _user: ReplaySubject<User> = new ReplaySubject<User>(1);
-
-  constructor() {}
 
   set user(value: User) {
     this._user.next(value);
@@ -40,34 +31,18 @@ export class UserService {
   }
 
   getUsers(params: { search: string }): Observable<User[]> {
-    return this._httpClient.get<User[]>(this._api, { params }).pipe(
-      catchError(() => {
-        return throwError(() => new Error('Error getting users'));
-      }),
-    );
+    return this._httpClient.get<User[]>(this._api, { params });
   }
 
   getUser(userId: number): Observable<User> {
-    return this._httpClient.get<User>(this._api + `${userId}/`).pipe(
-      catchError(() => {
-        return throwError(() => new Error('Error getting user'));
-      }),
-    );
+    return this._httpClient.get<User>(this._api + `${userId}/`);
   }
 
   saveUser(form: FormData): Observable<User> {
-    return this._httpClient.post<User>(this._api, form).pipe(
-      catchError(() => {
-        return throwError(() => new Error('Error saving user'));
-      }),
-    );
+    return this._httpClient.post<User>(this._api, form);
   }
 
   updateUser(id: number, form: FormData): Observable<User> {
-    return this._httpClient.put<User>(this._api + `${id}/`, form).pipe(
-      catchError(() => {
-        return throwError(() => new Error('Error updating user'));
-      }),
-    );
+    return this._httpClient.put<User>(this._api + `${id}/`, form);
   }
 }

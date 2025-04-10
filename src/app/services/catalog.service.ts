@@ -15,41 +15,18 @@ export class CatalogService {
   constructor() {}
 
   fetchCatalogs(params: Partial<CatalogParams>): Observable<Catalog[]> {
-    return this._httpClient.get<Catalog[]>(this._api, { params }).pipe(
-      catchError(() => {
-        return throwError(() => new Error('Error getting catalogs'));
-      }),
-    );
+    return this._httpClient.get<Catalog[]>(this._api, { params });
   }
 
   showCatalog(id: number): Observable<Catalog> {
-    return this._httpClient.get<Catalog>(this._api + `${id}/`).pipe(
-      catchError(() => {
-        return throwError(() => new Error('Error getting catalog'));
-      }),
-    );
+    return this._httpClient.get<Catalog>(this._api + `${id}/`);
   }
 
   saveCatalog(body: CatalogDto): Observable<Catalog> {
     return this._httpClient.post<Catalog>(this._api, body);
-    // .pipe(catchError(this.handleError));
   }
 
   updateCatalog(id: number, form: CatalogDto): Observable<Catalog> {
     return this._httpClient.put<Catalog>(this._api + `${id}/`, form);
-    // .pipe(catchError(this.handleError));
-  }
-
-  handleError(error: HttpErrorResponse) {
-    console.log(error);
-    if (error.status === 400) {
-      const errors = error.error;
-      console.log(errors);
-      // errors.forEach(clientError => {
-      //    console.log(clientError.code);
-      // });
-    }
-
-    return throwError(() => new Error('Error saving catalog'));
   }
 }
