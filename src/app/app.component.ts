@@ -1,25 +1,45 @@
-import { Component } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { SwUpdate } from '@angular/service-worker';
+
+import { ToastModule } from 'primeng/toast';
+import { ToastMessageService } from './core/services/toast-message.service';
+
+import { MessageService } from 'primeng/api';
+
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet],
+  imports: [RouterOutlet, ToastModule],
+  providers: [MessageService],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })
-export class AppComponent {
-  constructor(private readonly updateService: SwUpdate) {}
+export class AppComponent implements OnInit {
+  private readonly _updateService = inject(SwUpdate);
+  private readonly _messageService = inject(MessageService);
+  private readonly _toastMessageService = inject(ToastMessageService);
+
+  constructor() {}
 
   ngOnInit(): void {
-    if (this.updateService.isEnabled) {
+    if (this._updateService.isEnabled) {
       this.checkForUpdate();
     }
+
+    this._toastMessageService.message$.subscribe((message) => {
+      this._messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        icon: 'pi pi-exclamation-triangle',
+        detail: message,
+      });
+    });
   }
 
   async checkForUpdate() {
     try {
-      const updateFound = await this.updateService.checkForUpdate();
+      const updateFound = await this._updateService.checkForUpdate();
       console.log(
         updateFound
           ? 'A new version is available.'

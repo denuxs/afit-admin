@@ -3,6 +3,9 @@ import {
   provideZoneChangeDetection,
   isDevMode,
   LOCALE_ID,
+  ENVIRONMENT_INITIALIZER,
+  inject,
+  APP_INITIALIZER,
 } from '@angular/core';
 import {
   provideRouter,
@@ -37,6 +40,8 @@ registerLocaleData(localeEs, 'es');
 
 import { TranslocoHttpLoader } from './transloco-loader';
 import { provideTransloco } from '@jsverse/transloco';
+import { ToastMessageService } from './core/services/toast-message.service';
+import { AuthService } from './core/auth/auth.service';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -50,7 +55,14 @@ export const appConfig: ApplicationConfig = {
       }),
       withEnabledBlockingInitialNavigation(),
     ),
-    provideHttpClient(withInterceptors([authInterceptor])),
+    provideHttpClient(
+      withInterceptors([authInterceptor, httpErrorInterceptor]),
+    ),
+    {
+      provide: ENVIRONMENT_INITIALIZER,
+      useValue: () => inject(AuthService),
+      multi: true,
+    },
     provideAnimationsAsync(),
     providePrimeNG({
       theme: {
@@ -62,6 +74,11 @@ export const appConfig: ApplicationConfig = {
       enabled: !isDevMode(),
       registrationStrategy: 'registerWhenStable:30000',
     }),
+    {
+      provide: ENVIRONMENT_INITIALIZER,
+      useValue: () => inject(ToastMessageService),
+      multi: true,
+    },
     // provideQuillConfig({
     //   modules: {
     //     toolbar: [
