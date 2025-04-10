@@ -44,7 +44,13 @@
           }})
         </td>
         <td>{{ item.comment }}</td>
-        <td>{{ item.is_active | yesNo }}</td>
+        <td>
+          @if (item.is_active) {
+            <p-tag icon="pi pi-check" severity="success" />
+          } @else {
+            <p-tag icon="pi pi-times" severity="danger" />
+          }
+        </td>
         <td>{{ item.created | date: "mediumDate" }}</td>
         <td>
           <a

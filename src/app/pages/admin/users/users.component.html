@@ -38,8 +38,20 @@
         <td>
           {{ item.first_name }} {{ item.last_name }} ({{ item.username }})
         </td>
-        <td>{{ item.is_superuser | yesNo }}</td>
-        <td>{{ item.is_active | yesNo }}</td>
+        <td>
+          @if (item.is_superuser) {
+            <p-tag icon="pi pi-check" severity="success" />
+          } @else {
+            <p-tag icon="pi pi-ban" severity="danger" />
+          }
+        </td>
+        <td>
+          @if (item.is_active) {
+            <p-tag icon="pi pi-check" severity="success" />
+          } @else {
+            <p-tag icon="pi pi-ban" severity="danger" />
+          }
+        </td>
         <td>{{ item.last_login | date: "dd MMM yyyy, hh:mm a" }}</td>
         <td>{{ item.date_joined | date: "mediumDate" }}</td>
         <td>

@@ -10,6 +10,7 @@ import { YesNoPipe } from 'app/pipes/yes-no.pipe';
 
 import { TableModule } from 'primeng/table';
 import { TooltipModule } from 'primeng/tooltip';
+import { TagModule } from 'primeng/tag';
 
 @Component({
   selector: 'app-measures',
@@ -22,6 +23,7 @@ import { TooltipModule } from 'primeng/tooltip';
     TableModule,
     TooltipModule,
     YesNoPipe,
+    TagModule,
   ],
   templateUrl: './measures.component.html',
   styleUrl: './measures.component.scss',

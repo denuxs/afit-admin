@@ -1,6 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { AsyncPipe, DatePipe, NgIf } from '@angular/common';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { RouterLink } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 
@@ -10,6 +10,8 @@ import { UserService } from 'app/services';
 import { TableModule } from 'primeng/table';
 import { TooltipModule } from 'primeng/tooltip';
 import { YesNoPipe } from 'app/pipes/yes-no.pipe';
+import { TagModule } from 'primeng/tag';
+
 @Component({
   selector: 'app-users',
   standalone: true,
@@ -21,6 +23,7 @@ import { YesNoPipe } from 'app/pipes/yes-no.pipe';
     RouterLink,
     TooltipModule,
     YesNoPipe,
+    TagModule,
   ],
   templateUrl: './users.component.html',
   styleUrl: './users.component.scss',
@@ -29,7 +32,7 @@ export class UsersComponent implements OnInit {
   private readonly _formBuilder = inject(FormBuilder);
   private readonly _userService = inject(UserService);
 
-  users$!: Observable<User[]>;
+  users$: Observable<User[]> = of([]);
 
   filterForm: FormGroup;
 

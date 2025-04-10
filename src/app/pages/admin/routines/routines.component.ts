@@ -10,6 +10,8 @@ import { YesNoPipe } from 'app/pipes/yes-no.pipe';
 
 import { TableModule } from 'primeng/table';
 import { TooltipModule } from 'primeng/tooltip';
+import { TagModule } from 'primeng/tag';
+
 @Component({
   selector: 'app-routines',
   standalone: true,
@@ -21,6 +23,7 @@ import { TooltipModule } from 'primeng/tooltip';
     TableModule,
     TooltipModule,
     YesNoPipe,
+    TagModule,
   ],
   templateUrl: './routines.component.html',
   styleUrl: './routines.component.scss',
