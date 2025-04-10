@@ -1,7 +1,8 @@
 import { Routes } from '@angular/router';
 
 import { CatalogsComponent } from './catalogs.component';
-import { CatalogsFormComponent } from './catalogs-form/catalogs-form.component';
+import { CatalogCreateComponent } from './catalog-create/catalog-create.component';
+import { CatalogEditComponent } from './catalog-edit/catalog-edit.component';
 
 export default [
   {
@@ -10,10 +11,10 @@ export default [
   },
   {
     path: 'create',
-    component: CatalogsFormComponent,
+    component: CatalogCreateComponent,
   },
   {
     path: ':id/edit',
-    component: CatalogsFormComponent,
+    component: CatalogEditComponent,
   },
 ] as Routes;

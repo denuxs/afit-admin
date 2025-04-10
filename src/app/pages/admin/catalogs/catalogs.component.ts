@@ -64,7 +64,7 @@ export class CatalogsComponent implements OnInit {
 
   getCatalogs(params?: { search?: string; key?: string }): void {
     this.catalogs$ = this._catalogService.fetchCatalogs({
-      ordering: 'key',
+      ordering: '-id',
       ...params,
     });
   }

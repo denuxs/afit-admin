@@ -1,0 +1,7 @@
+<h1 class="mb-4">Editar Catálogo</h1>
+
+@if (catalog$ | async; as catalog) {
+  <app-catalogs-form (formChange)="onFormChange($event)" [catalog]="catalog" />
+} @else {
+  <p-progressSpinner />
+}
