@@ -4,7 +4,6 @@ import { Subject, takeUntil } from 'rxjs';
 
 import { UserService } from 'app/services';
 import { UserFormComponent } from '../user-form/user-form.component';
-
 @Component({
   selector: 'app-user-create',
   standalone: true,
@@ -17,6 +16,8 @@ export class UserCreateComponent {
 
   private readonly _userService = inject(UserService);
   private readonly _unsubscribeAll: Subject<any> = new Subject<any>();
+
+  constructor() {}
 
   onFormChange(form: FormData) {
     this._userService
