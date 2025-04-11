@@ -2,7 +2,7 @@
 
 SPA para crear rutinas de gimnasio. (**En desarrollo**)
 
-El API esta esta desarrollado en Django 5.
+El API esta en Django 5 [github.com/denuxs/gym_api](https://github.com/denuxs/gym_api)
 
 ### Paquetes
 
@@ -13,11 +13,16 @@ El API esta esta desarrollado en Django 5.
 ### Funcionalidades
 
 - Autenticación JWT
-- Uso de Guard, interceptor, resolvers, services http
-- Angular PWA
-- Reactive Forms
-- Custom Tailwind CSS
-- Lazy loading (routing)
+- CRUD de usuarios
+- CRUD de catálogos
+- CRUD de ejercicios
+- CRUD de rutinas
+- CRUD de medidas
+- Comentarios
+- Publicaciones
+- Subida de Imágenes
+- Notificaciones Push
+- Traducción 118n
 
 ### Instalar y ejecutar app
 
@@ -28,10 +33,7 @@ ng server
 
 ### TO DO
 
-- Refactorizar código en forms
 - Autenticación con cookies
-- UI components para forms
-- Alertas de errores
-- Revisar responsive desing
+- Responsive design
 - UI/UX
 - Unit Tests
