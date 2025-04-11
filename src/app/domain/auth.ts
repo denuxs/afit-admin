@@ -1,3 +1,5 @@
+import { User } from './user';
+
 export interface LoginDto {
   username: string;
   password: string;
@@ -6,6 +8,7 @@ export interface LoginDto {
 export interface LoginResponse {
   access: string;
   refresh: string;
+  user: User;
 }
 
 export interface RegisterDto {

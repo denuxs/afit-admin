@@ -31,7 +31,6 @@ export class AppComponent implements OnInit {
       this._messageService.add({
         severity: 'error',
         summary: 'Error',
-        icon: 'pi pi-exclamation-triangle',
         detail: message,
       });
     });

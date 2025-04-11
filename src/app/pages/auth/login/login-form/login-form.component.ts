@@ -10,6 +10,11 @@ import { PasswordModule } from 'primeng/password';
 import { InputTextModule } from 'primeng/inputtext';
 import { TranslocoDirective } from '@jsverse/transloco';
 
+interface LoginForm {
+  username: string;
+  password: string;
+}
+
 @Component({
   selector: 'app-login-form',
   standalone: true,
@@ -25,7 +30,7 @@ import { TranslocoDirective } from '@jsverse/transloco';
 export class LoginFormComponent {
   private readonly _formBuilder = inject(FormBuilder);
 
-  @Output() formChange: EventEmitter<any> = new EventEmitter<any>();
+  @Output() formChange: EventEmitter<LoginForm> = new EventEmitter<LoginForm>();
 
   loginForm: FormGroup;
 

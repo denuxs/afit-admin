@@ -4,12 +4,14 @@ import { Observable, tap } from 'rxjs';
 
 import { LoginDto, LoginResponse } from 'app/domain';
 import { environment } from 'environments/environment';
+import { UserService } from 'app/services';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
   private readonly _httpClient = inject(HttpClient);
+  private readonly _userService = inject(UserService);
 
   private readonly _api: string = environment.BACKEND_API + '/auth/';
 
@@ -38,9 +40,11 @@ export class AuthService {
       .post<LoginResponse>(this._api + 'token/', form)
       .pipe(
         tap((response: LoginResponse) => {
-          const { access, refresh } = response;
+          const { access, refresh, user } = response;
           this.accessToken = access;
           this.refreshToken = refresh;
+          this._userService.user = user;
+
           this._authenticated = true;
         }),
       );
