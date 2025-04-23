@@ -1,8 +1,13 @@
-import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
-import { AuthService } from '../auth/auth.service';
+import {
+  HttpErrorResponse,
+  HttpInterceptorFn,
+  HttpStatusCode,
+} from '@angular/common/http';
 import { inject } from '@angular/core';
 import { catchError, throwError } from 'rxjs';
 import { Router } from '@angular/router';
+
+import { AuthService } from '../auth/auth.service';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const _router = inject(Router);
@@ -14,7 +19,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     newReq = req.clone({
       headers: req.headers.set(
         'Authorization',
-        'Bearer ' + _authService.accessToken,
+        'Bearer ' + _authService.accessToken
       ),
     });
   }
@@ -24,7 +29,8 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
       if (
         error instanceof HttpErrorResponse &&
         // !newReq.url.includes('auth/login') &&
-        error.status === 401
+        (error.status === HttpStatusCode.Unauthorized ||
+          error.status === HttpStatusCode.Forbidden)
       ) {
         _authService.logout();
         // location.reload();
@@ -32,6 +38,6 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
       }
 
       return throwError(() => error);
-    }),
+    })
   );
 };
