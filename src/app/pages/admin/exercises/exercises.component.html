@@ -7,6 +7,34 @@
         <input type="text" placeholder="Buscar..." formControlName="search" />
       </div>
       <div>
+        <select
+          name="muscle"
+          id="muscle"
+          formControlName="muscle"
+          class="rounded-md">
+          <option value="">Musculo</option>
+          @for (item of muscles; track item.id) {
+            <option [value]="item.id">
+              {{ item.name }}
+            </option>
+          }
+        </select>
+      </div>
+      <div>
+        <select
+          name="equipment"
+          id="equipment"
+          formControlName="equipment"
+          class="rounded-md">
+          <option value="">Equipo</option>
+          @for (item of equipments; track item.id) {
+            <option [value]="item.id">
+              {{ item.name }}
+            </option>
+          }
+        </select>
+      </div>
+      <div>
         <button class="btn-primary" type="submit">
           <i class="pi pi-search"></i>
           Buscar
@@ -37,7 +65,7 @@
         <td>{{ item.name }}</td>
         <td>{{ item.muscle.name }}</td>
         <td>{{ item.equipment?.name }}</td>
-        <td>{{ item.created | date: "mediumDate" }}</td>
+        <td>{{ item.created | date: 'mediumDate' }}</td>
         <td>
           <a
             href="#"
