@@ -9,3 +9,4 @@ export * from './workout';
 export * from './catalog';
 export * from './post';
 export * from './image';
+export * from './notification';
