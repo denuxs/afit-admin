@@ -1,6 +1,11 @@
-import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
+import {
+  HttpErrorResponse,
+  HttpInterceptorFn,
+  HttpStatusCode,
+} from '@angular/common/http';
 import { inject } from '@angular/core';
 import { catchError, throwError } from 'rxjs';
+
 import { ToastMessageService } from '../services/toast-message.service';
 
 export const httpErrorInterceptor: HttpInterceptorFn = (req, next) => {
@@ -8,34 +13,34 @@ export const httpErrorInterceptor: HttpInterceptorFn = (req, next) => {
 
   return next(req).pipe(
     catchError((error: HttpErrorResponse) => {
-      if (error.status == 400) {
+      if (error.status == HttpStatusCode.BadRequest) {
         const errors = error.error;
 
         _toastMessageService.sendMessage('Error guardando los datos.');
         return throwError(() => errors);
       }
 
-      if (error.status == 401) {
+      if (error.status == HttpStatusCode.Unauthorized) {
         _toastMessageService.sendMessage(
-          'No está autorizado para realizar esta acción.',
+          'No está autorizado para realizar esta acción.'
         );
       }
 
-      if (error.status == 403) {
+      if (error.status == HttpStatusCode.Forbidden) {
         _toastMessageService.sendMessage(
-          'No está autorizado para realizar esta acción.',
+          'No está autorizado para realizar esta acción.'
         );
       }
 
-      if (error.status == 404) {
+      if (error.status == HttpStatusCode.NotFound) {
         _toastMessageService.sendMessage('No se encontró el recurso.');
       }
 
-      if (error.status == 500) {
+      if (error.status == HttpStatusCode.InternalServerError) {
         _toastMessageService.sendMessage('Error interno del servidor.');
       }
 
       return throwError(() => error);
-    }),
+    })
   );
 };
