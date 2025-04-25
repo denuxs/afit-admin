@@ -16,6 +16,7 @@ export class CommentService {
 
   fetchComments(params: {
     search?: string;
+    ordering?: string;
     user?: number;
     content_type?: number;
   }): Observable<Comment[]> {

@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 import { environment } from '../../environments/environment';
-import { Exercise } from 'app/domain';
+import { Comment, Exercise } from 'app/domain';
 
 @Injectable({
   providedIn: 'root',
@@ -32,5 +32,12 @@ export class ExerciseService {
 
   deleteExercise(id: number) {
     return this._httpClient.delete(this._api + `${id}/`);
+  }
+
+  // details
+  fetchComments(exerciseId: number): Observable<Comment[]> {
+    return this._httpClient.get<Comment[]>(
+      this._api + `${exerciseId}/comments/`
+    );
   }
 }

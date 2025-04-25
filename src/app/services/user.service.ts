@@ -26,7 +26,7 @@ export class UserService {
     return this._httpClient.get<User>(this._api + 'me/').pipe(
       tap((user: User) => {
         this._user.next(user);
-      }),
+      })
     );
   }
 
@@ -44,5 +44,16 @@ export class UserService {
 
   updateUser(id: number, form: FormData): Observable<User> {
     return this._httpClient.put<User>(this._api + `${id}/`, form);
+  }
+
+  saveFirebaseToken(form: {
+    token: string;
+    user: number;
+    device: string;
+  }): Observable<User> {
+    return this._httpClient.post<User>(
+      environment.BACKEND_API + '/fcmtokens/',
+      form
+    );
   }
 }

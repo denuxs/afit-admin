@@ -12,8 +12,6 @@ export class CatalogService {
   private readonly _httpClient = inject(HttpClient);
   private _api: string = environment.BACKEND_API + '/catalogs/';
 
-  constructor() {}
-
   fetchCatalogs(params: Partial<CatalogParams>): Observable<Catalog[]> {
     return this._httpClient.get<Catalog[]>(this._api, { params });
   }
