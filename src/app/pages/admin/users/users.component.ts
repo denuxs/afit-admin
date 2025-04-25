@@ -1,16 +1,21 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { AsyncPipe, DatePipe, NgIf } from '@angular/common';
+import { AsyncPipe, DatePipe } from '@angular/common';
 import { Observable, of } from 'rxjs';
 import { RouterLink } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 
 import { User } from 'app/domain';
 import { UserService } from 'app/services';
+import { YesNoPipe } from 'app/pipes/yes-no.pipe';
 
 import { TableModule } from 'primeng/table';
 import { TooltipModule } from 'primeng/tooltip';
-import { YesNoPipe } from 'app/pipes/yes-no.pipe';
 import { TagModule } from 'primeng/tag';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { TimeAgoPipe } from 'app/pipes/time-ago.pipe';
+
+import { NgIcon, provideIcons } from '@ng-icons/core';
+import { faSolidCircleCheck } from '@ng-icons/font-awesome/solid';
 
 @Component({
   selector: 'app-users',
@@ -24,7 +29,11 @@ import { TagModule } from 'primeng/tag';
     TooltipModule,
     YesNoPipe,
     TagModule,
+    ProgressSpinnerModule,
+    TimeAgoPipe,
+    NgIcon,
   ],
+  providers: [provideIcons({ faSolidCircleCheck })],
   templateUrl: './users.component.html',
   styleUrl: './users.component.scss',
 })
@@ -34,13 +43,11 @@ export class UsersComponent implements OnInit {
 
   users$: Observable<User[]> = of([]);
 
-  filterForm: FormGroup;
+  filterForm: FormGroup = this._formBuilder.group({
+    search: ['', []],
+  });
 
-  constructor() {
-    this.filterForm = this._formBuilder.group({
-      search: ['', []],
-    });
-  }
+  constructor() {}
 
   ngOnInit(): void {
     this.getUsers({ search: '' });

@@ -40,20 +40,32 @@
         </td>
         <td>
           @if (item.is_superuser) {
-            <p-tag icon="pi pi-check" severity="success" />
+            <ng-icon
+              class="text-green-500 text-xl"
+              name="faSolidCircleCheck"></ng-icon>
           } @else {
-            <p-tag icon="pi pi-ban" severity="danger" />
+            <ng-icon
+              class="text-red-500 text-xl"
+              name="faSolidCircleCheck"></ng-icon>
           }
         </td>
         <td>
           @if (item.is_active) {
-            <p-tag icon="pi pi-check" severity="success" />
+            <ng-icon
+              class="text-green-500 text-xl"
+              name="faSolidCircleCheck"></ng-icon>
           } @else {
-            <p-tag icon="pi pi-ban" severity="danger" />
+            <ng-icon
+              class="text-red-500 text-xl"
+              name="faSolidCircleCheck"></ng-icon>
           }
         </td>
-        <td>{{ item.last_login | date: "dd MMM yyyy, hh:mm a" }}</td>
-        <td>{{ item.date_joined | date: "mediumDate" }}</td>
+        <td>
+          @if (item.last_login) {
+            {{ item.last_login | timeAgo }}
+          }
+        </td>
+        <td>{{ item.date_joined | date: 'mediumDate' }}</td>
         <td>
           <a
             href="#"
@@ -67,4 +79,6 @@
       </tr>
     </ng-template>
   </p-table>
+} @else {
+  <p-progress-spinner ariaLabel="loading" />
 }

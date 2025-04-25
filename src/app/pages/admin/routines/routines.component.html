@@ -8,8 +8,7 @@
           type="text"
           placeholder="Buscar..."
           class="rounded-md"
-          formControlName="search"
-        />
+          formControlName="search" />
       </div>
       <div>
         <button class="btn-primary" type="submit">
@@ -50,12 +49,16 @@
         <td>{{ item.exercises.length }}</td>
         <td>
           @if (item.is_active) {
-            <p-tag icon="pi pi-check" severity="success" />
+            <ng-icon
+              class="text-green-500 text-xl"
+              name="faSolidCircleCheck"></ng-icon>
           } @else {
-            <p-tag icon="pi pi-times" severity="danger" />
+            <ng-icon
+              class="text-red-500 text-xl"
+              name="faSolidCircleCheck"></ng-icon>
           }
         </td>
-        <td>{{ item.created | date: "mediumDate" }}</td>
+        <td>{{ item.created | date: 'mediumDate' }}</td>
         <td>
           <a
             href="#"

@@ -12,6 +12,8 @@ import { TableModule } from 'primeng/table';
 import { TooltipModule } from 'primeng/tooltip';
 import { TagModule } from 'primeng/tag';
 
+import { NgIcon, provideIcons } from '@ng-icons/core';
+import { faSolidCircleCheck } from '@ng-icons/font-awesome/solid';
 @Component({
   selector: 'app-measures',
   standalone: true,
@@ -24,7 +26,9 @@ import { TagModule } from 'primeng/tag';
     TooltipModule,
     YesNoPipe,
     TagModule,
+    NgIcon,
   ],
+  providers: [provideIcons({ faSolidCircleCheck })],
   templateUrl: './measures.component.html',
   styleUrl: './measures.component.scss',
 })
