@@ -31,6 +31,7 @@
         <th>Último Acceso</th>
         <th>Creado</th>
         <th></th>
+        <th></th>
       </tr>
     </ng-template>
     <ng-template #body let-item>
@@ -75,6 +76,16 @@
             class="text-blue-600"
             ><i class="pi pi-pen-to-square"></i
           ></a>
+        </td>
+        <td>
+          <button
+            type="button"
+            pTooltip="Borrar"
+            tooltipPosition="top"
+            (click)="handleDelete(item.id)"
+            class="text-red-600">
+            <i class="pi pi-trash"></i>
+          </button>
         </td>
       </tr>
     </ng-template>

@@ -61,4 +61,13 @@ export class UsersComponent implements OnInit {
     const { search } = this.filterForm.value;
     this.getUsers({ search });
   }
+
+  handleDelete(id: number) {
+    if (confirm('¿Está seguro de borrar este usuario?')) {
+      this._userService.delete(id).subscribe(() => {
+        this.getUsers({ search: '' });
+      });
+    }
+    return;
+  }
 }

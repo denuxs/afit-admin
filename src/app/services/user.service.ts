@@ -46,6 +46,10 @@ export class UserService {
     return this._httpClient.put<User>(this._api + `${id}/`, form);
   }
 
+  delete(id: number): Observable<User> {
+    return this._httpClient.delete<User>(this._api + `${id}/`);
+  }
+
   saveFirebaseToken(form: {
     token: string;
     user: number;
