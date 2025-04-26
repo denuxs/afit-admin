@@ -22,7 +22,7 @@ import {
 import { Observable, Subject } from 'rxjs';
 import { AsyncPipe } from '@angular/common';
 
-import { UserService } from 'app/services';
+import { ExerciseService, UserService, WorkoutService } from 'app/services';
 import { Exercise, User, Workout, WorkoutDto } from 'app/domain';
 
 import { SelectModule } from 'primeng/select';
@@ -54,16 +54,30 @@ import { InputTextModule } from 'primeng/inputtext';
 export class RoutineFormComponent implements OnInit {
   private readonly _formBuilder = inject(UntypedFormBuilder);
 
+  private readonly _exerciseService = inject(ExerciseService);
+  private readonly _workoutService = inject(WorkoutService);
+
   private readonly _userService = inject(UserService);
   private readonly _unsubscribeAll: Subject<any> = new Subject<any>();
 
   routineForm!: UntypedFormGroup;
+
   exercisesList!: Exercise[];
   users$!: Observable<User[]>;
 
   routineId: number = 0;
   modules = {
-    toolbar: [['bold'], [{ list: 'ordered' }, { list: 'bullet' }]],
+    toolbar: [
+      // [{ header: 3 }, { header: 4 }],
+      [{ size: ['small', false, 'large', 'huge'] }], // custom dropdown
+      [{ header: [1, 2, 3, 4, 5, 6, false] }],
+      ['bold', 'italic', 'underline', 'strike', 'blockquote'],
+      [{ list: 'ordered' }, { list: 'bullet' }, { list: 'check' }],
+      [{ color: [] }, { background: [] }],
+      // [{ font: [] }],
+      [{ align: [] }],
+      ['clean'],
+    ],
   };
 
   days = [
@@ -93,9 +107,11 @@ export class RoutineFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.getUsers();
+    this.getExercises();
 
     if (this.workout) {
-      const { name, description, day, user, is_active } = this.workout;
+      const { name, description, day, user, is_active, exercises } =
+        this.workout;
       const form = {
         name: name,
         description: description,
@@ -103,12 +119,114 @@ export class RoutineFormComponent implements OnInit {
         user: user.id,
         is_active: is_active,
       };
+
       this.routineForm.patchValue(form);
+      this.setExercises(exercises);
     }
+  }
+
+  get exercises(): UntypedFormArray {
+    return this.routineForm.get('exercises') as UntypedFormArray;
+  }
+
+  sets(i: number): UntypedFormArray {
+    return this.exercises.at(i).get('sets') as UntypedFormArray;
+  }
+
+  addExercise(): void {
+    const formGroup = this._formBuilder.group({
+      id: [null],
+      workout: [this.workout?.id, []],
+      exercise: ['', []],
+      description: ['', []],
+      sets: this._formBuilder.array([
+        this._formBuilder.group({
+          sets: [1, []],
+          rept: [4, []],
+          weight: [0, []],
+        }),
+      ]),
+    });
+
+    this.exercises.push(formGroup);
+  }
+
+  addSet(exerciseIndex: number): void {
+    const formGroup = this._formBuilder.group({
+      rept: [4, []],
+      weight: [0, []],
+    });
+
+    this.sets(exerciseIndex).push(formGroup);
+  }
+
+  removeExercise(index: number, item: any): void {
+    const exerciseId = item.get('id').value;
+
+    if (!exerciseId) {
+      this.exercises.removeAt(index);
+      return;
+    }
+
+    this._workoutService.deleteDetailExercise(exerciseId).subscribe({
+      next: () => {
+        this.exercises.removeAt(index);
+      },
+    });
+  }
+
+  removeSet(exerciseIndex: any, index: any) {
+    this.sets(exerciseIndex).removeAt(index);
   }
 
   getUsers(): void {
     this.users$ = this._userService.getUsers({ search: '' });
+  }
+
+  getExercises() {
+    this._exerciseService.fetchExercises().subscribe({
+      next: (response: Exercise[]) => {
+        this.exercisesList = response;
+      },
+      error: err => {
+        console.log(err);
+      },
+    });
+  }
+
+  setExercises(data: any) {
+    const formGroups: any = [];
+
+    data.forEach((item: any) => {
+      const { exercise, data, workout, description } = item;
+
+      const sets: any = [];
+      if (data) {
+        data.forEach((item: any) => {
+          sets.push(
+            this._formBuilder.group({
+              sets: [item.sets, []],
+              rept: [item.rept, []],
+              weight: [item.weight, []],
+            })
+          );
+        });
+      }
+
+      formGroups.push(
+        this._formBuilder.group({
+          id: [item.id],
+          workout: [workout],
+          exercise: [exercise.id],
+          description: [description],
+          sets: this._formBuilder.array(sets),
+        })
+      );
+    });
+
+    formGroups.forEach((item: any) => {
+      this.exercises.push(item);
+    });
   }
 
   handleSubmit(): void {
@@ -117,7 +235,7 @@ export class RoutineFormComponent implements OnInit {
       return;
     }
 
-    const { name, description, day, user, exercises, is_active } =
+    const { name, description, day, exercises, user, is_active } =
       this.routineForm.value;
 
     const form: WorkoutDto = {
