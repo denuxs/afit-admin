@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, ReplaySubject, tap } from 'rxjs';
 
 import { environment } from 'environments/environment';
-import { User } from 'app/domain';
+import { User, UserList } from 'app/domain';
 
 @Injectable({
   providedIn: 'root',
@@ -30,8 +30,8 @@ export class UserService {
     );
   }
 
-  getUsers(params: { search: string }): Observable<User[]> {
-    return this._httpClient.get<User[]>(this._api, { params });
+  getUsers(params?: any): Observable<UserList> {
+    return this._httpClient.get<UserList>(this._api, { params });
   }
 
   getUser(userId: number): Observable<User> {

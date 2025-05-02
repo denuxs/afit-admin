@@ -14,6 +14,13 @@ export interface User {
   last_login: Date;
 }
 
+export interface UserList {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: User[];
+}
+
 export interface UserDto {
   username: string;
   phone: string;

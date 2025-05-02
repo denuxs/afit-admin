@@ -13,6 +13,13 @@ export interface Exercise {
   created: Date;
 }
 
+export interface ExerciseList {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: Exercise[];
+}
+
 export interface ExerciseDto {
   name: string;
   description: string;

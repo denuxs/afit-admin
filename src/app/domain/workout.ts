@@ -5,9 +5,11 @@ export interface Workout {
   id: number;
   day: string;
   name: string;
+  level: string;
   description: string;
   exercises: Exercise[];
   user: User;
+  order: number;
   created: Date;
   is_active: boolean;
 }
@@ -17,6 +19,7 @@ export interface WorkoutDto {
   description?: string;
   user: number;
   day: number;
+  level: string;
   is_active: boolean;
   exercises: {
     workout: number;
