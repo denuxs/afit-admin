@@ -1,44 +1,38 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { AsyncPipe, DatePipe } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { AsyncPipe } from '@angular/common';
 import { Observable } from 'rxjs';
-import {
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  ReactiveFormsModule,
-} from '@angular/forms';
 
 import { Catalog } from 'app/domain';
 import { CatalogService } from 'app/services';
 
-import { TableModule } from 'primeng/table';
-import { TooltipModule } from 'primeng/tooltip';
-import { TranslocoDirective } from '@jsverse/transloco';
+import { CatalogListComponent } from './catalog-list/catalog-list.component';
+import { CatalogFilterComponent } from './catalog-filter/catalog-filter.component';
+
+import { ProgressSpinner } from 'primeng/progressspinner';
 
 @Component({
   selector: 'app-catalogs',
   standalone: true,
   imports: [
     AsyncPipe,
-    DatePipe,
-    RouterLink,
-    ReactiveFormsModule,
-    TableModule,
-    TooltipModule,
-    TranslocoDirective,
+    ProgressSpinner,
+    CatalogListComponent,
+    CatalogFilterComponent,
   ],
+  providers: [],
   templateUrl: './catalogs.component.html',
   styleUrl: './catalogs.component.scss',
 })
 export class CatalogsComponent implements OnInit {
   private readonly _catalogService = inject(CatalogService);
-  private readonly _formBuilder = inject(FormBuilder);
 
   catalogs$!: Observable<Catalog[]>;
-  searchControl = new FormControl();
 
   catalogTypes: any = [
+    {
+      name: 'TODOS',
+      id: '',
+    },
     {
       name: 'Musculo',
       id: 'muscle',
@@ -49,28 +43,24 @@ export class CatalogsComponent implements OnInit {
     },
   ];
 
-  filterForm: FormGroup;
-
-  constructor() {
-    this.filterForm = this._formBuilder.group({
-      search: ['', []],
-      key: ['', []],
-    });
-  }
-
   ngOnInit(): void {
     this.getCatalogs();
   }
 
-  getCatalogs(params?: { search?: string; key?: string }): void {
+  getCatalogs(params?: any): void {
     this.catalogs$ = this._catalogService.fetchCatalogs({
       ordering: '-id',
       ...params,
     });
   }
 
-  handleFilter() {
-    const params = this.filterForm.value;
-    this.getCatalogs(params);
+  handleFilter(filters: any) {
+    this.getCatalogs(filters);
+  }
+
+  handleDelete(event: any) {
+    if (event) {
+      this.getCatalogs();
+    }
   }
 }

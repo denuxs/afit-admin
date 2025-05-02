@@ -18,8 +18,6 @@ El API esta en Django 5 [github.com/denuxs/gym_api](https://github.com/denuxs/gy
 - CRUD de ejercicios
 - CRUD de rutinas
 - CRUD de medidas
-- Comentarios
-- Publicaciones
 - Subida de Imágenes
 - Notificaciones Push
 - Traducción 118n
@@ -31,9 +29,18 @@ npm install
 ng server
 ```
 
+### Development server
+
+- Backend en Python AnyWhere
+- Frontend en Netflify
+
 ### TO DO
 
+- Refactorizar component a smart/dumb
+- Paginación
 - Autenticación con cookies
 - Responsive design
 - UI/UX
 - Unit Tests
+- Completar traducciones
+- Completar notificaciones push

@@ -1,41 +1,22 @@
-<div class="grid grid-cols-3 gap-4">
+<div class="grid grid-cols-3 gap-6">
   <form [formGroup]="catalogForm" (ngSubmit)="handleSubmit()">
-    <div class="mb-2">
-      <label for="name" class="form-label">Nombre</label>
-      <input type="text" class="w-full" pInputText formControlName="name" />
-      <p class="form-error">{{ checkErrors("name") }}</p>
-    </div>
+    <app-form-field [form]="catalogForm" controlName="name" label="Nombre" />
 
-    <div class="mb-2">
-      <label for="key" class="form-label">Tipo</label>
-      <p-select
-        [options]="catalogTypes"
-        optionLabel="name"
-        optionValue="id"
-        [filter]="true"
-        filterBy="name"
-        formControlName="key"
-        class="w-full"
-      >
-        <ng-template #selectedItem let-selectedOption>
-          <div>{{ selectedOption.name }}</div>
-        </ng-template>
-        <ng-template let-item #item>
-          <div>{{ item.name }}</div>
-        </ng-template>
-      </p-select>
-      <p class="form-error">{{ checkErrors("key") }}</p>
-    </div>
+    <app-select-input
+      [form]="catalogForm"
+      controlName="key"
+      label="Tipo"
+      [options]="catalogTypes" />
 
-    @if (catalogForm.hasError("error")) {
-      <div class="error">Error occured.</div>
-    }
-
-    <div class="flex justify-between mt-4">
-      <a href="#" class="btn-secondary" routerLink="/admin/catalogs">
-        Cancelar
-      </a>
+    <div class="flex justify-end mt-4">
       <button class="btn-primary" type="submit">Guardar</button>
     </div>
   </form>
+
+  @if (catalog) {
+    <div class="border border-gray-300 bg-gray-50 px-4 py-6 rounded-md">
+      <app-upload-image [contentType]="contentType" [objectId]="objectId" />
+    </div>
+    <div></div>
+  }
 </div>
