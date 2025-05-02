@@ -1,86 +1,87 @@
-<div class="grid grid-cols-3 gap-4">
-  <div>
-    <form [formGroup]="exerciseForm" (ngSubmit)="handleSubmit()">
-      <div class="mb-2">
-        <label for="name" class="form-label">Nombre</label>
-        <input
-          type="text"
-          id="name"
-          name="name"
-          pInputText
-          class="w-full"
-          formControlName="name"
-        />
-        <p class="form-error">{{ checkErrors("name") }}</p>
+<div class="grid grid-cols-3 gap-6">
+  <form
+    [formGroup]="exerciseForm"
+    (ngSubmit)="handleSubmit()"
+    class="col-span-2">
+    <div class="mb-4">
+      <label for="name" class="form-label">Nombre</label>
+      <input
+        type="text"
+        id="name"
+        name="name"
+        pInputText
+        class="w-full"
+        formControlName="name" />
+      <p class="form-error">{{ checkErrors('name') }}</p>
+    </div>
+
+    @if (equipments$ | async; as equipments) {
+      <div class="mb-4">
+        <label for="equipments" class="form-label">Equipo</label>
+        <p-select
+          [options]="equipments.results"
+          optionLabel="name"
+          optionValue="id"
+          [filter]="true"
+          filterBy="name"
+          formControlName="equipment"
+          class="w-full">
+          <ng-template #selectedItem let-selectedOption>
+            <div>{{ selectedOption.name }}</div>
+          </ng-template>
+          <ng-template let-item #item>
+            <div>{{ item.name }}</div>
+          </ng-template>
+        </p-select>
+        <p class="form-error">{{ checkErrors('equipment') }}</p>
       </div>
+    }
 
-      @if (equipments$ | async; as equipments) {
-        <div class="mb-2">
-          <label for="equipments" class="form-label">Equipo</label>
-          <p-select
-            [options]="equipments"
-            optionLabel="name"
-            optionValue="id"
-            [filter]="true"
-            filterBy="name"
-            formControlName="equipment"
-            class="w-full"
-          >
-            <ng-template #selectedItem let-selectedOption>
-              <div>{{ selectedOption.name }}</div>
-            </ng-template>
-            <ng-template let-item #item>
-              <div>{{ item.name }}</div>
-            </ng-template>
-          </p-select>
-          <p class="form-error">{{ checkErrors("equipment") }}</p>
-        </div>
-      }
-
-      @if (muscles$ | async; as muscles) {
-        <div class="mb-2">
-          <label for="muscles" class="form-label">Músculo</label>
-          <p-select
-            [options]="muscles"
-            optionLabel="name"
-            optionValue="id"
-            [filter]="true"
-            filterBy="name"
-            formControlName="muscle"
-            class="w-full"
-          >
-            <ng-template #selectedItem let-selectedOption>
-              <div>{{ selectedOption.name }}</div>
-            </ng-template>
-            <ng-template let-item #item>
-              <div>{{ item.name }}</div>
-            </ng-template>
-          </p-select>
-          <p class="form-error">{{ checkErrors("muscle") }}</p>
-        </div>
-      }
-
-      <div class="mb-2">
-        <label for="description" class="form-label">Instrucciones</label>
-
-        <p-editor
-          formControlName="description"
-          class="w-full"
-          [modules]="modules"
-        >
-          <ng-template pTemplate="header"> </ng-template>
-        </p-editor>
+    @if (muscles$ | async; as muscles) {
+      <div class="mb-4">
+        <label for="muscles" class="form-label">Músculo</label>
+        <p-select
+          [options]="muscles.results"
+          optionLabel="name"
+          optionValue="id"
+          [filter]="true"
+          filterBy="name"
+          formControlName="muscle"
+          class="w-full">
+          <ng-template #selectedItem let-selectedOption>
+            <div>{{ selectedOption.name }}</div>
+          </ng-template>
+          <ng-template let-item #item>
+            <div>{{ item.name }}</div>
+          </ng-template>
+        </p-select>
+        <p class="form-error">{{ checkErrors('muscle') }}</p>
       </div>
+    }
 
-      <div class="flex justify-end">
-        <button class="btn-primary mt-4" type="submit">Guardar</button>
-      </div>
-    </form>
-  </div>
-  <div>
+    <div class="mb-4">
+      <label for="description" class="form-label">Instrucciones</label>
+
+      <p-editor
+        formControlName="description"
+        class="w-full"
+        [modules]="modules">
+        <ng-template pTemplate="header"> </ng-template>
+      </p-editor>
+    </div>
+
+    <div class="flex justify-end">
+      <button class="btn-primary mt-4" type="submit">Guardar</button>
+    </div>
+  </form>
+
+  <div class="border border-gray-300 bg-gray-50 px-4 py-6 rounded-md">
     <app-file-upload
       [image]="exercise?.image || ''"
-      (uploadImageChange)="onUploadImage($event)"
-    ></app-file-upload>
+      (uploadImageChange)="onUploadImage($event)"></app-file-upload>
+
+    <!-- @if (exercise) {
+    <app-exercise-comments [exercise]="exercise"></app-exercise-comments>
+  } -->
   </div>
 </div>

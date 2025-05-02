@@ -26,9 +26,6 @@ export class ExerciseCreateComponent {
         next: () => {
           this._router.navigateByUrl('/admin/exercises');
         },
-        error: (err) => {
-          console.log(err);
-        },
       });
   }
 

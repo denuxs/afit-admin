@@ -17,7 +17,7 @@ import { map, Observable, Subject, takeUntil, tap } from 'rxjs';
 import { DomSanitizer } from '@angular/platform-browser';
 import { forkJoin } from 'rxjs';
 
-import { Catalog, Exercise, User } from 'app/domain';
+import { Catalog, CatalogList, Exercise, User } from 'app/domain';
 import { CatalogService, UserService } from 'app/services';
 
 import { SelectModule } from 'primeng/select';
@@ -25,6 +25,7 @@ import { EditorModule } from 'primeng/editor';
 import { InputTextModule } from 'primeng/inputtext';
 
 import { FileUploadComponent } from 'app/components/file-upload/file-upload.component';
+import { ExerciseCommentsComponent } from '../exercise-comments/exercise-comments.component';
 @Component({
   selector: 'app-exercise-form',
   standalone: true,
@@ -36,6 +37,7 @@ import { FileUploadComponent } from 'app/components/file-upload/file-upload.comp
     SelectModule,
     FileUploadComponent,
     InputTextModule,
+    ExerciseCommentsComponent,
   ],
   templateUrl: './exercise-form.component.html',
   styleUrl: './exercise-form.component.scss',
@@ -51,15 +53,25 @@ export class ExerciseFormComponent implements OnInit {
 
   exerciseForm: FormGroup;
 
-  equipments$!: Observable<Catalog[]>;
-  muscles$!: Observable<Catalog[]>;
+  equipments$!: Observable<CatalogList>;
+  muscles$!: Observable<CatalogList>;
 
   exerciseId: number = 0;
   photoField!: File;
   user!: User;
 
   modules = {
-    toolbar: [['bold'], [{ list: 'ordered' }, { list: 'bullet' }]],
+    toolbar: [
+      // [{ header: 3 }, { header: 4 }],
+      [{ size: ['small', false, 'large', 'huge'] }], // custom dropdown
+      [{ header: [1, 2, 3, 4, 5, 6, false] }],
+      ['bold', 'italic', 'underline', 'strike', 'blockquote'],
+      [{ list: 'ordered' }, { list: 'bullet' }, { list: 'check' }],
+      [{ color: [] }, { background: [] }],
+      // [{ font: [] }],
+      [{ align: [] }],
+      ['clean'],
+    ],
   };
 
   @Input() exercise: Exercise | null = null;

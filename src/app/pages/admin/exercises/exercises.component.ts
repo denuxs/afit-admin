@@ -1,78 +1,137 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { AsyncPipe, DatePipe, NgIf } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { AsyncPipe } from '@angular/common';
 import { Observable } from 'rxjs';
 
-import { Catalog, Exercise } from 'app/domain';
+import { Catalog, CatalogList, ExerciseList } from 'app/domain';
 import { CatalogService, ExerciseService } from 'app/services';
 
 import { TableModule } from 'primeng/table';
-import { TooltipModule } from 'primeng/tooltip';
+import { MessageService } from 'primeng/api';
+import { ProgressSpinner } from 'primeng/progressspinner';
+import { PaginatorModule, PaginatorState } from 'primeng/paginator';
+import { ToastModule } from 'primeng/toast';
+
+import { ExerciseFilterComponent } from './exercise-filter/exercise-filter.component';
+import { ExerciseListComponent } from './exercise-list/exercise-list.component';
+
+interface Params {
+  search?: string;
+  ordering?: string;
+  muscle?: string;
+  equipment?: string;
+  page?: number;
+}
 
 @Component({
   selector: 'app-exercises',
   standalone: true,
   imports: [
     AsyncPipe,
-    DatePipe,
-    ReactiveFormsModule,
-    RouterLink,
     TableModule,
-    TooltipModule,
+    ExerciseFilterComponent,
+    ProgressSpinner,
+    ExerciseListComponent,
+    PaginatorModule,
+    ToastModule,
   ],
+  providers: [MessageService],
   templateUrl: './exercises.component.html',
   styleUrl: './exercises.component.scss',
 })
 export class ExercisesComponent implements OnInit {
-  private readonly _formBuilder = inject(FormBuilder);
+  private readonly _messageService = inject(MessageService);
+
   private readonly _exerciseService = inject(ExerciseService);
   private readonly _catalogService = inject(CatalogService);
 
-  exercises$!: Observable<Exercise[]>;
-  catalogs$!: Observable<Catalog[]>;
+  exercises$!: Observable<ExerciseList>;
 
-  filterForm: FormGroup;
+  muscles!: Catalog[];
+  equipments!: Catalog[];
 
-  muscles: any = [];
-  equipments: any = [];
-
-  constructor() {
-    this.filterForm = this._formBuilder.group({
-      search: ['', []],
-      muscle: ['', []],
-      equipment: ['', []],
-    });
-  }
+  first = 0;
+  rows = 10;
+  filters: Params = {
+    search: '',
+    ordering: '',
+    muscle: '',
+    equipment: '',
+    page: 1,
+  };
 
   ngOnInit(): void {
-    this.getExercises({});
-    this.getCatalogs();
+    const params = this.getParams();
+
+    this.fetchCatalogs();
+    this.fetchData(params);
   }
 
-  getExercises(params?: any): void {
-    console.log(params);
-    params['ordering'] = '-id';
+  fetchData(params: Params): void {
     this.exercises$ = this._exerciseService.fetchExercises(params);
   }
 
-  getCatalogs(): void {
-    this._catalogService
-      .fetchCatalogs({
-        ordering: '-id',
-      })
-      .subscribe({
-        next: (catalogs: Catalog[]) => {
-          this.muscles = catalogs.filter(catalog => catalog.key === 'muscle');
-          this.equipments = catalogs.filter(
-            catalog => catalog.key === 'equipment'
-          );
-        },
-      });
+  fetchCatalogs(): void {
+    const params = {
+      ordering: '-id',
+    };
+    this._catalogService.fetchCatalogs(params).subscribe({
+      next: (catalogs: CatalogList) => {
+        const { results } = catalogs;
+        this.muscles = results.filter(catalog => catalog.key === 'muscle');
+        this.equipments = results.filter(
+          catalog => catalog.key === 'equipment'
+        );
+      },
+    });
   }
 
-  handleFilter() {
-    const params = this.filterForm.value;
-    this.getExercises(params);
+  handlePage(event: PaginatorState) {
+    const limit = event.rows ?? 0;
+    this.first = event.first ?? 0;
+    const page = this.first / limit + 1;
+
+    const params = this.getParams();
+    Object.assign(params, this.filters);
+    params.page = page;
+    this.fetchData(params);
+  }
+
+  handleFilter(filters: Params) {
+    this.filters = filters;
+
+    const params = this.getParams();
+    Object.assign(params, filters);
+
+    this.fetchData(params);
+  }
+
+  handleDelete(event: { id: number; index: number }) {
+    if (!event.id) {
+      return;
+    }
+
+    this._exerciseService.delete(event.id).subscribe({
+      next: () => {
+        const params = this.getParams();
+        this.fetchData(params);
+      },
+      error: () => {
+        this._messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Algunas rutinas se encuentran asociados a este ejercicio',
+        });
+      },
+    });
+  }
+
+  getParams(): Params {
+    return {
+      search: '',
+      ordering: '-id',
+      muscle: '',
+      equipment: '',
+      page: 1,
+    };
   }
 }

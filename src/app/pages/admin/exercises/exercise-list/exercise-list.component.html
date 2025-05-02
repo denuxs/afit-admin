@@ -1,0 +1,48 @@
+<ng-container *transloco="let t">
+  <p-table [value]="data.results" stripedRows>
+    <ng-template #header>
+      <tr>
+        <th></th>
+        <th>Nombre</th>
+        <th>Musculo</th>
+        <th>Equipo</th>
+        <th>Creado por</th>
+        <th>Creado</th>
+        <th></th>
+        <th></th>
+      </tr>
+    </ng-template>
+    <ng-template #body let-item let-rowIndex="rowIndex">
+      <tr>
+        <th>{{ rowIndex + 1 }}</th>
+        <td>{{ item.name }}</td>
+        <td>{{ item.muscle.name }}</td>
+        <td>{{ item.equipment?.name }}</td>
+        <td>{{ item.user.username }}</td>
+        <td>{{ item.created | date: 'mediumDate' }}</td>
+        <td>
+          <a
+            href="#"
+            pTooltip="Editar"
+            tooltipPosition="top"
+            [routerLink]="[item.id, 'edit']"
+            class="text-blue-600"
+            ><i class="pi pi-pen-to-square"></i
+          ></a>
+        </td>
+        <td>
+          <button
+            type="button"
+            pTooltip="Borrar"
+            tooltipPosition="top"
+            (click)="handleDelete(item.id, rowIndex)"
+            class="text-red-600">
+            <i class="pi pi-trash"></i>
+          </button>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</ng-container>
+
+<p-confirmdialog />

@@ -48,9 +48,6 @@ export class ExerciseEditComponent implements OnInit {
         next: () => {
           this._router.navigateByUrl('/admin/exercises');
         },
-        error: (err) => {
-          console.log(err);
-        },
       });
   }
 
