@@ -32,7 +32,11 @@ export class WorkoutService {
 
   deleteDetailExercise(id: number) {
     return this._httpClient.delete(
-      environment.BACKEND_API + `/workouts-detail/${id}/`,
+      environment.BACKEND_API + `/workouts-detail/${id}/`
     );
+  }
+
+  delete(id: number) {
+    return this._httpClient.delete(this._api + `${id}/`);
   }
 }

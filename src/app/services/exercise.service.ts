@@ -40,4 +40,8 @@ export class ExerciseService {
       this._api + `${exerciseId}/comments/`
     );
   }
+
+  delete(id: number) {
+    return this._httpClient.delete(this._api + `${id}/`);
+  }
 }

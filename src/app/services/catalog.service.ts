@@ -27,4 +27,8 @@ export class CatalogService {
   updateCatalog(id: number, form: CatalogDto): Observable<Catalog> {
     return this._httpClient.put<Catalog>(this._api + `${id}/`, form);
   }
+
+  delete(id: number) {
+    return this._httpClient.delete(this._api + `${id}/`);
+  }
 }

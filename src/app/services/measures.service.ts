@@ -14,7 +14,7 @@ export class MeasuresService {
 
   constructor() {}
 
-  fetchMeasures(params: { search: string }): Observable<Measure[]> {
+  fetchMeasures(params: any): Observable<Measure[]> {
     return this._httpClient.get<Measure[]>(this._api, { params });
   }
 
@@ -32,5 +32,9 @@ export class MeasuresService {
 
   saveImage(id: number, form: FormData): Observable<Measure> {
     return this._httpClient.patch<Measure>(this._api + `${id}/`, form);
+  }
+
+  delete(id: number) {
+    return this._httpClient.delete(this._api + `${id}/`);
   }
 }
