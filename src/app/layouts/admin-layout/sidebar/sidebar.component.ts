@@ -5,6 +5,10 @@ import { AuthService } from 'app/core/auth/auth.service';
 import { UserService } from 'app/services';
 import { User } from 'app/domain';
 
+import { IconField } from 'primeng/iconfield';
+import { InputIcon } from 'primeng/inputicon';
+import { AutoComplete } from 'primeng/autocomplete';
+
 interface Menu {
   id: number;
   link: string;
@@ -15,7 +19,7 @@ interface Menu {
 @Component({
   selector: 'app-sidebar',
   standalone: true,
-  imports: [RouterLink, RouterLinkActive],
+  imports: [RouterLink, InputIcon, AutoComplete, IconField, RouterLinkActive],
   templateUrl: './sidebar.component.html',
   styleUrl: './sidebar.component.scss',
 })
@@ -33,46 +37,64 @@ export class SidebarComponent implements OnInit {
     },
     {
       id: 2,
-      link: '/admin/posts',
-      label: 'Publicaciones',
-      icon: 'pi pi-image',
+      link: '/admin/users',
+      label: 'Usuarios',
+      icon: 'pi pi-users',
     },
+    // {
+    //   id: 2,
+    //   link: '/admin/notifications',
+    //   label: 'Notificaciones',
+    //   icon: 'pi pi-bell',
+    // },
+    // {
+    //   id: 3,
+    //   link: '/admin/posts',
+    //   label: 'Publicaciones',
+    //   icon: 'pi pi-image',
+    // },
+    // {
+    //   id: 4,
+    //   link: '/admin/comments',
+    //   label: 'Comentarios',
+    //   icon: 'pi pi-comment',
+    // },
+    // {
+    //   id: 5,
+    //   link: '/admin/workouts',
+    //   label: 'Rutinas',
+    //   icon: 'pi pi-bars',
+    // },
     {
       id: 3,
-      link: '/admin/comments',
-      label: 'Comentarios',
-      icon: 'pi pi-comment',
-    },
-    {
-      id: 4,
-      link: '/admin/workouts',
-      label: 'Rutinas',
-      icon: 'pi pi-bars',
-    },
-    {
-      id: 5,
       link: '/admin/exercises',
       label: 'Ejercicios',
       icon: 'pi pi-bars',
     },
+    // {
+    //   id: 7,
+    //   link: '/admin/measures',
+    //   label: 'Medidas',
+    //   icon: 'pi pi-bars',
+    // },
     {
-      id: 6,
-      link: '/admin/measures',
-      label: 'Medidas',
-      icon: 'pi pi-bars',
-    },
-    {
-      id: 7,
+      id: 4,
       link: '/admin/catalogs',
       label: 'Catálogos',
       icon: 'pi pi-bars',
     },
-    {
-      id: 8,
-      link: '/admin/users',
-      label: 'Usuarios',
-      icon: 'pi pi-user',
-    },
+    // {
+    //   id: 10,
+    //   link: '/admin/profile',
+    //   label: 'Mi Perfil',
+    //   icon: 'pi pi-user',
+    // },
+    // {
+    //   id: 11,
+    //   link: '/admin/settings',
+    //   label: 'Configuración',
+    //   icon: 'pi pi-cog',
+    // },
   ];
 
   user!: User;
@@ -85,9 +107,6 @@ export class SidebarComponent implements OnInit {
     this._userService.user$.subscribe({
       next: (response: User) => {
         this.user = response;
-      },
-      error: (err) => {
-        console.log('error getting profile');
       },
     });
   }

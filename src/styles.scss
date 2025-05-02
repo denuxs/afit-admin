@@ -1,24 +1,24 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-@import "primeicons/primeicons.css";
+@import 'primeicons/primeicons.css';
 
-@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
 
 .poppins-regular {
-  font-family: "Poppins", serif;
+  font-family: 'Poppins', serif;
   font-weight: 400;
   font-style: normal;
 }
 
 .poppins-semibold {
-  font-family: "Poppins", serif;
+  font-family: 'Poppins', serif;
   font-weight: 600;
   font-style: normal;
 }
 
 .poppins-bold {
-  font-family: "Poppins", serif;
+  font-family: 'Poppins', serif;
   font-weight: 700;
   font-style: normal;
 }
@@ -29,7 +29,7 @@
 // }
 
 body {
-  // @apply bg-gray-100;
+  @apply bg-gray-100;
 }
 
 h1 {
@@ -37,7 +37,7 @@ h1 {
 }
 
 h2 {
-  @apply font-poppins text-xl font-semibold text-gray-700;
+  @apply font-poppins text-xl  text-gray-700;
 }
 
 h3 {
@@ -57,12 +57,12 @@ h3 {
 // }
 
 .menu-active {
-  @apply text-blue-700;
+  @apply text-gray-50 bg-[#25282a];
 }
 
 @layer components {
   .btn-primary {
-    @apply font-poppins bg-blue-700 hover:bg-blue-600 text-white  px-3 py-2;
+    @apply font-poppins bg-[#1780ea] hover:bg-[#0e4d8c] text-white rounded-md  px-3 py-2;
   }
 
   .btn-secondary {
@@ -70,7 +70,7 @@ h3 {
   }
 
   .form-label {
-    @apply font-poppins text-slate-600 inline-block mb-2 text-sm;
+    @apply font-poppins  inline-block mb-2 text-sm;
   }
 
   .card {
@@ -93,3 +93,6 @@ h3 {
 // .ng-valid {
 //   @apply border-gray-600;
 // }
+
+// html, body { height: 100%; }
+// body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }

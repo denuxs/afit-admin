@@ -72,9 +72,6 @@ export class NavbarComponent implements OnInit {
       next: (response: User) => {
         this.user = response;
       },
-      error: (err) => {
-        console.log('error getting profile');
-      },
     });
   }
 
