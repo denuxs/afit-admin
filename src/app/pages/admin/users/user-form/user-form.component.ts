@@ -22,6 +22,8 @@ import { Password } from 'primeng/password';
 import { SelectModule } from 'primeng/select';
 import { CheckboxModule } from 'primeng/checkbox';
 import { InputTextModule } from 'primeng/inputtext';
+
+import { UploadImageComponent } from 'app/components/upload-image/upload-image.component';
 @Component({
   selector: 'app-user-form',
   standalone: true,
@@ -31,6 +33,7 @@ import { InputTextModule } from 'primeng/inputtext';
     CheckboxModule,
     FileUploadComponent,
     InputTextModule,
+    UploadImageComponent,
   ],
   templateUrl: './user-form.component.html',
   styleUrl: './user-form.component.scss',
@@ -59,6 +62,9 @@ export class UserFormComponent implements OnInit {
     },
   ];
 
+  contentType = 8;
+  objectId = 0;
+
   constructor() {
     this.userForm = this._formBuilder.group({
       username: ['', [Validators.required]],
@@ -80,6 +86,7 @@ export class UserFormComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.user) {
+      this.objectId = this.user.id;
       this.setFormFields(this.user);
     }
   }
@@ -104,7 +111,7 @@ export class UserFormComponent implements OnInit {
     const min = 0,
       max = 99999;
     return ('0' + (Math.floor(Math.random() * (max - min + 1)) + min)).substr(
-      -6,
+      -6
     );
   }
 

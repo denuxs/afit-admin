@@ -1,0 +1,6 @@
+<h1 class="mb-4">Crear Medida</h1>
+@if (userId) {
+  <app-measure-form
+    [userId]="userId"
+    (formChange)="onFormChange($event)"></app-measure-form>
+}

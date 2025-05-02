@@ -27,9 +27,6 @@ export class UserCreateComponent {
         next: () => {
           this._router.navigateByUrl('/admin/users');
         },
-        error: (err) => {
-          console.log(err);
-        },
       });
   }
 

@@ -18,4 +18,12 @@ export default [
     path: ':id/edit',
     component: UserEditComponent,
   },
+  {
+    path: ':userId/measures',
+    loadChildren: () => import('./measures/measures.routes'),
+  },
+  {
+    path: ':userId/workouts',
+    loadChildren: () => import('./routines/routines.routes'),
+  },
 ] as Routes;

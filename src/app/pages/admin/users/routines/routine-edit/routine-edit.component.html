@@ -1,0 +1,14 @@
+<h1 class="mb-4">Editar Rutina</h1>
+
+@if (loading) {
+  <div>
+    <p-progressSpinner></p-progressSpinner>
+  </div>
+}
+
+@if (!loading) {
+  <app-routine-form
+    [workout]="workout"
+    (formChange)="onFormChange($event)"
+  ></app-routine-form>
+}

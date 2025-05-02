@@ -1,95 +1,19 @@
 <h1 class="mb-4">Usuarios</h1>
 
-<div class="flex justify-between mb-2">
-  <form [formGroup]="filterForm" (ngSubmit)="handleFilter()">
-    <div class="flex space-x-2">
-      <div>
-        <input type="text" placeholder="Buscar..." formControlName="search" />
-      </div>
-      <div>
-        <button class="btn-primary" type="submit">
-          <i class="pi pi-search"></i>
-          Buscar
-        </button>
-      </div>
-    </div>
-  </form>
-  <div>
-    <a href="#" routerLink="create" class="btn-primary inline-block"
-      ><i class="pi pi-plus"></i> Nuevo Usuario</a
-    >
-  </div>
-</div>
+<app-user-filter (filterChange)="handleFilter($event)" />
 
 @if (users$ | async; as data) {
-  <p-table [value]="data" stripedRows>
-    <ng-template #header>
-      <tr>
-        <th>Usuario</th>
-        <th>Admin</th>
-        <th>Activo</th>
-        <th>Último Acceso</th>
-        <th>Creado</th>
-        <th></th>
-        <th></th>
-      </tr>
-    </ng-template>
-    <ng-template #body let-item>
-      <tr>
-        <td>
-          {{ item.first_name }} {{ item.last_name }} ({{ item.username }})
-        </td>
-        <td>
-          @if (item.is_superuser) {
-            <ng-icon
-              class="text-green-500 text-xl"
-              name="faSolidCircleCheck"></ng-icon>
-          } @else {
-            <ng-icon
-              class="text-red-500 text-xl"
-              name="faSolidCircleCheck"></ng-icon>
-          }
-        </td>
-        <td>
-          @if (item.is_active) {
-            <ng-icon
-              class="text-green-500 text-xl"
-              name="faSolidCircleCheck"></ng-icon>
-          } @else {
-            <ng-icon
-              class="text-red-500 text-xl"
-              name="faSolidCircleCheck"></ng-icon>
-          }
-        </td>
-        <td>
-          @if (item.last_login) {
-            {{ item.last_login | timeAgo }}
-          }
-        </td>
-        <td>{{ item.date_joined | date: 'mediumDate' }}</td>
-        <td>
-          <a
-            href="#"
-            pTooltip="Editar"
-            tooltipPosition="top"
-            [routerLink]="[item.id, 'edit']"
-            class="text-blue-600"
-            ><i class="pi pi-pen-to-square"></i
-          ></a>
-        </td>
-        <td>
-          <button
-            type="button"
-            pTooltip="Borrar"
-            tooltipPosition="top"
-            (click)="handleDelete(item.id)"
-            class="text-red-600">
-            <i class="pi pi-trash"></i>
-          </button>
-        </td>
-      </tr>
-    </ng-template>
-  </p-table>
+  <app-user-list [data]="data" (deleteChange)="handleDelete($event)" />
+
+  <p-paginator
+    showCurrentPageReport="true"
+    currentPageReportTemplate="{first} - {last} de {totalRecords}"
+    (onPageChange)="handlePage($event)"
+    [first]="first"
+    [rows]="rows"
+    [totalRecords]="data.count" />
 } @else {
-  <p-progress-spinner ariaLabel="loading" />
+  <p-progressSpinner [style]="{ width: '40px', height: '40px' }" />
 }
+
+<p-toast />

@@ -47,9 +47,6 @@ export class UserEditComponent implements OnInit {
         next: () => {
           this._router.navigateByUrl('/admin/users');
         },
-        error: (err) => {
-          console.log(err);
-        },
       });
   }
 

@@ -1,0 +1,7 @@
+<h1 class="mb-4">Nueva Rutina</h1>
+
+@if (userId) {
+  <app-routine-form
+    (formChange)="onFormChange($event)"
+    [userId]="userId"></app-routine-form>
+}

@@ -1,73 +1,111 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { AsyncPipe, DatePipe } from '@angular/common';
-import { Observable, of } from 'rxjs';
-import { RouterLink } from '@angular/router';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
-
-import { User } from 'app/domain';
-import { UserService } from 'app/services';
-import { YesNoPipe } from 'app/pipes/yes-no.pipe';
+import { AsyncPipe } from '@angular/common';
+import { Observable } from 'rxjs';
 
 import { TableModule } from 'primeng/table';
-import { TooltipModule } from 'primeng/tooltip';
-import { TagModule } from 'primeng/tag';
-import { ProgressSpinnerModule } from 'primeng/progressspinner';
-import { TimeAgoPipe } from 'app/pipes/time-ago.pipe';
+import { MessageService } from 'primeng/api';
+import { ProgressSpinner } from 'primeng/progressspinner';
+import { PaginatorModule, PaginatorState } from 'primeng/paginator';
+import { ToastModule } from 'primeng/toast';
 
-import { NgIcon, provideIcons } from '@ng-icons/core';
-import { faSolidCircleCheck } from '@ng-icons/font-awesome/solid';
+import { UserFilterComponent } from './user-filter/user-filter.component';
+import { UserListComponent } from './user-list/user-list.component';
+import { UserService } from 'app/services';
+import { UserList } from 'app/domain';
+
+interface Params {
+  search?: string;
+  ordering?: string;
+  page?: number;
+}
 
 @Component({
   selector: 'app-users',
   standalone: true,
   imports: [
     AsyncPipe,
-    DatePipe,
-    ReactiveFormsModule,
     TableModule,
-    RouterLink,
-    TooltipModule,
-    YesNoPipe,
-    TagModule,
-    ProgressSpinnerModule,
-    TimeAgoPipe,
-    NgIcon,
+    UserFilterComponent,
+    ProgressSpinner,
+    UserListComponent,
+    PaginatorModule,
+    ToastModule,
   ],
-  providers: [provideIcons({ faSolidCircleCheck })],
+  providers: [MessageService],
   templateUrl: './users.component.html',
   styleUrl: './users.component.scss',
 })
 export class UsersComponent implements OnInit {
-  private readonly _formBuilder = inject(FormBuilder);
+  private readonly _messageService = inject(MessageService);
+
   private readonly _userService = inject(UserService);
 
-  users$: Observable<User[]> = of([]);
+  users$!: Observable<UserList>;
 
-  filterForm: FormGroup = this._formBuilder.group({
-    search: ['', []],
-  });
-
-  constructor() {}
+  first = 0;
+  rows = 10;
+  filters: Params = {
+    search: '',
+    ordering: '',
+    page: 1,
+  };
 
   ngOnInit(): void {
-    this.getUsers({ search: '' });
+    const params = this.getParams();
+
+    this.fetchData(params);
   }
 
-  getUsers(params: { search: string }): void {
+  fetchData(params: Params): void {
     this.users$ = this._userService.getUsers(params);
   }
 
-  handleFilter() {
-    const { search } = this.filterForm.value;
-    this.getUsers({ search });
+  handlePage(event: PaginatorState) {
+    const limit = event.rows ?? 0;
+    this.first = event.first ?? 0;
+    const page = this.first / limit + 1;
+
+    const params = this.getParams();
+    Object.assign(params, this.filters);
+    params.page = page;
+    this.fetchData(params);
   }
 
-  handleDelete(id: number) {
-    if (confirm('¿Está seguro de borrar este usuario?')) {
-      this._userService.delete(id).subscribe(() => {
-        this.getUsers({ search: '' });
-      });
+  handleFilter(filters: Params) {
+    this.filters = filters;
+
+    const params = this.getParams();
+    Object.assign(params, filters);
+
+    this.fetchData(params);
+  }
+
+  handleDelete(event: { id: number; index: number }) {
+    if (!event.id) {
+      return;
     }
-    return;
+
+    this._userService.delete(event.id).subscribe({
+      next: () => {
+        const params = this.getParams();
+        this.fetchData(params);
+      },
+      error: () => {
+        this._messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail:
+            'Algunas rutinas,medidas o notificaciones se encuentran asociados a este usuario',
+        });
+      },
+    });
+  }
+
+  getParams(): Params {
+    return {
+      search: '',
+      ordering: '-id',
+      page: 1,
+    };
   }
 }

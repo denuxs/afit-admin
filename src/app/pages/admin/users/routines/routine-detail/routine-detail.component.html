@@ -1,0 +1,68 @@
+<div class="grid grid-cols-5 gap-2 mb-2">
+  <div>Ejercicio</div>
+  <div>Descripción</div>
+  <div>Series</div>
+  <div>Repeticiones</div>
+  <div></div>
+</div>
+
+@for (item of exercises.controls; track $index; let index = $index) {
+  <div class="grid grid-cols-5 gap-2 mt-2">
+    <div>
+      <p-select
+        [options]="exercisesList"
+        optionLabel="name"
+        optionValue="id"
+        [filter]="true"
+        filterBy="name"
+        [formControl]="item.get('exercise') | formControl"
+        class="w-full"
+      >
+        <ng-template #selectedItem let-selectedOption>
+          <div>{{ selectedOption.name }}</div>
+        </ng-template>
+        <ng-template let-item #item>
+          <div>{{ item.name }}</div>
+        </ng-template>
+      </p-select>
+    </div>
+    <div>
+      <input
+        type="text"
+        id="description"
+        name="description"
+        class="w-full rounded-md border-gray-300"
+        [formControl]="item.get('description') | formControl"
+      />
+    </div>
+    <div>
+      <input
+        type="number"
+        id="sets"
+        name="sets"
+        class="w-full rounded-md border-gray-300"
+        [formControl]="item.get('sets') | formControl"
+      />
+    </div>
+    <div>
+      <input
+        type="number"
+        id="repts"
+        name="repts"
+        class="w-full rounded-md border-gray-300"
+        [formControl]="item.get('repts') | formControl"
+      />
+    </div>
+    <div>
+      <p-button
+        icon="pi pi-times"
+        aria-label="remove"
+        (click)="removeExercise(index, item)"
+        severity="danger"
+      />
+    </div>
+  </div>
+}
+<div class="mt-2">
+  <p-button icon="pi pi-plus" aria-label="add" (click)="addExercise()" />
+</div>
