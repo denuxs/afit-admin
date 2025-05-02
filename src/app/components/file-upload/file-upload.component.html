@@ -6,26 +6,23 @@
     id="image"
     name="image"
     class="hidden"
-    #filePost
-  />
+    #filePost />
   <button
     type="button"
     class="py-2.5 px-5 me-2 mb-2 text-sm font-medium inline-flex items-center text-gray-900 focus:outline-none bg-white border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100"
-    (click)="filePost.click()"
-  >
+    (click)="filePost.click()">
     <i class="pi pi-camera me-2"></i>
     <span>Subir Imagen</span>
   </button>
 
   <div
-    class="w-60 border-dashed border-2 border-gray-200 bg-gray-100 rounded-md h-60"
-  >
+    class="w-60 border-dashed border-2 relative border-gray-200 bg-gray-100 rounded-md h-60">
     @if (photoPreview) {
       <img
-        [src]="photoPreview"
+        [ngSrc]="photoPreview"
         alt="avatar"
-        class="w-full h-full object-cover"
-      />
+        [fill]="true"
+        class="w-full object-center object-cover" />
     }
   </div>
 </div>

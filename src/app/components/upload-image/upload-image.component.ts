@@ -71,9 +71,6 @@ export class UploadImageComponent implements OnInit {
         next: (image: Image) => {
           this.getImages(this.objectId, this.contentType);
         },
-        error: err => {
-          console.log(err);
-        },
       });
   }
 
@@ -93,9 +90,6 @@ export class UploadImageComponent implements OnInit {
           .subscribe({
             next: () => {
               this.getImages(this.objectId, this.contentType);
-            },
-            error: err => {
-              console.log(err);
             },
           });
       },
