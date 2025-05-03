@@ -4,13 +4,13 @@ import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { SelectModule } from 'primeng/select';
 
 @Component({
-  selector: 'app-select-input',
+  selector: 'app-prime-select',
   standalone: true,
   imports: [ReactiveFormsModule, SelectModule],
-  templateUrl: './select-input.component.html',
-  styleUrl: './select-input.component.scss',
+  templateUrl: './prime-select.component.html',
+  styleUrl: './prime-select.component.scss',
 })
-export class SelectInputComponent {
+export class PrimeSelectComponent {
   @Input() form!: FormGroup;
   @Input() label!: string;
   @Input() controlName!: string;
