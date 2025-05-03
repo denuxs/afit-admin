@@ -2,19 +2,19 @@
   <div class="flex justify-between mb-2">
     <form [formGroup]="filterForm" (ngSubmit)="handleFilter()">
       <div class="flex space-x-2">
-        <app-form-field
+        <app-prime-input
           [form]="filterForm"
           placeholder="Buscar..."
           controlName="search"
           label="" />
 
-        <app-select-input
+        <app-prime-select
           [form]="filterForm"
           controlName="muscle"
           label=""
           [options]="muscles" />
 
-        <app-select-input
+        <app-prime-select
           [form]="filterForm"
           controlName="equipment"
           label=""

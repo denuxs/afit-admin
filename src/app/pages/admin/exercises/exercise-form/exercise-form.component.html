@@ -3,15 +3,15 @@
     [formGroup]="exerciseForm"
     (ngSubmit)="handleSubmit()"
     class="col-span-2">
-    <app-form-field [form]="exerciseForm" controlName="name" label="Nombre" />
+    <app-prime-input [form]="exerciseForm" controlName="name" label="Nombre" />
 
-    <app-select-input
+    <app-prime-select
       [form]="exerciseForm"
       controlName="muscle"
       label="Músculo"
       [options]="muscles" />
 
-    <app-select-input
+    <app-prime-select
       [form]="exerciseForm"
       controlName="equipment"
       label="Equipo"
