@@ -3,61 +3,19 @@
     [formGroup]="exerciseForm"
     (ngSubmit)="handleSubmit()"
     class="col-span-2">
-    <div class="mb-4">
-      <label for="name" class="form-label">Nombre</label>
-      <input
-        type="text"
-        id="name"
-        name="name"
-        pInputText
-        class="w-full"
-        formControlName="name" />
-      <p class="form-error">{{ checkErrors('name') }}</p>
-    </div>
+    <app-form-field [form]="exerciseForm" controlName="name" label="Nombre" />
 
-    @if (equipments$ | async; as equipments) {
-      <div class="mb-4">
-        <label for="equipments" class="form-label">Equipo</label>
-        <p-select
-          [options]="equipments.results"
-          optionLabel="name"
-          optionValue="id"
-          [filter]="true"
-          filterBy="name"
-          formControlName="equipment"
-          class="w-full">
-          <ng-template #selectedItem let-selectedOption>
-            <div>{{ selectedOption.name }}</div>
-          </ng-template>
-          <ng-template let-item #item>
-            <div>{{ item.name }}</div>
-          </ng-template>
-        </p-select>
-        <p class="form-error">{{ checkErrors('equipment') }}</p>
-      </div>
-    }
+    <app-select-input
+      [form]="exerciseForm"
+      controlName="muscle"
+      label="Músculo"
+      [options]="muscles" />
 
-    @if (muscles$ | async; as muscles) {
-      <div class="mb-4">
-        <label for="muscles" class="form-label">Músculo</label>
-        <p-select
-          [options]="muscles.results"
-          optionLabel="name"
-          optionValue="id"
-          [filter]="true"
-          filterBy="name"
-          formControlName="muscle"
-          class="w-full">
-          <ng-template #selectedItem let-selectedOption>
-            <div>{{ selectedOption.name }}</div>
-          </ng-template>
-          <ng-template let-item #item>
-            <div>{{ item.name }}</div>
-          </ng-template>
-        </p-select>
-        <p class="form-error">{{ checkErrors('muscle') }}</p>
-      </div>
-    }
+    <app-select-input
+      [form]="exerciseForm"
+      controlName="equipment"
+      label="Equipo"
+      [options]="equipments" />
 
     <div class="mb-4">
       <label for="description" class="form-label">Instrucciones</label>

@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 
@@ -12,7 +12,7 @@ import { ExerciseFormComponent } from '../exercise-form/exercise-form.component'
   templateUrl: './exercise-create.component.html',
   styleUrl: './exercise-create.component.scss',
 })
-export class ExerciseCreateComponent {
+export class ExerciseCreateComponent implements OnDestroy {
   private readonly _router = inject(Router);
 
   private readonly _exerciseService = inject(ExerciseService);

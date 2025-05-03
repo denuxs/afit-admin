@@ -25,7 +25,7 @@ export class ExerciseEditComponent implements OnInit {
   private readonly _unsubscribeAll: Subject<any> = new Subject<any>();
 
   exercise$!: Observable<Exercise>;
-  exerciseId: number = 0;
+  exerciseId = 0;
 
   ngOnInit(): void {
     const exerciseId = this._route.snapshot.paramMap.get('id');

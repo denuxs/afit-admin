@@ -1,9 +1,9 @@
-import { AsyncPipe, NgStyle } from '@angular/common';
 import {
   Component,
   EventEmitter,
   inject,
   Input,
+  OnDestroy,
   OnInit,
   Output,
 } from '@angular/core';
@@ -13,12 +13,11 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { map, Observable, Subject, takeUntil, tap } from 'rxjs';
+import { Subject } from 'rxjs';
 import { DomSanitizer } from '@angular/platform-browser';
-import { forkJoin } from 'rxjs';
 
-import { Catalog, CatalogList, Exercise, User } from 'app/domain';
-import { CatalogService, UserService } from 'app/services';
+import { Catalog, CatalogList, Exercise } from 'app/domain';
+import { CatalogService } from 'app/services';
 
 import { SelectModule } from 'primeng/select';
 import { EditorModule } from 'primeng/editor';
@@ -26,39 +25,39 @@ import { InputTextModule } from 'primeng/inputtext';
 
 import { FileUploadComponent } from 'app/components/file-upload/file-upload.component';
 import { ExerciseCommentsComponent } from '../exercise-comments/exercise-comments.component';
+import { FormFieldComponent } from 'app/components/form-field/form-field.component';
+import { SelectInputComponent } from 'app/components/select-input/select-input.component';
 @Component({
   selector: 'app-exercise-form',
   standalone: true,
   imports: [
     ReactiveFormsModule,
-    AsyncPipe,
-    NgStyle,
     EditorModule,
     SelectModule,
     FileUploadComponent,
     InputTextModule,
     ExerciseCommentsComponent,
+    FormFieldComponent,
+    SelectInputComponent,
   ],
   templateUrl: './exercise-form.component.html',
   styleUrl: './exercise-form.component.scss',
 })
-export class ExerciseFormComponent implements OnInit {
+export class ExerciseFormComponent implements OnInit, OnDestroy {
   private readonly _formBuilder = inject(FormBuilder);
   private readonly _sanitizer = inject(DomSanitizer);
 
   private readonly _catalogService = inject(CatalogService);
-  private readonly _userService = inject(UserService);
 
   private readonly _unsubscribeAll: Subject<any> = new Subject<any>();
 
   exerciseForm: FormGroup;
 
-  equipments$!: Observable<CatalogList>;
-  muscles$!: Observable<CatalogList>;
+  muscles!: Catalog[];
+  equipments!: Catalog[];
 
-  exerciseId: number = 0;
+  exerciseId = 0;
   photoField!: File;
-  user!: User;
 
   modules = {
     toolbar: [
@@ -84,13 +83,10 @@ export class ExerciseFormComponent implements OnInit {
       equipment: ['', [Validators.required]],
       muscle: ['', [Validators.required]],
     });
-
-    this.getUser();
   }
 
   ngOnInit(): void {
-    this.getEquipments();
-    this.getMuscles();
+    this.fetchCatalogs();
 
     if (this.exercise) {
       const { name, description, equipment, muscle } = this.exercise;
@@ -106,23 +102,18 @@ export class ExerciseFormComponent implements OnInit {
     }
   }
 
-  getUser() {
-    this._userService.user$.subscribe({
-      next: (response: User) => {
-        this.user = response;
+  fetchCatalogs(): void {
+    const params = {
+      ordering: '-id',
+    };
+    this._catalogService.fetchCatalogs(params).subscribe({
+      next: (catalogs: CatalogList) => {
+        const { results } = catalogs;
+        this.muscles = results.filter(catalog => catalog.key === 'muscle');
+        this.equipments = results.filter(
+          catalog => catalog.key === 'equipment'
+        );
       },
-    });
-  }
-
-  getMuscles() {
-    this.muscles$ = this._catalogService.fetchCatalogs({
-      key: 'muscle',
-    });
-  }
-
-  getEquipments() {
-    this.equipments$ = this._catalogService.fetchCatalogs({
-      key: 'equipment',
     });
   }
 
@@ -134,35 +125,17 @@ export class ExerciseFormComponent implements OnInit {
 
     const { name, description, equipment, muscle } = this.exerciseForm.value;
 
-    const user = this.user.id;
-
     const formData = new FormData();
     formData.append('name', name);
     formData.append('description', description);
     formData.append('equipment', equipment);
     formData.append('muscle', muscle);
-    formData.append('user', user.toString());
 
     if (this.photoField) {
       formData.append('image', this.photoField);
     }
 
     this.formChange.emit(formData);
-  }
-
-  checkErrors(field: string): string {
-    const form: any = this.exerciseForm.get(field);
-
-    if (form.invalid && (form.dirty || form.touched)) {
-      if (form?.hasError('required')) {
-        return 'Campo requerido';
-      }
-
-      // if (form?.hasError('email')) {
-      //   return 'Value is invalid';
-      // }
-    }
-    return '';
   }
 
   byPassHTML(html: string) {
