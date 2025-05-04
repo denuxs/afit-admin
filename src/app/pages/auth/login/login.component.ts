@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 
 import { Router } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
@@ -6,8 +6,6 @@ import { Subject, takeUntil } from 'rxjs';
 import { Toast } from 'primeng/toast';
 
 import { AuthService } from 'app/core/auth/auth.service';
-import { UserService } from 'app/services';
-import { User } from 'app/domain';
 import { LoginFormComponent } from './login-form/login-form.component';
 
 import { TranslocoService } from '@jsverse/transloco';
@@ -19,18 +17,15 @@ import { ToastMessageService } from 'app/core/services/toast-message.service';
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent implements OnDestroy {
   private readonly _router = inject(Router);
 
   private readonly _translocoService = inject(TranslocoService);
 
   private readonly _authService = inject(AuthService);
-  private readonly _userService = inject(UserService);
   private readonly _toastMessage = inject(ToastMessageService);
 
   private readonly _unsubscribeAll: Subject<any> = new Subject<any>();
-
-  ngOnInit(): void {}
 
   onFormChange(form: { username: string; password: string }) {
     this._authService
@@ -46,7 +41,7 @@ export class LoginComponent implements OnInit {
 
           this._router.navigateByUrl('/admin');
         },
-        error: (err) => {
+        error: err => {
           this.showToast('login.error');
         },
       });

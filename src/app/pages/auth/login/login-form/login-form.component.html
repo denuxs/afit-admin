@@ -1,28 +1,15 @@
-<ng-container *transloco="let t">
-  <form [formGroup]="loginForm" (ngSubmit)="handleSubmit()">
-    <div class="mb-2">
-      <label for="username" class="form-label">{{ t("login.username") }}</label>
-      <input type="text" pInputText fluid="true" formControlName="username" />
-      <p class="form-error">{{ checkErrors("username") }}</p>
-    </div>
+<form [formGroup]="loginForm" (ngSubmit)="handleSubmit()">
+  <app-prime-input [form]="loginForm" controlName="username" label="Usuario" />
 
-    <div class="mb-2">
-      <label for="password" class="form-label">{{ t("login.password") }}</label>
-      <p-password
-        formControlName="password"
-        fluid="true"
-        [toggleMask]="true"
-        [feedback]="false"
-      />
-      <p class="form-error">{{ checkErrors("password") }}</p>
-    </div>
+  <app-prime-password
+    [form]="loginForm"
+    controlName="password"
+    label="Contraseña" />
 
-    <button
-      class="btn-primary mt-4 w-full"
-      type="submit"
-      [disabled]="loginForm.invalid"
-    >
-      {{ t("login.login") }}
-    </button>
-  </form>
-</ng-container>
+  <button
+    class="btn-primary w-full"
+    type="submit"
+    [disabled]="loginForm.invalid">
+    Iniciar Sesión
+  </button>
+</form>

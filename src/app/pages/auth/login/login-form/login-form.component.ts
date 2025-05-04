@@ -8,7 +8,9 @@ import {
 
 import { PasswordModule } from 'primeng/password';
 import { InputTextModule } from 'primeng/inputtext';
-import { TranslocoDirective } from '@jsverse/transloco';
+
+import { PrimeInputComponent } from 'app/components/prime-input/prime-input.component';
+import { PrimePasswordComponent } from 'app/components/prime-password/prime-password.component';
 
 interface LoginForm {
   username: string;
@@ -22,7 +24,8 @@ interface LoginForm {
     ReactiveFormsModule,
     InputTextModule,
     PasswordModule,
-    TranslocoDirective,
+    PrimeInputComponent,
+    PrimePasswordComponent,
   ],
   templateUrl: './login-form.component.html',
   styleUrl: './login-form.component.scss',
@@ -36,8 +39,8 @@ export class LoginFormComponent {
 
   constructor() {
     this.loginForm = this._formBuilder.group({
-      username: ['admin', [Validators.required]],
-      password: ['endurance', [Validators.required]],
+      username: ['', [Validators.required]],
+      password: ['', [Validators.required]],
     });
   }
 
@@ -50,16 +53,5 @@ export class LoginFormComponent {
     const { username, password } = this.loginForm.value;
 
     this.formChange.emit({ username, password });
-  }
-
-  checkErrors(field: string): string {
-    const form: any = this.loginForm.get(field);
-
-    if (form.invalid && (form.dirty || form.touched)) {
-      if (form?.hasError('required')) {
-        return 'Campo requerido';
-      }
-    }
-    return '';
   }
 }
