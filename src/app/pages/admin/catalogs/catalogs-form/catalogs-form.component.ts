@@ -3,6 +3,7 @@ import {
   EventEmitter,
   inject,
   Input,
+  OnDestroy,
   OnInit,
   Output,
 } from '@angular/core';
@@ -13,19 +14,25 @@ import {
   UntypedFormBuilder,
   Validators,
 } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 
-import { Catalog, CatalogDto } from 'app/domain';
+import { Catalog } from 'app/domain';
 
 import { SelectModule } from 'primeng/select';
 import { InputTextModule } from 'primeng/inputtext';
+import {
+  DialogService,
+  DynamicDialogComponent,
+  DynamicDialogConfig,
+  DynamicDialogRef,
+} from 'primeng/dynamicdialog';
+import { MessageService } from 'primeng/api';
 
-import { UploadImageComponent } from 'app/components/upload-image/upload-image.component';
 import { CatalogService } from 'app/services';
 
-import { FormFieldComponent } from 'app/components/form-field/form-field.component';
-import { SelectInputComponent } from 'app/components/select-input/select-input.component';
+import { PrimeInputComponent } from 'app/components/prime-input/prime-input.component';
+import { PrimeSelectComponent } from 'app/components/prime-select/prime-select.component';
+import { FileUploadComponent } from 'app/components/file-upload/file-upload.component';
 
 @Component({
   selector: 'app-catalogs-form',
@@ -34,40 +41,29 @@ import { SelectInputComponent } from 'app/components/select-input/select-input.c
     ReactiveFormsModule,
     InputTextModule,
     SelectModule,
-    RouterLink,
-    UploadImageComponent,
-    FormFieldComponent,
-    SelectInputComponent,
+    PrimeInputComponent,
+    PrimeSelectComponent,
+    FileUploadComponent,
   ],
+  providers: [DialogService, MessageService],
   templateUrl: './catalogs-form.component.html',
   styleUrl: './catalogs-form.component.scss',
 })
-export class CatalogsFormComponent implements OnInit {
+export class CatalogsFormComponent implements OnInit, OnDestroy {
   private readonly _formBuilder = inject(UntypedFormBuilder);
-  private readonly _router = inject(Router);
+  private readonly _config = inject(DynamicDialogConfig);
+  private readonly _ref = inject(DynamicDialogRef);
 
   private readonly _unsubscribeAll: Subject<any> = new Subject<any>();
 
   private readonly _catalogService = inject(CatalogService);
 
-  @Input() catalog: Catalog | null = null;
-  @Output() formChange: EventEmitter<any> = new EventEmitter<any>();
-
   catalogForm: FormGroup;
+  catalog!: Catalog;
+  photoField!: File;
+  image = 'default.jpg';
 
-  catalogTypes = [
-    {
-      name: 'Musculo',
-      id: 'muscle',
-    },
-    {
-      name: 'Equipo',
-      id: 'equipment',
-    },
-  ];
-
-  contentType = 10;
-  objectId = 0;
+  categories = [];
 
   constructor() {
     this.catalogForm = this._formBuilder.group({
@@ -77,9 +73,18 @@ export class CatalogsFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    if (this.catalog) {
-      this.objectId = this.catalog.id;
-      this.setFormValue(this.catalog);
+    const config = this._config.data;
+    const { categories } = config;
+    this.categories = categories;
+
+    if ('catalog' in config) {
+      const { image } = config.catalog;
+      if (image) {
+        this.image = image;
+      }
+
+      this.catalog = config.catalog;
+      this.setFormValue(config.catalog);
     }
   }
 
@@ -99,41 +104,48 @@ export class CatalogsFormComponent implements OnInit {
 
     const { name, key } = this.catalogForm.value;
 
-    const form: CatalogDto = {
-      name,
-      key,
-    };
+    const formData = new FormData();
+    formData.append('name', name);
+    formData.append('key', key);
+
+    if (this.photoField) {
+      formData.append('image', this.photoField);
+    }
 
     if (this.catalog) {
-      this.update(this.catalog.id, form);
+      this.updateCatalog(this.catalog.id, formData);
       return;
     }
 
-    this.save(form);
+    this.createCatalog(formData);
   }
 
-  save(form: CatalogDto) {
+  createCatalog(form: FormData) {
     this._catalogService
-      .saveCatalog(form)
+      .create(form)
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe({
         next: () => {
-          this._router.navigateByUrl('/admin/catalogs');
+          this.closeDialog();
         },
         error: errors => this.setFormErrors(errors),
       });
   }
 
-  update(id: number, form: CatalogDto) {
+  updateCatalog(id: number, form: FormData) {
     this._catalogService
-      .updateCatalog(id, form)
+      .update(id, form)
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe({
         next: () => {
-          this._router.navigateByUrl('/admin/catalogs');
+          this.closeDialog();
         },
         error: errors => this.setFormErrors(errors),
       });
+  }
+
+  closeDialog() {
+    this._ref.close(true);
   }
 
   setFormErrors(errors: any) {
@@ -147,23 +159,16 @@ export class CatalogsFormComponent implements OnInit {
     this.catalogForm.markAllAsTouched();
   }
 
-  showErrors(key: string): string {
-    const field: any = this.catalogForm.get(key);
-
-    if (field.invalid && (field.dirty || field.touched)) {
-      if (field?.hasError('required')) {
-        return 'Campo requerido';
-      }
-
-      if (field?.hasError('server')) {
-        return field.errors['server'];
-      }
-    }
-    return '';
+  handleFile(file: File): void {
+    this.photoField = file;
   }
 
   ngOnDestroy(): void {
     this._unsubscribeAll.next(null);
     this._unsubscribeAll.complete();
+
+    if (this._ref) {
+      this._ref.close();
+    }
   }
 }

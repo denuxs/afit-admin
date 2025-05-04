@@ -9,17 +9,16 @@ import {
 import { RouterLink } from '@angular/router';
 
 import { TranslocoDirective } from '@jsverse/transloco';
-
-import { FormFieldComponent } from 'app/components/form-field/form-field.component';
-import { SelectInputComponent } from 'app/components/select-input/select-input.component';
+import { PrimeInputComponent } from 'app/components/prime-input/prime-input.component';
+import { PrimeSelectComponent } from 'app/components/prime-select/prime-select.component';
 
 @Component({
   selector: 'app-catalog-filter',
   standalone: true,
   imports: [
     ReactiveFormsModule,
-    FormFieldComponent,
-    SelectInputComponent,
+    PrimeInputComponent,
+    PrimeSelectComponent,
     RouterLink,
     TranslocoDirective,
   ],
