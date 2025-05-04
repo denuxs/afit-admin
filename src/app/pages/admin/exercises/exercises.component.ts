@@ -1,18 +1,27 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { AsyncPipe } from '@angular/common';
+import { AsyncPipe, DatePipe } from '@angular/common';
 import { Observable } from 'rxjs';
 
-import { Catalog, CatalogList, ExerciseList } from 'app/domain';
+import { Catalog, Exercise, ExerciseList } from 'app/domain';
 import { CatalogService, ExerciseService } from 'app/services';
 
-import { TableModule } from 'primeng/table';
-import { MessageService } from 'primeng/api';
 import { ProgressSpinner } from 'primeng/progressspinner';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
+import {
+  DialogService,
+  DynamicDialog,
+  DynamicDialogRef,
+} from 'primeng/dynamicdialog';
+import { TableModule } from 'primeng/table';
+import { TooltipModule } from 'primeng/tooltip';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 
+import { TranslocoDirective } from '@jsverse/transloco';
+
 import { ExerciseFilterComponent } from './exercise-filter/exercise-filter.component';
-import { ExerciseListComponent } from './exercise-list/exercise-list.component';
+import { ExerciseFormComponent } from './exercise-form/exercise-form.component';
 
 interface Params {
   search?: string;
@@ -27,27 +36,33 @@ interface Params {
   standalone: true,
   imports: [
     AsyncPipe,
+    DatePipe,
     TableModule,
     ExerciseFilterComponent,
     ProgressSpinner,
-    ExerciseListComponent,
     PaginatorModule,
     ToastModule,
+    ConfirmDialogModule,
+    TooltipModule,
+    TranslocoDirective,
   ],
-  providers: [MessageService],
+  providers: [MessageService, ConfirmationService, DialogService],
   templateUrl: './exercises.component.html',
   styleUrl: './exercises.component.scss',
 })
 export class ExercisesComponent implements OnInit {
+  private readonly _confirmationService = inject(ConfirmationService);
   private readonly _messageService = inject(MessageService);
+  private readonly _dialogService = inject(DialogService);
 
   private readonly _exerciseService = inject(ExerciseService);
   private readonly _catalogService = inject(CatalogService);
 
   exercises$!: Observable<ExerciseList>;
+  ref: DynamicDialogRef | undefined;
 
-  muscles!: Catalog[];
-  equipments!: Catalog[];
+  muscles: Catalog[] = [];
+  equipments: Catalog[] = [];
 
   first = 0;
   rows = 10;
@@ -62,23 +77,23 @@ export class ExercisesComponent implements OnInit {
   ngOnInit(): void {
     const params = this.getParams();
 
-    this.fetchCatalogs();
-    this.fetchData(params);
+    this.loadCatalogs();
+    this.loadData(params);
   }
 
-  fetchData(params: Params): void {
-    this.exercises$ = this._exerciseService.fetchExercises(params);
+  loadData(params: Params): void {
+    this.exercises$ = this._exerciseService.search(params);
   }
 
-  fetchCatalogs(): void {
+  loadCatalogs(): void {
     const params = {
       ordering: '-id',
+      paginator: null,
     };
-    this._catalogService.fetchCatalogs(params).subscribe({
-      next: (catalogs: CatalogList) => {
-        const { results } = catalogs;
-        this.muscles = results.filter(catalog => catalog.key === 'muscle');
-        this.equipments = results.filter(
+    this._catalogService.all(params).subscribe({
+      next: (catalogs: Catalog[]) => {
+        this.muscles = catalogs.filter(catalog => catalog.key === 'muscle');
+        this.equipments = catalogs.filter(
           catalog => catalog.key === 'equipment'
         );
       },
@@ -93,7 +108,7 @@ export class ExercisesComponent implements OnInit {
     const params = this.getParams();
     Object.assign(params, this.filters);
     params.page = page;
-    this.fetchData(params);
+    this.loadData(params);
   }
 
   handleFilter(filters: Params) {
@@ -102,18 +117,76 @@ export class ExercisesComponent implements OnInit {
     const params = this.getParams();
     Object.assign(params, filters);
 
-    this.fetchData(params);
+    this.loadData(params);
   }
 
-  handleDelete(event: { id: number; index: number }) {
-    if (!event.id) {
-      return;
-    }
+  openCreateDialog(): void {
+    this.ref = this._dialogService.open(ExerciseFormComponent, {
+      header: 'Crear Ejercicio',
+      modal: true,
+      position: 'top',
+      closable: true,
+      data: {
+        muscles: this.muscles,
+        equipments: this.equipments,
+      },
+    });
 
-    this._exerciseService.delete(event.id).subscribe({
+    this.ref.onClose.subscribe((data: any) => {
+      if (data) {
+        const params = this.getParams();
+        this.loadData(params);
+      }
+    });
+  }
+
+  openEditDialog(exercise: Exercise): void {
+    this.ref = this._dialogService.open(ExerciseFormComponent, {
+      header: 'Actualizar Ejercicio',
+      modal: true,
+      position: 'top',
+      closable: true,
+      data: {
+        muscles: this.muscles,
+        equipments: this.equipments,
+        exercise: exercise,
+      },
+    });
+
+    this.ref.onClose.subscribe((data: any) => {
+      if (data) {
+        const params = this.getParams();
+        this.loadData(params);
+      }
+    });
+  }
+
+  confirmDelete(id: number) {
+    this._confirmationService.confirm({
+      message: '¿Está seguro de borrar este ejercicio?',
+      header: 'Eliminar',
+      icon: 'pi pi-info-circle',
+      rejectLabel: 'Cancel',
+      rejectButtonProps: {
+        label: 'Cancelar',
+        severity: 'secondary',
+        outlined: true,
+      },
+      acceptButtonProps: {
+        label: 'Borrar',
+        severity: 'danger',
+      },
+      accept: () => {
+        this.handleDelete(id);
+      },
+    });
+  }
+
+  handleDelete(id: number) {
+    this._exerciseService.delete(id).subscribe({
       next: () => {
         const params = this.getParams();
-        this.fetchData(params);
+        this.loadData(params);
       },
       error: () => {
         this._messageService.add({

@@ -1,27 +1,26 @@
-import {
-  Component,
-  EventEmitter,
-  inject,
-  Input,
-  OnDestroy,
-  OnInit,
-  Output,
-} from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { Subject } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 import { DomSanitizer } from '@angular/platform-browser';
 
-import { Catalog, CatalogList, Exercise } from 'app/domain';
-import { CatalogService } from 'app/services';
+import { Catalog, Exercise } from 'app/domain';
+import { CatalogService, ExerciseService } from 'app/services';
 
 import { SelectModule } from 'primeng/select';
 import { EditorModule } from 'primeng/editor';
 import { InputTextModule } from 'primeng/inputtext';
+import {
+  DialogService,
+  DynamicDialogComponent,
+  DynamicDialogConfig,
+  DynamicDialogRef,
+} from 'primeng/dynamicdialog';
+import { MessageService } from 'primeng/api';
 
 import { FileUploadComponent } from 'app/components/file-upload/file-upload.component';
 import { ExerciseCommentsComponent } from '../exercise-comments/exercise-comments.component';
@@ -41,24 +40,27 @@ import { PrimeSelectComponent } from 'app/components/prime-select/prime-select.c
     PrimeInputComponent,
     PrimeSelectComponent,
   ],
+  providers: [DialogService, MessageService],
   templateUrl: './exercise-form.component.html',
   styleUrl: './exercise-form.component.scss',
 })
 export class ExerciseFormComponent implements OnInit, OnDestroy {
   private readonly _formBuilder = inject(FormBuilder);
   private readonly _sanitizer = inject(DomSanitizer);
+  private readonly _config = inject(DynamicDialogConfig);
+  private readonly _ref = inject(DynamicDialogRef);
 
-  private readonly _catalogService = inject(CatalogService);
+  private readonly _exerciseService = inject(ExerciseService);
 
   private readonly _unsubscribeAll: Subject<any> = new Subject<any>();
 
   exerciseForm: FormGroup;
-
-  muscles!: Catalog[];
-  equipments!: Catalog[];
-
-  exerciseId = 0;
+  exercise!: Exercise;
   photoField!: File;
+  image = 'default.jpg';
+
+  muscles: Catalog[] = [];
+  equipments: Catalog[] = [];
 
   modules = {
     toolbar: [
@@ -74,9 +76,6 @@ export class ExerciseFormComponent implements OnInit, OnDestroy {
     ],
   };
 
-  @Input() exercise: Exercise | null = null;
-  @Output() formChange: EventEmitter<any> = new EventEmitter<any>();
-
   constructor() {
     this.exerciseForm = this._formBuilder.group({
       name: ['', [Validators.required]],
@@ -87,35 +86,32 @@ export class ExerciseFormComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.fetchCatalogs();
+    const config = this._config.data;
+    const { muscles, equipments } = config;
+    this.muscles = muscles;
+    this.equipments = equipments;
 
-    if (this.exercise) {
-      const { name, description, equipment, muscle } = this.exercise;
+    if ('exercise' in config) {
+      const { image } = config.exercise;
+      if (image) {
+        this.image = image;
+      }
 
-      const form = {
-        name,
-        description,
-        equipment: equipment.id,
-        muscle: muscle.id,
-      };
-
-      this.exerciseForm.patchValue(form);
+      this.exercise = config.exercise;
+      this.setFormValue(config.exercise);
     }
   }
 
-  fetchCatalogs(): void {
-    const params = {
-      ordering: '-id',
+  setFormValue(exercise: Exercise) {
+    const form = {
+      name: exercise.name,
+      key: exercise.description,
+      equipment: exercise.equipment.id,
+      muscle: exercise.muscle.id,
+      description: exercise.description,
     };
-    this._catalogService.fetchCatalogs(params).subscribe({
-      next: (catalogs: CatalogList) => {
-        const { results } = catalogs;
-        this.muscles = results.filter(catalog => catalog.key === 'muscle');
-        this.equipments = results.filter(
-          catalog => catalog.key === 'equipment'
-        );
-      },
-    });
+
+    this.exerciseForm.patchValue(form);
   }
 
   handleSubmit(): void {
@@ -136,19 +132,67 @@ export class ExerciseFormComponent implements OnInit, OnDestroy {
       formData.append('image', this.photoField);
     }
 
-    this.formChange.emit(formData);
+    if (this.exercise) {
+      this.updateCatalog(this.exercise.id, formData);
+      return;
+    }
+
+    this.createCatalog(formData);
+  }
+
+  createCatalog(form: FormData) {
+    this._exerciseService
+      .create(form)
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe({
+        next: () => {
+          this.closeDialog();
+        },
+        error: errors => this.setFormErrors(errors),
+      });
+  }
+
+  updateCatalog(id: number, form: FormData) {
+    this._exerciseService
+      .update(id, form)
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe({
+        next: () => {
+          this.closeDialog();
+        },
+        error: errors => this.setFormErrors(errors),
+      });
+  }
+
+  closeDialog() {
+    this._ref.close(true);
+  }
+
+  setFormErrors(errors: any) {
+    for (const field in errors) {
+      if (this.exerciseForm.controls[field]) {
+        const control = this.exerciseForm.get(field);
+        control?.setErrors({ server: errors[field].join(' ') });
+      }
+    }
+
+    this.exerciseForm.markAllAsTouched();
+  }
+
+  handleFile(file: File): void {
+    this.photoField = file;
   }
 
   byPassHTML(html: string) {
     return this._sanitizer.bypassSecurityTrustHtml(html);
   }
 
-  onUploadImage(file: File): void {
-    this.photoField = file;
-  }
-
   ngOnDestroy(): void {
     this._unsubscribeAll.next(null);
     this._unsubscribeAll.complete();
+
+    if (this._ref) {
+      this._ref.close();
+    }
   }
 }
