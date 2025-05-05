@@ -2,13 +2,17 @@
 
 SPA para crear rutinas de gimnasio. (**En desarrollo**)
 
-El API esta en Django 5 [github.com/denuxs/gym_api](https://github.com/denuxs/gym_api)
+- El API esta en Django 5 [github.com/denuxs/gym_api](https://github.com/denuxs/gym_api)
+- Usuario: admin / contraseña: endurance
+
+- Nota: hay archivos que no estan versionados por que estan en desarrollo
 
 ### Paquetes
 
 - Angular 18
 - Tailwind 3
 - Angular PWA
+- Primeng
 
 ### Funcionalidades
 
@@ -31,16 +35,15 @@ ng server
 
 ### Development server
 
-- Backend en Python AnyWhere
-- Frontend en Netflify
+- Backend hosting en PythonanyWhere
+- Frontend hosting en Netflify
 
 ### TO DO
 
+- Mejorar UI/UX
 - Refactorizar component a smart/dumb
-- Paginación
 - Autenticación con cookies
 - Responsive design
-- UI/UX
 - Unit Tests
 - Completar traducciones
 - Completar notificaciones push
