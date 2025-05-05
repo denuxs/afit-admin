@@ -37,8 +37,8 @@ export class SidebarComponent implements OnInit {
     },
     {
       id: 2,
-      link: '/admin/users',
-      label: 'Usuarios',
+      link: '/admin/clients',
+      label: 'Clientes',
       icon: 'pi pi-users',
     },
     {
@@ -54,7 +54,7 @@ export class SidebarComponent implements OnInit {
       icon: 'pi pi-bars',
     },
     {
-      id: 10,
+      id: 5,
       link: '/admin/profile',
       label: 'Mi Perfil',
       icon: 'pi pi-user',

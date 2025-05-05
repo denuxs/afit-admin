@@ -41,7 +41,7 @@ export const routes: Routes = [
         loadChildren: () => import('./pages/admin/exercises/exercises.routes'),
       },
       {
-        path: 'users',
+        path: 'clients',
         loadChildren: () => import('./pages/admin/users/users.routes'),
       },
       {

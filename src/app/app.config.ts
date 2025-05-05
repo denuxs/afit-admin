@@ -11,6 +11,9 @@ import {
   provideRouter,
   withEnabledBlockingInitialNavigation,
   withInMemoryScrolling,
+  withComponentInputBinding,
+  withPreloading,
+  PreloadAllModules,
 } from '@angular/router';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
@@ -19,7 +22,9 @@ import { provideServiceWorker } from '@angular/service-worker';
 import { routes } from './app.routes';
 import { authInterceptor } from './core/interceptors/auth.interceptor';
 import { httpErrorInterceptor } from './core/interceptors/http-error.interceptor';
+
 import { provideQuillConfig } from 'ngx-quill';
+
 import { providePrimeNG } from 'primeng/config';
 import Aura from '@primeng/themes/aura';
 import { definePreset } from '@primeng/themes';
@@ -54,9 +59,11 @@ export const appConfig: ApplicationConfig = {
         scrollPositionRestoration: 'enabled',
       }),
       withEnabledBlockingInitialNavigation(),
+      withComponentInputBinding(),
+      withPreloading(PreloadAllModules)
     ),
     provideHttpClient(
-      withInterceptors([authInterceptor, httpErrorInterceptor]),
+      withInterceptors([authInterceptor, httpErrorInterceptor])
     ),
     {
       provide: ENVIRONMENT_INITIALIZER,
@@ -67,7 +74,7 @@ export const appConfig: ApplicationConfig = {
     providePrimeNG({
       theme: {
         preset: Aura,
-        options: { darkModeSelector: '.app-dark' },
+        // options: { darkModeSelector: '.app-dark' },
       },
     }),
     provideServiceWorker('ngsw-worker.js', {

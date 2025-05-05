@@ -7,6 +7,9 @@ import { ToastMessageService } from './core/services/toast-message.service';
 
 import { MessageService } from 'primeng/api';
 
+import { initializeApp } from 'firebase/app';
+import { getMessaging, onMessage } from 'firebase/messaging';
+
 @Component({
   selector: 'app-root',
   standalone: true,
@@ -20,14 +23,17 @@ export class AppComponent implements OnInit {
   private readonly _messageService = inject(MessageService);
   private readonly _toastMessageService = inject(ToastMessageService);
 
-  constructor() {}
+  constructor() {
+    // const app = initializeApp(environment.firebaseConfig);
+    // this.messaging = getMessaging(app);
+  }
 
   ngOnInit(): void {
     if (this._updateService.isEnabled) {
       this.checkForUpdate();
     }
 
-    this._toastMessageService.message$.subscribe((message) => {
+    this._toastMessageService.message$.subscribe(message => {
       this._messageService.add({
         severity: 'error',
         summary: 'Error',
@@ -39,11 +45,7 @@ export class AppComponent implements OnInit {
   async checkForUpdate() {
     try {
       const updateFound = await this._updateService.checkForUpdate();
-      console.log(
-        updateFound
-          ? 'A new version is available.'
-          : 'Already on the latest version.',
-      );
+
       if (updateFound) {
         if (confirm('New version available. Load new version?')) {
           // Reload the page to update to the latest version.
