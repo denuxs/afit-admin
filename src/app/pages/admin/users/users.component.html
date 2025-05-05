@@ -1,9 +1,99 @@
 <h1 class="mb-4">Usuarios</h1>
 
-<app-user-filter (filterChange)="handleFilter($event)" />
+<div class="flex justify-between">
+  <app-user-filter (filterChange)="handleFilter($event)" />
+
+  <div>
+    <a href="#" routerLink="create" class="btn-primary inline-block"
+      ><i class="pi pi-plus"></i> Nuevo</a
+    >
+  </div>
+</div>
 
 @if (users$ | async; as data) {
-  <app-user-list [data]="data" (deleteChange)="handleDelete($event)" />
+  <p-table [value]="data.results" stripedRows>
+    <ng-template #header>
+      <tr>
+        <th></th>
+        <th>Usuario</th>
+        <th>Admin</th>
+        <th>Activo</th>
+        <th>Último Acceso</th>
+        <th>Creado</th>
+        <th></th>
+        <th></th>
+        <th></th>
+      </tr>
+    </ng-template>
+    <ng-template #body let-item let-rowIndex="rowIndex">
+      <tr>
+        <td>{{ rowIndex + 1 }}</td>
+        <td>
+          {{ item.first_name }} {{ item.last_name }} ({{ item.username }})
+        </td>
+        <td>
+          @if (item.is_superuser) {
+            <ng-icon
+              class="text-green-500 text-xl"
+              name="faSolidCircleCheck"></ng-icon>
+          } @else {
+            <ng-icon
+              class="text-red-500 text-xl"
+              name="faSolidCircleCheck"></ng-icon>
+          }
+        </td>
+        <td>
+          @if (item.is_active) {
+            <ng-icon
+              class="text-green-500 text-xl"
+              name="faSolidCircleCheck"></ng-icon>
+          } @else {
+            <ng-icon
+              class="text-red-500 text-xl"
+              name="faSolidCircleCheck"></ng-icon>
+          }
+        </td>
+        <td>
+          @if (item.last_login) {
+            {{ item.last_login | timeAgo }}
+          }
+        </td>
+        <td>{{ item.date_joined | date: 'mediumDate' }}</td>
+        <td>
+          <a
+            href="#"
+            pTooltip="Detaille"
+            tooltipPosition="top"
+            [routerLink]="[item.id, 'view']"
+            class="text-blue-600"
+            ><i class="pi pi-eye"></i
+          ></a>
+        </td>
+        <td>
+          <a
+            href="#"
+            pTooltip="Editar"
+            tooltipPosition="top"
+            [routerLink]="[item.id, 'edit']"
+            class="text-blue-600"
+            ><i class="pi pi-pen-to-square"></i
+          ></a>
+        </td>
+        <td>
+          @if (!item.is_superuser) {
+            <button
+              type="button"
+              pTooltip="Borrar"
+              tooltipPosition="top"
+              (click)="confirmDelete(item.id)"
+              class="text-red-600">
+              <i class="pi pi-trash"></i>
+            </button>
+          }
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
 
   <p-paginator
     showCurrentPageReport="true"
@@ -16,4 +106,5 @@
   <p-progressSpinner [style]="{ width: '40px', height: '40px' }" />
 }
 
+<p-confirmdialog />
 <p-toast />

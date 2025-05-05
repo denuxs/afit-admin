@@ -3,9 +3,7 @@ import {
   inject,
   DestroyRef,
   OnInit,
-  Input,
-  Output,
-  EventEmitter,
+  OnDestroy,
 } from '@angular/core';
 import {
   FormBuilder,
@@ -13,17 +11,20 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { Subject } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
+import { ActivatedRoute, Router } from '@angular/router';
 
 import { User } from 'app/domain';
 import { FileUploadComponent } from 'app/components/file-upload/file-upload.component';
 
-import { Password } from 'primeng/password';
 import { SelectModule } from 'primeng/select';
 import { CheckboxModule } from 'primeng/checkbox';
 import { InputTextModule } from 'primeng/inputtext';
 
-import { UploadImageComponent } from 'app/components/upload-image/upload-image.component';
+import { UserService } from 'app/services';
+import { PrimeInputComponent } from 'app/components/prime-input/prime-input.component';
+import { PrimeSelectComponent } from 'app/components/prime-select/prime-select.component';
+
 @Component({
   selector: 'app-user-form',
   standalone: true,
@@ -33,25 +34,28 @@ import { UploadImageComponent } from 'app/components/upload-image/upload-image.c
     CheckboxModule,
     FileUploadComponent,
     InputTextModule,
-    UploadImageComponent,
+    PrimeInputComponent,
+    PrimeSelectComponent,
   ],
   templateUrl: './user-form.component.html',
   styleUrl: './user-form.component.scss',
 })
-export class UserFormComponent implements OnInit {
+export class UserFormComponent implements OnInit, OnDestroy {
+  private readonly _route = inject(ActivatedRoute);
+  private readonly _router = inject(Router);
   private readonly _formBuilder = inject(FormBuilder);
 
+  private readonly _userService = inject(UserService);
   private readonly _unsubscribeAll: Subject<any> = new Subject<any>();
 
-  @Input() user: User | null = null;
-  @Output() formChange: EventEmitter<any> = new EventEmitter<any>();
-
   userForm: FormGroup;
+  user!: User;
   destroyRef = inject(DestroyRef);
 
   photoField!: File;
+  image = 'default.jpg';
 
-  genders: any[] = [
+  genders = [
     {
       name: 'Masculino',
       id: 'male',
@@ -62,21 +66,19 @@ export class UserFormComponent implements OnInit {
     },
   ];
 
-  contentType = 8;
-  objectId = 0;
-
   constructor() {
     this.userForm = this._formBuilder.group({
       username: ['', [Validators.required]],
-      // email: ['', [Validators.required]],
       first_name: ['', [Validators.required]],
       last_name: ['', [Validators.required]],
       gender: ['', [Validators.required]],
       password: ['', []],
       phone: [0, [Validators.required, Validators.max(99999999)]],
       age: [0, [Validators.required, Validators.max(99)]],
+      weight: [0, []],
+      height: [0, []],
+      experience_level: ['', []],
       is_active: [true, []],
-      // is_superuser: ['', []],
     });
 
     this.userForm.patchValue({
@@ -85,10 +87,26 @@ export class UserFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    if (this.user) {
-      this.objectId = this.user.id;
-      this.setFormFields(this.user);
+    const userId = this._route.snapshot.paramMap.get('id');
+    if (userId) {
+      this.getUser(Number(userId));
     }
+  }
+
+  getUser(userId: number) {
+    this._userService
+      .get(userId)
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe({
+        next: (user: User) => {
+          this.user = user;
+
+          this.setFormFields(user);
+          if (user.photo) {
+            this.image = user.photo;
+          }
+        },
+      });
   }
 
   setFormFields(user: User) {
@@ -101,6 +119,9 @@ export class UserFormComponent implements OnInit {
       gender: user.gender,
       is_active: user.is_active,
       password: '',
+      weight: user.weight,
+      height: user.height,
+      experience_level: user.experience_level,
       // is_superuser: user.is_superuser,
     };
 
@@ -130,6 +151,9 @@ export class UserFormComponent implements OnInit {
     formData.append('first_name', form.first_name);
     formData.append('last_name', form.last_name);
     formData.append('gender', form.gender);
+    formData.append('weight', form.weight);
+    formData.append('height', form.height);
+    formData.append('experience_level', form.experience_level);
     formData.append('is_active', Number(form.is_active).toString());
 
     if (form.password) {
@@ -140,25 +164,52 @@ export class UserFormComponent implements OnInit {
       formData.append('photo', this.photoField);
     }
 
-    this.formChange.emit(formData);
+    if (this.user) {
+      this.updateCatalog(this.user.id, formData);
+      return;
+    }
+
+    this.createCatalog(formData);
   }
 
-  checkErrors(field: string): string {
-    const form: any = this.userForm.get(field);
+  createCatalog(form: FormData) {
+    this._userService
+      .create(form)
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe({
+        next: () => {
+          const url = `/admin/users`;
+          this._router.navigateByUrl(url);
+        },
+        error: errors => this.setFormErrors(errors),
+      });
+  }
 
-    if (form.invalid && (form.dirty || form.touched)) {
-      if (form?.hasError('required')) {
-        return 'Campo requerido';
-      }
+  updateCatalog(id: number, form: FormData) {
+    this._userService
+      .update(id, form)
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe({
+        next: () => {
+          const url = `/admin/users`;
+          this._router.navigateByUrl(url);
+        },
+        error: errors => this.setFormErrors(errors),
+      });
+  }
 
-      if (form?.hasError('max')) {
-        return 'Value is invalid';
+  setFormErrors(errors: any) {
+    for (const field in errors) {
+      if (this.userForm.controls[field]) {
+        const control = this.userForm.get(field);
+        control?.setErrors({ server: errors[field].join(' ') });
       }
     }
-    return '';
+
+    this.userForm.markAllAsTouched();
   }
 
-  onUploadImage(file: File): void {
+  handleFile(file: File): void {
     this.photoField = file;
   }
 

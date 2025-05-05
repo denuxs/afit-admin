@@ -1,117 +1,55 @@
-<div class="grid grid-cols-2 gap-4">
-  <div>
-    <form [formGroup]="userForm" (ngSubmit)="handleSubmit()">
-      <div class="flex gap-2 mb-2">
-        <div class="flex flex-col flex-auto">
-          <label for="first_name" class="form-label">Nombres</label>
-          <input
-            type="text"
-            id="first_name"
-            name="first_name"
-            pInputText
-            class="w-full"
-            formControlName="first_name" />
-          <p class="form-error">{{ checkErrors('first_name') }}</p>
-        </div>
-        <div class="flex flex-col flex-auto">
-          <label for="last_name" class="form-label">Apellidos</label>
-          <input
-            type="text"
-            id="last_name"
-            name="last_name"
-            pInputText
-            class="w-full"
-            formControlName="last_name" />
-          <p class="form-error">{{ checkErrors('last_name') }}</p>
-        </div>
-      </div>
+<div class="w-1/2">
+  <form [formGroup]="userForm" (ngSubmit)="handleSubmit()">
+    <app-file-upload [image]="image" (fileChange)="handleFile($event)" />
 
-      <div class="flex gap-2 mb-2">
-        <div class="flex flex-col flex-auto">
-          <label for="gender" class="form-label">Género</label>
-          <p-select
-            [options]="genders"
-            optionLabel="name"
-            optionValue="id"
-            formControlName="gender"
-            class="w-full">
-            <ng-template #selectedItem let-selectedOption>
-              <div>{{ selectedOption.name }}</div>
-            </ng-template>
-            <ng-template let-item #item>
-              <div>{{ item.name }}</div>
-            </ng-template>
-          </p-select>
+    <div class="flex gap-2">
+      <app-prime-input
+        [form]="userForm"
+        controlName="first_name"
+        label="Nombres" />
+      <app-prime-input
+        [form]="userForm"
+        controlName="last_name"
+        label="Apellidos" />
+    </div>
 
-          <p class="form-error">{{ checkErrors('gender') }}</p>
-        </div>
-        <div class="flex flex-col flex-auto">
-          <label for="phone" class="form-label">Teléfono</label>
-          <input
-            type="number"
-            id="phone"
-            name="phone"
-            pInputText
-            class="w-full"
-            formControlName="phone" />
-          <p class="form-error">{{ checkErrors('phone') }}</p>
-        </div>
-        <div class="flex flex-col flex-auto">
-          <label for="age" class="form-label">Edad</label>
-          <input
-            type="number"
-            id="age"
-            name="age"
-            pInputText
-            class="w-full"
-            formControlName="age" />
-          <p class="form-error">{{ checkErrors('age') }}</p>
-        </div>
-      </div>
+    <div class="flex gap-2">
+      <app-prime-select
+        [form]="userForm"
+        controlName="gender"
+        label="Genero"
+        [options]="genders" />
+      <app-prime-input [form]="userForm" controlName="phone" label="Telefono" />
+      <app-prime-input [form]="userForm" controlName="age" label="Edad" />
+    </div>
 
-      <div class="mb-2 flex flex-col">
-        <label for="username" class="form-label">Usuario</label>
-        <input
-          type="text"
-          id="username"
-          name="username"
-          pInputText
-          class="w-full"
-          formControlName="username" />
-        <small class="mt-1 text-sm text-gray-500"
-          >Usuario no puede contener espacios</small
-        >
-        <p class="form-error">{{ checkErrors('username') }}</p>
-      </div>
+    <div class="flex gap-2">
+      <app-prime-input [form]="userForm" controlName="weight" label="Peso" />
+      <app-prime-input [form]="userForm" controlName="height" label="Altura" />
+      <app-prime-input
+        [form]="userForm"
+        controlName="experience_level"
+        label="Experiencia" />
+    </div>
 
-      <div class="mb-4 flex flex-col">
-        <label for="password" class="form-label">Contraseña</label>
-        <input
-          type="text"
-          id="password"
-          name="password"
-          pInputText
-          class="w-full"
-          formControlName="password" />
-        <p class="form-error">{{ checkErrors('password') }}</p>
-      </div>
+    <app-prime-input [form]="userForm" controlName="username" label="Usuario" />
 
-      <div class="flex items-center">
-        <p-checkbox
-          inputId="is_active"
-          name="is_active"
-          [binary]="true"
-          formControlName="is_active" />
-        <label for="is_active" class="ml-2">Es Activo?</label>
-        <p class="form-error">{{ checkErrors('is_active') }}</p>
-      </div>
+    <app-prime-input
+      [form]="userForm"
+      controlName="password"
+      label="Contraseña" />
 
-      <div class="flex justify-end">
-        <button class="btn-primary mt-4" type="submit">Guardar</button>
-      </div>
-    </form>
-  </div>
-  <div>
-    <app-upload-image [contentType]="contentType" [objectId]="objectId" />
-  </div>
+    <div class="flex items-center">
+      <p-checkbox
+        inputId="is_active"
+        name="is_active"
+        [binary]="true"
+        formControlName="is_active" />
+      <label for="is_active" class="ml-2">Es Activo?</label>
+    </div>
+
+    <div class="flex justify-end">
+      <button class="btn-primary mt-4" type="submit">Guardar</button>
+    </div>
+  </form>
 </div>

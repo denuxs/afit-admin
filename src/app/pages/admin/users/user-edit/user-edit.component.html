@@ -1,7 +1,0 @@
-<h1 class="mb-4">Editar Usuario</h1>
-
-@if (user$ | async; as user) {
-  <app-user-form (formChange)="onFormChange($event)" [user]="user" />
-} @else {
-  <p-progressSpinner />
-}

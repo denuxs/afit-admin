@@ -1,18 +1,24 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { AsyncPipe } from '@angular/common';
+import { AsyncPipe, DatePipe } from '@angular/common';
 import { Observable } from 'rxjs';
+import { RouterLink } from '@angular/router';
 
 import { TableModule } from 'primeng/table';
-import { MessageService } from 'primeng/api';
 import { ProgressSpinner } from 'primeng/progressspinner';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { ToastModule } from 'primeng/toast';
+import { ConfirmationService, MessageService } from 'primeng/api';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { TooltipModule } from 'primeng/tooltip';
 
 import { UserFilterComponent } from './user-filter/user-filter.component';
-import { UserListComponent } from './user-list/user-list.component';
 import { UserService } from 'app/services';
 import { UserList } from 'app/domain';
 
+import { NgIcon, provideIcons } from '@ng-icons/core';
+import { faSolidCircleCheck } from '@ng-icons/font-awesome/solid';
+
+import { TimeAgoPipe } from 'app/pipes/time-ago.pipe';
 interface Params {
   search?: string;
   ordering?: string;
@@ -27,15 +33,25 @@ interface Params {
     TableModule,
     UserFilterComponent,
     ProgressSpinner,
-    UserListComponent,
     PaginatorModule,
+    TooltipModule,
+    ConfirmDialogModule,
     ToastModule,
+    NgIcon,
+    TimeAgoPipe,
+    DatePipe,
+    RouterLink,
   ],
-  providers: [MessageService],
+  providers: [
+    MessageService,
+    ConfirmationService,
+    provideIcons({ faSolidCircleCheck }),
+  ],
   templateUrl: './users.component.html',
   styleUrl: './users.component.scss',
 })
 export class UsersComponent implements OnInit {
+  private readonly _confirmationService = inject(ConfirmationService);
   private readonly _messageService = inject(MessageService);
 
   private readonly _userService = inject(UserService);
@@ -53,11 +69,11 @@ export class UsersComponent implements OnInit {
   ngOnInit(): void {
     const params = this.getParams();
 
-    this.fetchData(params);
+    this.loadData(params);
   }
 
-  fetchData(params: Params): void {
-    this.users$ = this._userService.getUsers(params);
+  loadData(params: Params): void {
+    this.users$ = this._userService.search(params);
   }
 
   handlePage(event: PaginatorState) {
@@ -68,7 +84,7 @@ export class UsersComponent implements OnInit {
     const params = this.getParams();
     Object.assign(params, this.filters);
     params.page = page;
-    this.fetchData(params);
+    this.loadData(params);
   }
 
   handleFilter(filters: Params) {
@@ -77,18 +93,35 @@ export class UsersComponent implements OnInit {
     const params = this.getParams();
     Object.assign(params, filters);
 
-    this.fetchData(params);
+    this.loadData(params);
   }
 
-  handleDelete(event: { id: number; index: number }) {
-    if (!event.id) {
-      return;
-    }
+  confirmDelete(id: number) {
+    this._confirmationService.confirm({
+      message: '¿Está seguro de borrar este catálogo?',
+      header: 'Eliminar',
+      icon: 'pi pi-info-circle',
+      rejectLabel: 'Cancel',
+      rejectButtonProps: {
+        label: 'Cancelar',
+        severity: 'secondary',
+        outlined: true,
+      },
+      acceptButtonProps: {
+        label: 'Borrar',
+        severity: 'danger',
+      },
+      accept: () => {
+        this.handleDelete(id);
+      },
+    });
+  }
 
-    this._userService.delete(event.id).subscribe({
+  handleDelete(id: number) {
+    this._userService.delete(id).subscribe({
       next: () => {
         const params = this.getParams();
-        this.fetchData(params);
+        this.loadData(params);
       },
       error: () => {
         this._messageService.add({
