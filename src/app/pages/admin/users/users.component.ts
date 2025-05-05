@@ -16,7 +16,11 @@ import { UserService } from 'app/services';
 import { UserList } from 'app/domain';
 
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { faSolidCircleCheck } from '@ng-icons/font-awesome/solid';
+import {
+  faSolidCircleCheck,
+  faSolidDumbbell,
+  faSolidPenToSquare,
+} from '@ng-icons/font-awesome/solid';
 
 import { TimeAgoPipe } from 'app/pipes/time-ago.pipe';
 interface Params {
@@ -45,7 +49,7 @@ interface Params {
   providers: [
     MessageService,
     ConfirmationService,
-    provideIcons({ faSolidCircleCheck }),
+    provideIcons({ faSolidCircleCheck, faSolidPenToSquare, faSolidDumbbell }),
   ],
   templateUrl: './users.component.html',
   styleUrl: './users.component.scss',

@@ -1,4 +1,4 @@
-<h1 class="mb-4">Usuarios</h1>
+<h1 class="mb-4">Clientes</h1>
 
 <div class="flex justify-between">
   <app-user-filter (filterChange)="handleFilter($event)" />
@@ -13,7 +13,7 @@
 @if (users$ | async; as data) {
   <p-table [value]="data.results" stripedRows>
     <ng-template #header>
-      <tr>
+      <tr class="uppercase">
         <th></th>
         <th>Usuario</th>
         <th>Admin</th>
@@ -33,24 +33,16 @@
         </td>
         <td>
           @if (item.is_superuser) {
-            <ng-icon
-              class="text-green-500 text-xl"
-              name="faSolidCircleCheck"></ng-icon>
+            <ng-icon class="text-green-500" name="faSolidCircleCheck"></ng-icon>
           } @else {
-            <ng-icon
-              class="text-red-500 text-xl"
-              name="faSolidCircleCheck"></ng-icon>
+            <ng-icon class="text-red-500" name="faSolidCircleCheck"></ng-icon>
           }
         </td>
         <td>
           @if (item.is_active) {
-            <ng-icon
-              class="text-green-500 text-xl"
-              name="faSolidCircleCheck"></ng-icon>
+            <ng-icon class="text-green-500" name="faSolidCircleCheck"></ng-icon>
           } @else {
-            <ng-icon
-              class="text-red-500 text-xl"
-              name="faSolidCircleCheck"></ng-icon>
+            <ng-icon class="text-red-500" name="faSolidCircleCheck"></ng-icon>
           }
         </td>
         <td>
@@ -62,12 +54,12 @@
         <td>
           <a
             href="#"
-            pTooltip="Detaille"
+            pTooltip="Rutinas"
             tooltipPosition="top"
-            [routerLink]="[item.id, 'view']"
-            class="text-blue-600"
-            ><i class="pi pi-eye"></i
-          ></a>
+            [routerLink]="[item.id, 'view', 'workouts', item.id]"
+            class="text-blue-600">
+            <ng-icon name="faSolidDumbbell"></ng-icon>
+          </a>
         </td>
         <td>
           <a
@@ -75,8 +67,8 @@
             pTooltip="Editar"
             tooltipPosition="top"
             [routerLink]="[item.id, 'edit']"
-            class="text-blue-600"
-            ><i class="pi pi-pen-to-square"></i
+            class="text-blue-600">
+            <ng-icon name="faSolidPenToSquare"></ng-icon
           ></a>
         </td>
         <td>

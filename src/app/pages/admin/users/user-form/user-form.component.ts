@@ -12,14 +12,12 @@ import {
   Validators,
 } from '@angular/forms';
 import { Subject, takeUntil } from 'rxjs';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
 import { User } from 'app/domain';
 import { FileUploadComponent } from 'app/components/file-upload/file-upload.component';
 
-import { SelectModule } from 'primeng/select';
 import { CheckboxModule } from 'primeng/checkbox';
-import { InputTextModule } from 'primeng/inputtext';
 
 import { UserService } from 'app/services';
 import { PrimeInputComponent } from 'app/components/prime-input/prime-input.component';
@@ -30,10 +28,9 @@ import { PrimeSelectComponent } from 'app/components/prime-select/prime-select.c
   standalone: true,
   imports: [
     ReactiveFormsModule,
-    SelectModule,
+    RouterLink,
     CheckboxModule,
     FileUploadComponent,
-    InputTextModule,
     PrimeInputComponent,
     PrimeSelectComponent,
   ],
@@ -54,6 +51,7 @@ export class UserFormComponent implements OnInit, OnDestroy {
 
   photoField!: File;
   image = 'default.jpg';
+  title = 'Crear Cliente';
 
   genders = [
     {
@@ -89,6 +87,7 @@ export class UserFormComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     const userId = this._route.snapshot.paramMap.get('id');
     if (userId) {
+      this.title = 'Editar Cliente';
       this.getUser(Number(userId));
     }
   }
@@ -178,7 +177,7 @@ export class UserFormComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe({
         next: () => {
-          const url = `/admin/users`;
+          const url = `/admin/clients`;
           this._router.navigateByUrl(url);
         },
         error: errors => this.setFormErrors(errors),
@@ -191,7 +190,7 @@ export class UserFormComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe({
         next: () => {
-          const url = `/admin/users`;
+          const url = `/admin/clients`;
           this._router.navigateByUrl(url);
         },
         error: errors => this.setFormErrors(errors),

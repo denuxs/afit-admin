@@ -1,96 +1,106 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { AsyncPipe, DatePipe, NgIf } from '@angular/common';
-import { ActivatedRoute, RouterLink } from '@angular/router';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { AsyncPipe, DatePipe } from '@angular/common';
 import { Observable } from 'rxjs';
 
-import { Workout } from 'app/domain';
+import { WorkoutList } from 'app/domain';
 import { WorkoutService } from 'app/services';
-import { YesNoPipe } from 'app/pipes/yes-no.pipe';
 
 import { TableModule } from 'primeng/table';
-import { TooltipModule } from 'primeng/tooltip';
-import { TagModule } from 'primeng/tag';
-
-import { ConfirmDialogModule } from 'primeng/confirmdialog';
-import { ConfirmationService } from 'primeng/api';
+import { ProgressSpinner } from 'primeng/progressspinner';
+import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { ToastModule } from 'primeng/toast';
+import { ConfirmationService, MessageService } from 'primeng/api';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { TooltipModule } from 'primeng/tooltip';
 
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { faSolidCircleCheck } from '@ng-icons/font-awesome/solid';
+
+import { TranslocoDirective } from '@jsverse/transloco';
+import { ActivatedRoute, RouterLink } from '@angular/router';
+
+interface Params {
+  search?: string;
+  user?: number;
+  ordering?: string;
+  page?: number;
+}
 @Component({
   selector: 'app-routines',
   standalone: true,
   imports: [
     AsyncPipe,
-    DatePipe,
-    ReactiveFormsModule,
-    RouterLink,
     TableModule,
-    TooltipModule,
-    YesNoPipe,
-    TagModule,
-    NgIcon,
-    ToastModule,
+    ProgressSpinner,
     ConfirmDialogModule,
+    TooltipModule,
+    PaginatorModule,
+    ToastModule,
+    RouterLink,
+    NgIcon,
+    DatePipe,
+    TranslocoDirective,
   ],
-  providers: [ConfirmationService, provideIcons({ faSolidCircleCheck })],
+  providers: [
+    MessageService,
+    ConfirmationService,
+    provideIcons({ faSolidCircleCheck }),
+  ],
   templateUrl: './routines.component.html',
   styleUrl: './routines.component.scss',
 })
 export class RoutinesComponent implements OnInit {
-  private readonly _formBuilder = inject(FormBuilder);
   private readonly _route = inject(ActivatedRoute);
-  private readonly _workoutService = inject(WorkoutService);
-
   private readonly _confirmationService = inject(ConfirmationService);
 
-  workoust$!: Observable<Workout[]>;
+  private readonly _workoutService = inject(WorkoutService);
 
-  filterForm: FormGroup;
+  workoust$!: Observable<WorkoutList>;
 
-  days = [
-    'Lunes',
-    'Martes',
-    'Miercoles',
-    'Jueves',
-    'Viernes',
-    'Sabado',
-    'Domingo',
-  ];
+  first = 0;
+  rows = 10;
+  filters: Params = {
+    search: '',
+    ordering: '',
+    page: 1,
+  };
   userId!: number;
 
-  constructor() {
-    this.filterForm = this._formBuilder.group({
-      search: ['', []],
-    });
-  }
-
   ngOnInit(): void {
-    const userId = this._route.snapshot.paramMap.get('userId');
+    const userId = this._route.snapshot.paramMap.get('userid');
     if (userId) {
       this.userId = +userId;
-      const params = { user: this.userId, search: '' };
-      this.getWorkouts(params);
     }
+
+    const params = this.getParams();
+    this.loadData(params);
   }
 
-  getWorkouts(params: any): void {
-    this.workoust$ = this._workoutService.fetchWorkouts(params);
+  loadData(params: Params): void {
+    this.workoust$ = this._workoutService.search(params);
   }
 
-  handleFilter() {
-    const { search } = this.filterForm.value;
+  handlePage(event: PaginatorState) {
+    const limit = event.rows ?? 0;
+    this.first = event.first ?? 0;
+    const page = this.first / limit + 1;
 
-    const params = { user: this.userId, search };
-    this.getWorkouts(params);
+    const params = this.getParams();
+    Object.assign(params, this.filters);
+    params.page = page;
+    this.loadData(params);
   }
 
-  getDay(day: number): string {
-    return this.days[day - 1];
+  handleFilter(filters: Params) {
+    this.filters = filters;
+
+    const params = this.getParams();
+    Object.assign(params, filters);
+
+    this.loadData(params);
   }
 
-  handleDelete(id: number) {
+  confirmDelete(id: number) {
     this._confirmationService.confirm({
       message: '¿Está seguro de borrar esta rutina?',
       header: 'Eliminar',
@@ -106,13 +116,27 @@ export class RoutinesComponent implements OnInit {
         severity: 'danger',
       },
       accept: () => {
-        this._workoutService.delete(id).subscribe({
-          next: () => {
-            const params = { user: this.userId, search: '' };
-            this.getWorkouts(params);
-          },
-        });
+        this.handleDelete(id);
       },
     });
+  }
+
+  handleDelete(id: number) {
+    this._workoutService.delete(id).subscribe({
+      next: () => {
+        const params = this.getParams();
+        this.loadData(params);
+      },
+      error: () => {},
+    });
+  }
+
+  getParams(): Params {
+    return {
+      search: '',
+      user: this.userId,
+      ordering: 'day',
+      page: 1,
+    };
   }
 }

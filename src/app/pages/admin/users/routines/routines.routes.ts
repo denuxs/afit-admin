@@ -1,8 +1,7 @@
 import { Routes } from '@angular/router';
 
 import { RoutinesComponent } from './routines.component';
-import { RoutineCreateComponent } from './routine-create/routine-create.component';
-import { RoutineEditComponent } from './routine-edit/routine-edit.component';
+import { RoutineFormComponent } from './routine-form/routine-form.component';
 
 export default [
   {
@@ -11,10 +10,10 @@ export default [
   },
   {
     path: 'create',
-    component: RoutineCreateComponent,
+    component: RoutineFormComponent,
   },
   {
     path: ':id/edit',
-    component: RoutineEditComponent,
+    component: RoutineFormComponent,
   },
 ] as Routes;

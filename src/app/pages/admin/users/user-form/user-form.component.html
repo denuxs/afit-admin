@@ -1,4 +1,13 @@
 <div class="w-1/2">
+  <div class="flex gap-4 items-center">
+    <div>
+      <a href="#" routerLink="/admin/clients"
+        ><i class="pi pi-arrow-left"></i
+      ></a>
+    </div>
+    <h1>{{ title }}</h1>
+  </div>
+
   <form [formGroup]="userForm" (ngSubmit)="handleSubmit()">
     <app-file-upload [image]="image" (fileChange)="handleFile($event)" />
 

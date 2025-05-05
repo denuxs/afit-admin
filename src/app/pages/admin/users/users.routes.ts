@@ -11,26 +11,26 @@ export default [
     component: UsersComponent,
   },
   {
+    path: ':userid/view',
+    component: UserDetailComponent,
+    children: [
+      { path: '', pathMatch: 'full', redirectTo: 'workouts' },
+      {
+        path: 'workouts/:userid',
+        loadChildren: () => import('./routines/routines.routes'),
+      },
+      // {
+      //   path: 'measures',
+      //   loadChildren: () => import('./measures/measures.routes'),
+      // },
+    ],
+  },
+  {
     path: 'create',
     component: UserFormComponent,
   },
   {
     path: ':id/edit',
     component: UserFormComponent,
-  },
-  {
-    path: ':id/view',
-    component: UserDetailComponent,
-    children: [
-      { path: '', pathMatch: 'full', redirectTo: 'workouts' },
-      {
-        path: 'workouts',
-        loadChildren: () => import('./routines/routines.routes'),
-      },
-      {
-        path: 'measures',
-        loadChildren: () => import('./measures/measures.routes'),
-      },
-    ],
   },
 ] as Routes;

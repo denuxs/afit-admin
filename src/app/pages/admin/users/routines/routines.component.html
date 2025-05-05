@@ -1,37 +1,19 @@
-<h1 class="mb-4">Rutinas</h1>
-
-<div class="flex justify-between mb-2">
-  <form [formGroup]="filterForm" (ngSubmit)="handleFilter()">
-    <div class="flex space-x-2">
-      <div>
-        <input
-          type="text"
-          placeholder="Buscar..."
-          class="rounded-md"
-          formControlName="search" />
-      </div>
-      <div>
-        <button class="btn-primary" type="submit">
-          <i class="pi pi-search"></i> Buscar
-        </button>
-      </div>
-    </div>
-  </form>
+<div class="flex justify-end mb-2">
   <div>
     <a href="#" routerLink="create" class="btn-primary inline-block"
-      ><i class="pi pi-plus"></i> Nueva Rutina</a
+      ><i class="pi pi-plus"></i> Nuevo</a
     >
   </div>
 </div>
 
 @if (workoust$ | async; as data) {
-  <p-table [value]="data" stripedRows>
+  <p-table [value]="data.results" stripedRows>
     <ng-template #header>
-      <tr>
+      <tr class="uppercase">
+        <th></th>
         <th>Nombre</th>
         <th>Dia</th>
         <th>Nivel</th>
-        <th>Usuario</th>
         <th>Ejercicios</th>
         <th>Activo</th>
         <th>Creado</th>
@@ -39,16 +21,12 @@
         <th></th>
       </tr>
     </ng-template>
-    <ng-template #body let-item>
+    <ng-template #body let-item let-rowIndex="rowIndex">
       <tr>
+        <td>{{ rowIndex + 1 }}</td>
         <td>{{ item.name }}</td>
-        <td>{{ getDay(item.day) }}</td>
-        <td>{{ item.level }}</td>
-        <td>
-          {{ item.user.first_name }} {{ item.user.last_name }} ({{
-            item.user.username
-          }})
-        </td>
+        <td>{{ item.day_display }}</td>
+        <td>{{ item.level_display }}</td>
         <td>{{ item.exercises.length }}</td>
         <td>
           @if (item.is_active) {
@@ -77,7 +55,7 @@
             type="button"
             pTooltip="Borrar"
             tooltipPosition="top"
-            (click)="handleDelete(item.id)"
+            (click)="confirmDelete(item.id)"
             class="text-red-600">
             <i class="pi pi-trash"></i>
           </button>
@@ -85,5 +63,17 @@
       </tr>
     </ng-template>
   </p-table>
+
+  <p-paginator
+    showCurrentPageReport="true"
+    currentPageReportTemplate="{first} - {last} de {totalRecords}"
+    (onPageChange)="handlePage($event)"
+    [first]="first"
+    [rows]="rows"
+    [totalRecords]="data.count" />
+} @else {
+  <p-progressSpinner [style]="{ width: '40px', height: '40px' }" />
 }
+
 <p-confirmdialog />
+<p-toast />

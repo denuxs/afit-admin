@@ -1,1 +1,54 @@
-<p>measure-list works!</p>
+<ng-container *transloco="let t">
+  <p-table [value]="data.results" stripedRows>
+    <ng-template #header>
+      <tr>
+        <th></th>
+        <th>Comentario</th>
+        <th>Activo</th>
+        <th>Creado</th>
+        <th></th>
+        <th></th>
+      </tr>
+    </ng-template>
+    <ng-template #body let-item let-rowIndex="rowIndex">
+      <tr>
+        <td>{{ rowIndex + 1 }}</td>
+        <td>{{ item.comment }}</td>
+        <td>
+          @if (item.is_active) {
+            <ng-icon
+              class="text-green-500 text-xl"
+              name="faSolidCircleCheck"></ng-icon>
+          } @else {
+            <ng-icon
+              class="text-red-500 text-xl"
+              name="faSolidCircleCheck"></ng-icon>
+          }
+        </td>
+        <td>{{ item.created | date: 'mediumDate' }}</td>
+        <td>
+          <a
+            href="#"
+            pTooltip="Editar"
+            tooltipPosition="top"
+            [routerLink]="[item.id, 'edit']"
+            class="text-blue-600"
+            ><i class="pi pi-pen-to-square"></i
+          ></a>
+        </td>
+        <td>
+          <button
+            type="button"
+            pTooltip="Borrar"
+            tooltipPosition="top"
+            (click)="handleDelete(item.id, rowIndex)"
+            class="text-red-600">
+            <i class="pi pi-trash"></i>
+          </button>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</ng-container>
+
+<p-confirmdialog />

@@ -1,11 +1,4 @@
-import {
-  Component,
-  EventEmitter,
-  inject,
-  Input,
-  OnInit,
-  Output,
-} from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -21,25 +14,17 @@ import {
   FormControl,
 } from '@angular/forms';
 import { Observable, Subject } from 'rxjs';
-import { AsyncPipe, JsonPipe, NgFor } from '@angular/common';
-import { debounceTime } from 'rxjs/operators';
+import { AsyncPipe, NgFor } from '@angular/common';
+import { debounceTime, takeUntil } from 'rxjs/operators';
 
-import { ExerciseService, UserService, WorkoutService } from 'app/services';
-import {
-  Exercise,
-  ExerciseList,
-  User,
-  UserList,
-  Workout,
-  WorkoutDto,
-} from 'app/domain';
+import { ExerciseService, WorkoutService } from 'app/services';
+import { Exercise, UserList, Workout, WorkoutDto } from 'app/domain';
 
 import { SelectModule } from 'primeng/select';
 import { EditorModule } from 'primeng/editor';
 import { ButtonModule } from 'primeng/button';
 import { CheckboxModule } from 'primeng/checkbox';
 
-import { RoutineDetailComponent } from '../routine-detail/routine-detail.component';
 import { RadioButtonModule } from 'primeng/radiobutton';
 import { InputTextModule } from 'primeng/inputtext';
 import {
@@ -50,10 +35,15 @@ import {
 } from '@angular/cdk/drag-drop';
 import { AccordionModule } from 'primeng/accordion';
 import { AutoCompleteModule } from 'primeng/autocomplete';
-import { FormControlPipe } from 'app/pipes/form-control.pipe';
 import { SelectButtonModule } from 'primeng/selectbutton';
 import { TableModule } from 'primeng/table';
 import { ScrollPanelModule } from 'primeng/scrollpanel';
+
+import { PrimeInputComponent } from 'app/components/prime-input/prime-input.component';
+import { PrimeSelectComponent } from 'app/components/prime-select/prime-select.component';
+import { PrimeEditorComponent } from 'app/components/prime-editor/prime-editor.component';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Paginator } from 'primeng/paginator';
 
 @Component({
   selector: 'app-routine-form',
@@ -64,7 +54,6 @@ import { ScrollPanelModule } from 'primeng/scrollpanel';
     ButtonModule,
     SelectModule,
     EditorModule,
-    RoutineDetailComponent,
     CheckboxModule,
     RadioButtonModule,
     InputTextModule,
@@ -73,23 +62,24 @@ import { ScrollPanelModule } from 'primeng/scrollpanel';
     NgFor,
     AccordionModule,
     AutoCompleteModule,
-    JsonPipe,
-    FormControlPipe,
     SelectButtonModule,
     TableModule,
-    AsyncPipe,
     ScrollPanelModule,
+    PrimeInputComponent,
+    PrimeSelectComponent,
+    PrimeEditorComponent,
   ],
   templateUrl: './routine-form.component.html',
   styleUrl: './routine-form.component.scss',
 })
-export class RoutineFormComponent implements OnInit {
+export class RoutineFormComponent implements OnInit, OnDestroy {
+  private readonly _route = inject(ActivatedRoute);
+  private readonly _router = inject(Router);
   private readonly _formBuilder = inject(UntypedFormBuilder);
 
   private readonly _exerciseService = inject(ExerciseService);
   private readonly _workoutService = inject(WorkoutService);
 
-  private readonly _userService = inject(UserService);
   private readonly _unsubscribeAll: Subject<any> = new Subject<any>();
 
   routineForm!: UntypedFormGroup;
@@ -98,50 +88,57 @@ export class RoutineFormComponent implements OnInit {
   exercises$!: Observable<Exercise[]>;
   users$!: Observable<UserList>;
 
-  routineId: number = 0;
-  modules = {
-    toolbar: [
-      // [{ header: 3 }, { header: 4 }],
-      [{ size: ['small', false, 'large', 'huge'] }], // custom dropdown
-      [{ header: [1, 2, 3, 4, 5, 6, false] }],
-      ['bold', 'italic', 'underline', 'strike', 'blockquote'],
-      [{ list: 'ordered' }, { list: 'bullet' }, { list: 'check' }],
-      [{ color: [] }, { background: [] }],
-      // [{ font: [] }],
-      [{ align: [] }],
-      ['clean'],
-    ],
-  };
+  workout!: Workout;
+  userId = 0;
 
-  days = [
-    { value: 1, label: 'Lunes' },
-    { value: 2, label: 'Martes' },
-    { value: 3, label: 'Miercoles' },
-    { value: 4, label: 'Jueves' },
-    { value: 5, label: 'Viernes' },
-    { value: 6, label: 'Sabado' },
-    { value: 7, label: 'Domingo' },
-  ];
-
-  @Input() workout: Workout | null = null;
-  @Output() formChange: EventEmitter<WorkoutDto> =
-    new EventEmitter<WorkoutDto>();
-
-  @Input() userId!: number;
-
-  tabSelected: number = 0;
-
-  filteredExercises: any = [];
+  tabSelected = 0;
+  filteredExercises!: any;
 
   searchControl = new FormControl();
 
   levels = [
-    { value: 'beginner', label: 'Principiante' },
-    { value: 'medium', label: 'Intermedio' },
-    { value: 'advanced', label: 'Avanzado' },
+    { id: 'beginner', name: 'Principiante' },
+    { id: 'medium', name: 'Intermedio' },
+    { id: 'advanced', name: 'Avanzado' },
+  ];
+
+  days = [
+    { id: 1, name: 'Lunes' },
+    { id: 2, name: 'Martes' },
+    { id: 3, name: 'Miercoles' },
+    { id: 4, name: 'Jueves' },
+    { id: 5, name: 'Viernes' },
+    { id: 6, name: 'Sabado' },
+    { id: 7, name: 'Domingo' },
   ];
 
   constructor() {
+    this.routineForm = this._formBuilder.group({
+      name: ['', [Validators.required]],
+      description: ['', []],
+      level: ['', [Validators.required]],
+      day: ['', [Validators.required]],
+      user: [0, [Validators.required]],
+      exercises: this._formBuilder.array([]),
+      is_active: [true, []],
+    });
+  }
+
+  ngOnInit(): void {
+    this.loadExercises();
+    this.handleExerciseFilter();
+
+    const workoutId = this._route.snapshot.paramMap.get('id');
+
+    const userId = this._route.snapshot.paramMap.get('userid');
+    this.userId = Number(userId);
+
+    if (workoutId) {
+      this.getWorkout(Number(workoutId));
+    }
+  }
+
+  handleExerciseFilter() {
     this.searchControl.valueChanges.pipe(debounceTime(300)).subscribe(query => {
       this.filteredExercises = this.exercisesList.filter(item =>
         item.name.toLowerCase().includes(query.toLowerCase())
@@ -149,36 +146,47 @@ export class RoutineFormComponent implements OnInit {
     });
   }
 
-  ngOnInit(): void {
-    this.getUsers();
-    this.getExercises();
+  getWorkout(workoutId: number) {
+    this._workoutService
+      .get(workoutId)
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe({
+        next: (workout: Workout) => {
+          this.workout = workout;
 
-    this.routineForm = this._formBuilder.group({
-      name: ['', [Validators.required]],
-      description: ['', []],
-      level: ['', []],
-      day: ['', [Validators.required]],
-      user: [this.userId, [Validators.required]],
-      exercises: this._formBuilder.array([]),
-      is_active: [true, []],
+          this.setFormFields(workout);
+        },
+      });
+  }
+
+  setFormFields(workout: Workout) {
+    const { name, description, day, level, user, is_active, exercises } =
+      workout;
+
+    const form = {
+      name: name,
+      description: description,
+      day: day,
+      level: level,
+      user: user.id,
+      is_active: is_active,
+    };
+
+    this.routineForm.patchValue(form);
+    this.setExercises(exercises);
+  }
+
+  loadExercises() {
+    const params = {
+      ordering: 'name',
+      paginator: null,
+    };
+    this._exerciseService.all(params).subscribe({
+      next: (response: Exercise[]) => {
+        this.exercisesList = response;
+        this.filteredExercises = response;
+      },
     });
-
-    if (this.workout) {
-      const { name, description, day, level, user, is_active, exercises } =
-        this.workout;
-
-      const form = {
-        name: name,
-        description: description,
-        day: day,
-        level: level,
-        user: user.id,
-        is_active: is_active,
-      };
-
-      this.routineForm.patchValue(form);
-      this.setExercises(exercises);
-    }
   }
 
   get exercises(): FormArray {
@@ -194,7 +202,7 @@ export class RoutineFormComponent implements OnInit {
 
     const formGroup = this._formBuilder.group({
       id: [null],
-      workout: [this.workout?.id, []],
+      workout: [this.workout.id, []],
       exercise: [id, []],
       name: [name, []],
       description: ['', []],
@@ -239,24 +247,6 @@ export class RoutineFormComponent implements OnInit {
 
   removeSet(exerciseIndex: any, index: any) {
     this.sets(exerciseIndex).removeAt(index);
-  }
-
-  getUsers(): void {
-    this.users$ = this._userService.getUsers({ search: '' });
-  }
-
-  getExercises() {
-    // this.exercises$ = this._exerciseService.fetchExercises();
-
-    const params = {
-      ordering: 'name',
-    };
-    this._exerciseService.fetchExercises(params).subscribe({
-      next: (response: ExerciseList) => {
-        this.exercisesList = response.results;
-        this.filteredExercises = response.results;
-      },
-    });
   }
 
   setExercises(data: any) {
@@ -315,13 +305,55 @@ export class RoutineFormComponent implements OnInit {
       name,
       description,
       day,
-      user,
+      user: this.userId,
       exercises,
       is_active,
       level,
     };
 
-    this.formChange.emit(form);
+    if (this.workout) {
+      this.updateWorkout(this.workout.id, form);
+      return;
+    }
+
+    this.createWorkout(form);
+  }
+
+  createWorkout(form: WorkoutDto) {
+    this._workoutService
+      .create(form)
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe({
+        next: () => {
+          const url = `/admin/clients/${this.userId}/view/workouts/${this.userId}`;
+          this._router.navigateByUrl(url);
+        },
+        error: errors => this.setFormErrors(errors),
+      });
+  }
+
+  updateWorkout(id: number, form: WorkoutDto) {
+    this._workoutService
+      .update(id, form)
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe({
+        next: () => {
+          const url = `/admin/clients/${this.userId}/view/workouts/${this.userId}`;
+          this._router.navigateByUrl(url);
+        },
+        error: errors => this.setFormErrors(errors),
+      });
+  }
+
+  setFormErrors(errors: any) {
+    for (const field in errors) {
+      if (this.routineForm.controls[field]) {
+        const control = this.routineForm.get(field);
+        control?.setErrors({ server: errors[field].join(' ') });
+      }
+    }
+
+    this.routineForm.markAllAsTouched();
   }
 
   drop(event: any) {
@@ -336,35 +368,11 @@ export class RoutineFormComponent implements OnInit {
     });
   }
 
-  handleSearch(event: any) {
-    const { query } = event;
-    // console.log(query);
-    // this.filteredExercises = this.exercisesList.filter(item =>
-    //   item.name.toLowerCase().includes(query.toLowerCase())
-    // );
-  }
-
   selectExercise(exercise: any) {
     this.addExercise(exercise);
   }
 
-  checkErrors(field: string): string {
-    const form: any = this.routineForm.get(field);
-
-    if (form.invalid && (form.dirty || form.touched)) {
-      if (form?.hasError('required')) {
-        return 'Campo requerido';
-      }
-
-      // if (form?.hasError('email')) {
-      //   return 'Value is invalid';
-      // }
-    }
-    return '';
-  }
-
   ngOnDestroy(): void {
-    // Unsubscribe from all subscriptions
     this._unsubscribeAll.next(null);
     this._unsubscribeAll.complete();
   }

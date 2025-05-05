@@ -86,7 +86,7 @@ export class MeasureFormComponent implements OnInit {
   }
 
   getUsers() {
-    this.users$ = this._userService.getUsers({ search: '' });
+    // this.users$ = this._userService.all({ search: '' });
   }
 
   handleSubmit(): void {

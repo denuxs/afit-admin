@@ -1,1 +1,32 @@
-<p>user-detail works!</p>
+@if (user) {
+  <div class="mb-2 flex gap-2">
+    <div>
+      <img
+        src="{{ user.photo }}"
+        alt="user"
+        class="rounded-full h-20 w-20 border object-cover border-gray-300" />
+    </div>
+    <div>
+      <h2>{{ user.first_name }} {{ user.last_name }}</h2>
+      <p>{{ user.username }}</p>
+    </div>
+  </div>
+
+  <div
+    class="text-center text-gray-500 border-b border-gray-200 mb-4 uppercase">
+    <ul class="flex flex-wrap -mb-px">
+      @for (tab of tabs; track tab.route) {
+        <li class="me-2">
+          <a
+            href="#"
+            [routerLink]="[tab.route]"
+            class="inline-block p-4 text-blue-600 border-b-2 border-blue-600 rounded-t-md"
+            >{{ tab.label }}</a
+          >
+        </li>
+      }
+    </ul>
+  </div>
+}
+
+<router-outlet></router-outlet>
