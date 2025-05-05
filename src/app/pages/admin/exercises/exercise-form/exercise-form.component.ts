@@ -11,9 +11,6 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { Catalog, Exercise } from 'app/domain';
 import { CatalogService, ExerciseService } from 'app/services';
 
-import { SelectModule } from 'primeng/select';
-import { EditorModule } from 'primeng/editor';
-import { InputTextModule } from 'primeng/inputtext';
 import {
   DialogService,
   DynamicDialogComponent,
@@ -26,19 +23,18 @@ import { FileUploadComponent } from 'app/components/file-upload/file-upload.comp
 import { ExerciseCommentsComponent } from '../exercise-comments/exercise-comments.component';
 import { PrimeInputComponent } from 'app/components/prime-input/prime-input.component';
 import { PrimeSelectComponent } from 'app/components/prime-select/prime-select.component';
+import { PrimeEditorComponent } from 'app/components/prime-editor/prime-editor.component';
 
 @Component({
   selector: 'app-exercise-form',
   standalone: true,
   imports: [
     ReactiveFormsModule,
-    EditorModule,
-    SelectModule,
     FileUploadComponent,
-    InputTextModule,
     ExerciseCommentsComponent,
     PrimeInputComponent,
     PrimeSelectComponent,
+    PrimeEditorComponent,
   ],
   providers: [DialogService, MessageService],
   templateUrl: './exercise-form.component.html',
@@ -61,20 +57,6 @@ export class ExerciseFormComponent implements OnInit, OnDestroy {
 
   muscles: Catalog[] = [];
   equipments: Catalog[] = [];
-
-  modules = {
-    toolbar: [
-      // [{ header: 3 }, { header: 4 }],
-      [{ size: ['small', false, 'large', 'huge'] }], // custom dropdown
-      [{ header: [1, 2, 3, 4, 5, 6, false] }],
-      ['bold', 'italic', 'underline', 'strike', 'blockquote'],
-      [{ list: 'ordered' }, { list: 'bullet' }, { list: 'check' }],
-      [{ color: [] }, { background: [] }],
-      // [{ font: [] }],
-      [{ align: [] }],
-      ['clean'],
-    ],
-  };
 
   constructor() {
     this.exerciseForm = this._formBuilder.group({

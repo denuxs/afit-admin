@@ -12,29 +12,29 @@ export class WorkoutService {
   private readonly _httpClient = inject(HttpClient);
   private _api: string = environment.BACKEND_API + '/workouts/';
 
-  fetchWorkouts(params?: any): Observable<WorkoutList> {
+  search(params?: any): Observable<WorkoutList> {
     return this._httpClient.get<WorkoutList>(this._api, { params });
   }
 
-  showWorkout(id: number): Observable<Workout> {
+  get(id: number): Observable<Workout> {
     return this._httpClient.get<Workout>(`${this._api}${id}/`);
   }
 
-  saveWorkout(form: WorkoutDto): Observable<Workout> {
+  create(form: WorkoutDto): Observable<Workout> {
     return this._httpClient.post<Workout>(this._api, form);
   }
 
-  updateWorkout(id: number, form: WorkoutDto): Observable<Workout> {
+  update(id: number, form: WorkoutDto): Observable<Workout> {
     return this._httpClient.put<Workout>(this._api + `${id}/`, form);
+  }
+
+  delete(id: number) {
+    return this._httpClient.delete(this._api + `${id}/`);
   }
 
   deleteDetailExercise(id: number) {
     return this._httpClient.delete(
       environment.BACKEND_API + `/workouts-detail/${id}/`
     );
-  }
-
-  delete(id: number) {
-    return this._httpClient.delete(this._api + `${id}/`);
   }
 }

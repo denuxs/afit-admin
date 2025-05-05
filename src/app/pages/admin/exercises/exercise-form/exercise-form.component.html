@@ -16,11 +16,10 @@
     [options]="equipments" />
 
   <div class="mb-4">
-    <label for="description" class="form-label">Instrucciones</label>
-
-    <p-editor formControlName="description" class="w-full" [modules]="modules">
-      <ng-template pTemplate="header"> </ng-template>
-    </p-editor>
+    <app-prime-editor
+      [form]="exerciseForm"
+      controlName="description"
+      label="Instrucciones" />
   </div>
 
   <div class="flex justify-end">

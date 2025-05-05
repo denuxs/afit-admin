@@ -16,7 +16,7 @@
   @if (catalogs$ | async; as data) {
     <p-table [value]="data.results" stripedRows>
       <ng-template #header>
-        <tr>
+        <tr class="uppercase">
           <th></th>
           <th>Nombre</th>
           <th>Categoria</th>

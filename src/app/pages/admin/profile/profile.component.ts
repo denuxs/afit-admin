@@ -12,14 +12,11 @@ import {
   Validators,
 } from '@angular/forms';
 import { Subject, takeUntil } from 'rxjs';
-import { ActivatedRoute, Router } from '@angular/router';
 
 import { User } from 'app/domain';
 import { FileUploadComponent } from 'app/components/file-upload/file-upload.component';
 
-import { SelectModule } from 'primeng/select';
 import { CheckboxModule } from 'primeng/checkbox';
-import { InputTextModule } from 'primeng/inputtext';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 
@@ -32,10 +29,8 @@ import { PrimeSelectComponent } from 'app/components/prime-select/prime-select.c
   standalone: true,
   imports: [
     ReactiveFormsModule,
-    SelectModule,
     CheckboxModule,
     FileUploadComponent,
-    InputTextModule,
     PrimeInputComponent,
     PrimeSelectComponent,
     ToastModule,

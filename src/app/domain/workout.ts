@@ -4,8 +4,10 @@ import { User } from './user';
 export interface Workout {
   id: number;
   day: string;
+  day_display: string;
   name: string;
   level: string;
+  level_display: string;
   description: string;
   exercises: Exercise[];
   user: User;

@@ -1,12 +1,4 @@
-import {
-  Component,
-  EventEmitter,
-  inject,
-  Input,
-  OnDestroy,
-  OnInit,
-  Output,
-} from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -18,8 +10,6 @@ import { Subject, takeUntil } from 'rxjs';
 
 import { Catalog } from 'app/domain';
 
-import { SelectModule } from 'primeng/select';
-import { InputTextModule } from 'primeng/inputtext';
 import {
   DialogService,
   DynamicDialogComponent,
@@ -39,8 +29,6 @@ import { FileUploadComponent } from 'app/components/file-upload/file-upload.comp
   standalone: true,
   imports: [
     ReactiveFormsModule,
-    InputTextModule,
-    SelectModule,
     PrimeInputComponent,
     PrimeSelectComponent,
     FileUploadComponent,
