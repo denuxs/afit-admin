@@ -1,34 +1,28 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { NgOptimizedImage } from '@angular/common';
 
 @Component({
   selector: 'app-file-upload',
   standalone: true,
-  imports: [NgOptimizedImage],
+  imports: [],
   templateUrl: './file-upload.component.html',
   styleUrl: './file-upload.component.scss',
 })
 export class FileUploadComponent {
-  @Input() image: string = '';
-  @Output() uploadImageChange: EventEmitter<File> = new EventEmitter<File>();
+  @Input() image = '';
+  @Output() fileChange: EventEmitter<File> = new EventEmitter<File>();
 
-  photoPreview: string | null = null;
-
-  ngOnInit(): void {
-    this.photoPreview = this.image;
-  }
-
-  handleUploadImage(event: any): void {
+  handleUpload(event: any): void {
     const file: File = event.target.files[0];
     if (!file) {
       return;
     }
 
-    this._readAsDataURL(file).then((data) => {
-      this.photoPreview = data;
+    this._readAsDataURL(file).then(response => {
+      this.image = response;
     });
 
-    this.uploadImageChange.emit(file);
+    this.fileChange.emit(file);
   }
 
   private _readAsDataURL(file: File): Promise<any> {
