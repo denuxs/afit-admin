@@ -1,0 +1,56 @@
+<div class="w-1/2">
+  <form [formGroup]="userForm" (ngSubmit)="handleSubmit()">
+    <app-file-upload [image]="image" (fileChange)="handleFile($event)" />
+
+    <div class="flex gap-2">
+      <app-prime-input
+        [form]="userForm"
+        controlName="first_name"
+        label="Nombres" />
+      <app-prime-input
+        [form]="userForm"
+        controlName="last_name"
+        label="Apellidos" />
+    </div>
+
+    <div class="flex gap-2">
+      <app-prime-select
+        [form]="userForm"
+        controlName="gender"
+        label="Genero"
+        [options]="genders" />
+      <app-prime-input [form]="userForm" controlName="phone" label="Telefono" />
+      <app-prime-input [form]="userForm" controlName="age" label="Edad" />
+    </div>
+
+    <div class="flex gap-2">
+      <app-prime-input [form]="userForm" controlName="weight" label="Peso" />
+      <app-prime-input [form]="userForm" controlName="height" label="Altura" />
+      <app-prime-input
+        [form]="userForm"
+        controlName="experience_level"
+        label="Experiencia" />
+    </div>
+
+    <app-prime-input [form]="userForm" controlName="username" label="Usuario" />
+
+    <app-prime-input
+      [form]="userForm"
+      controlName="password"
+      label="Contraseña" />
+
+    <div class="flex items-center">
+      <p-checkbox
+        inputId="is_active"
+        name="is_active"
+        [binary]="true"
+        formControlName="is_active" />
+      <label for="is_active" class="ml-2">Es Activo?</label>
+    </div>
+
+    <div class="flex justify-end">
+      <button class="btn-primary mt-4" type="submit">Guardar</button>
+    </div>
+  </form>
+</div>
+<p-toast />

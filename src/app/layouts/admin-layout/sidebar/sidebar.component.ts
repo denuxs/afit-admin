@@ -41,60 +41,24 @@ export class SidebarComponent implements OnInit {
       label: 'Usuarios',
       icon: 'pi pi-users',
     },
-    // {
-    //   id: 2,
-    //   link: '/admin/notifications',
-    //   label: 'Notificaciones',
-    //   icon: 'pi pi-bell',
-    // },
-    // {
-    //   id: 3,
-    //   link: '/admin/posts',
-    //   label: 'Publicaciones',
-    //   icon: 'pi pi-image',
-    // },
-    // {
-    //   id: 4,
-    //   link: '/admin/comments',
-    //   label: 'Comentarios',
-    //   icon: 'pi pi-comment',
-    // },
-    // {
-    //   id: 5,
-    //   link: '/admin/workouts',
-    //   label: 'Rutinas',
-    //   icon: 'pi pi-bars',
-    // },
     {
       id: 3,
       link: '/admin/exercises',
       label: 'Ejercicios',
       icon: 'pi pi-bars',
     },
-    // {
-    //   id: 7,
-    //   link: '/admin/measures',
-    //   label: 'Medidas',
-    //   icon: 'pi pi-bars',
-    // },
     {
       id: 4,
       link: '/admin/catalogs',
       label: 'Catálogos',
       icon: 'pi pi-bars',
     },
-    // {
-    //   id: 10,
-    //   link: '/admin/profile',
-    //   label: 'Mi Perfil',
-    //   icon: 'pi pi-user',
-    // },
-    // {
-    //   id: 11,
-    //   link: '/admin/settings',
-    //   label: 'Configuración',
-    //   icon: 'pi pi-cog',
-    // },
+    {
+      id: 10,
+      link: '/admin/profile',
+      label: 'Mi Perfil',
+      icon: 'pi pi-user',
+    },
   ];
 
   user!: User;
