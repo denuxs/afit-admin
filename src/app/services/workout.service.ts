@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 import { environment } from '../../environments/environment';
-import { Workout, WorkoutDto } from 'app/domain';
+import { Workout, WorkoutDto, WorkoutList } from 'app/domain';
 
 @Injectable({
   providedIn: 'root',
@@ -12,10 +12,8 @@ export class WorkoutService {
   private readonly _httpClient = inject(HttpClient);
   private _api: string = environment.BACKEND_API + '/workouts/';
 
-  constructor() {}
-
-  fetchWorkouts(params?: any): Observable<Workout[]> {
-    return this._httpClient.get<Workout[]>(this._api, { params });
+  fetchWorkouts(params?: any): Observable<WorkoutList> {
+    return this._httpClient.get<WorkoutList>(this._api, { params });
   }
 
   showWorkout(id: number): Observable<Workout> {

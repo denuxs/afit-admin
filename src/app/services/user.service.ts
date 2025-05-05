@@ -30,19 +30,23 @@ export class UserService {
     );
   }
 
-  getUsers(params?: any): Observable<UserList> {
+  all(params?: any): Observable<User[]> {
+    return this._httpClient.get<User[]>(this._api, { params });
+  }
+
+  search(params?: any): Observable<UserList> {
     return this._httpClient.get<UserList>(this._api, { params });
   }
 
-  getUser(userId: number): Observable<User> {
+  get(userId: number): Observable<User> {
     return this._httpClient.get<User>(this._api + `${userId}/`);
   }
 
-  saveUser(form: FormData): Observable<User> {
+  create(form: FormData): Observable<User> {
     return this._httpClient.post<User>(this._api, form);
   }
 
-  updateUser(id: number, form: FormData): Observable<User> {
+  update(id: number, form: FormData): Observable<User> {
     return this._httpClient.put<User>(this._api + `${id}/`, form);
   }
 

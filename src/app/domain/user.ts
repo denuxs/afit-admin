@@ -6,6 +6,9 @@ export interface User {
   age: number;
   password: string;
   gender: string;
+  weight: string;
+  height: string;
+  experience_level: string;
   first_name: string;
   last_name: string;
   is_superuser: boolean;

@@ -14,6 +14,13 @@ export interface Workout {
   is_active: boolean;
 }
 
+export interface WorkoutList {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: Workout[];
+}
+
 export interface WorkoutDto {
   name: string;
   description?: string;

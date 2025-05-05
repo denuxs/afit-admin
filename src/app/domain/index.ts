@@ -3,7 +3,6 @@ export * from './comment';
 export * from './dashboard';
 export * from './exercise';
 export * from './measure';
-export * from './routine';
 export * from './user';
 export * from './workout';
 export * from './catalog';

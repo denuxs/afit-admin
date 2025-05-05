@@ -12,25 +12,27 @@ export class ExerciseService {
   private readonly _httpClient = inject(HttpClient);
   private _api: string = environment.BACKEND_API + '/exercises/';
 
-  constructor() {}
+  all(params?: any): Observable<Exercise[]> {
+    return this._httpClient.get<Exercise[]>(this._api, { params });
+  }
 
-  fetchExercises(params?: any): Observable<ExerciseList> {
+  search(params?: any): Observable<ExerciseList> {
     return this._httpClient.get<ExerciseList>(this._api, { params });
   }
 
-  showExercise(id: number): Observable<Exercise> {
+  get(id: number): Observable<Exercise> {
     return this._httpClient.get<Exercise>(this._api + `${id}/`);
   }
 
-  saveExercise(body: FormData): Observable<Exercise> {
+  create(body: FormData): Observable<Exercise> {
     return this._httpClient.post<Exercise>(this._api, body);
   }
 
-  updateExercise(id: number, body: FormData): Observable<Exercise> {
+  update(id: number, body: FormData): Observable<Exercise> {
     return this._httpClient.put<Exercise>(this._api + `${id}/`, body);
   }
 
-  deleteExercise(id: number) {
+  delete(id: number) {
     return this._httpClient.delete(this._api + `${id}/`);
   }
 
@@ -39,9 +41,5 @@ export class ExerciseService {
     return this._httpClient.get<Comment[]>(
       this._api + `${exerciseId}/comments/`
     );
-  }
-
-  delete(id: number) {
-    return this._httpClient.delete(this._api + `${id}/`);
   }
 }

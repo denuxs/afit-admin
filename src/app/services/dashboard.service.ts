@@ -12,8 +12,6 @@ export class DashboardService {
   private readonly _httpClient = inject(HttpClient);
   private _api: string = environment.BACKEND_API + '/dashboard/';
 
-  constructor() {}
-
   fetchDashboard(): Observable<Dashboard> {
     return this._httpClient.get<Dashboard>(this._api);
   }

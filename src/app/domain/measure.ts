@@ -22,6 +22,12 @@ export interface Measure {
   };
 }
 
+export interface MeasureList {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: Measure[];
+}
 export interface MeasureDto {
   comment: string;
   user: number;
