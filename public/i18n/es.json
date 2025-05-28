@@ -1,0 +1,30 @@
+{
+  "login": {
+    "username": "Usuario",
+    "password": "Contraseña",
+    "login": "Iniciar Sesión",
+    "error": "Usuario o contraseña incorrectos",
+    "unauthorized": "Usuario no autorizado"
+  },
+  "equipment": "Equipo",
+  "muscle": "Músculo",
+  "name": "Nombre",
+  "created": "Creado",
+  "type": "Tipo",
+  "edit": "Editar",
+  "new": "Nuevo",
+  "search": "Buscar",
+  "key": "Clave",
+  "catalogs": "Catálogos",
+  "comments": "Comentarios",
+  "users": "Usuarios",
+  "measures": "Medidas",
+  "exercises": "Ejercicios",
+  "workouts": "Rutinas",
+  "profile": "Perfil",
+  "settings": "Configuración",
+  "dashboard": "Dashboard",
+  "admin": "Administración",
+  "home": "Inicio",
+  "logout": "Salir"
+}

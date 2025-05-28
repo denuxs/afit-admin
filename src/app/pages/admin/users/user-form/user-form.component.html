@@ -1,0 +1,43 @@
+<form [formGroup]="userForm" (ngSubmit)="handleSubmit()">
+  <app-file-upload [image]="image" (fileChange)="handleFile($event)" />
+
+  <div class="flex gap-2">
+    <app-prime-input
+      [form]="userForm"
+      controlName="first_name"
+      label="Nombres" />
+    <app-prime-input
+      [form]="userForm"
+      controlName="last_name"
+      label="Apellidos" />
+  </div>
+
+  <app-prime-input [form]="userForm" controlName="username" label="Usuario" />
+
+  <app-prime-input
+    [form]="userForm"
+    controlName="password"
+    label="Contraseña" />
+
+  <div class="flex items-center">
+    <p-checkbox
+      inputId="is_active"
+      name="is_active"
+      [binary]="true"
+      formControlName="is_active" />
+    <label for="is_active" class="ml-2">Es Activo?</label>
+  </div>
+
+  <div class="flex items-center">
+    <p-checkbox
+      inputId="is_staff"
+      name="is_staff"
+      [binary]="true"
+      formControlName="is_staff" />
+    <label for="is_active" class="ml-2">Es Coach?</label>
+  </div>
+
+  <div class="flex justify-end">
+    <button class="btn-primary mt-4" type="submit">Guardar</button>
+  </div>
+</form>

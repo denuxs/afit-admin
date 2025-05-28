@@ -1,0 +1,84 @@
+<div class="w-1/2">
+  <div class="flex gap-4 items-center">
+    <div>
+      <a href="#" routerLink="/admin/clients"
+        ><i class="pi pi-arrow-left"></i
+      ></a>
+    </div>
+    <h1>{{ title }}</h1>
+  </div>
+
+  <form [formGroup]="clientForm" (ngSubmit)="handleSubmit()">
+    <app-file-upload [image]="image" (fileChange)="handleFile($event)" />
+
+    <h3 class="mb-2">Datos Personales</h3>
+
+    <div class="border bg-white border-gray-300 rounded-md px-4 py-6">
+      <div class="flex gap-2">
+        <app-prime-input
+          [form]="clientForm"
+          controlName="first_name"
+          label="Nombres" />
+        <app-prime-input
+          [form]="clientForm"
+          controlName="last_name"
+          label="Apellidos" />
+      </div>
+
+      <div class="flex gap-2">
+        <app-prime-select
+          [form]="clientForm"
+          controlName="gender"
+          label="Género"
+          [options]="genders" />
+        <app-prime-input
+          [form]="clientForm"
+          controlName="phone"
+          label="Teléfono" />
+        <app-prime-input [form]="clientForm" controlName="age" label="Edad" />
+      </div>
+
+      <div class="flex gap-2">
+        <app-prime-input
+          [form]="clientForm"
+          controlName="weight"
+          label="Peso" />
+        <app-prime-input
+          [form]="clientForm"
+          controlName="height"
+          label="Altura" />
+        <app-prime-input
+          [form]="clientForm"
+          controlName="experience_level"
+          label="Experiencia" />
+      </div>
+    </div>
+
+    <h3 class="mb-2 mt-4">Datos de Usuario</h3>
+
+    <div class="border bg-white border-gray-300 rounded-md px-4 py-6">
+      <app-prime-input
+        [form]="clientForm"
+        controlName="username"
+        label="Usuario" />
+
+      <app-prime-input
+        [form]="clientForm"
+        controlName="password"
+        label="Contraseña" />
+
+      <div class="flex items-center">
+        <p-checkbox
+          inputId="is_active"
+          name="is_active"
+          [binary]="true"
+          formControlName="is_active" />
+        <label for="is_active" class="ml-2">Es Activo?</label>
+      </div>
+    </div>
+
+    <div class="flex justify-end">
+      <button class="btn-primary mt-4" type="submit">Guardar</button>
+    </div>
+  </form>
+</div>

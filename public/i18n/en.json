@@ -1,0 +1,30 @@
+{
+  "login": {
+    "username": "Username",
+    "password": "Password",
+    "login": "Login",
+    "error": "Username or password incorrect",
+    "unauthorized": "Unauthorized user"
+  },
+  "equipment": "Equipment",
+  "muscle": "Muscle",
+  "name": "Name",
+  "created": "Created",
+  "type": "Type",
+  "edit": "Edit",
+  "new": "New",
+  "search": "Search",
+  "key": "Key",
+  "catalogs": "Catalogs",
+  "comments": "Comments",
+  "users": "Users",
+  "measures": "Measures",
+  "exercises": "Exercises",
+  "workouts": "Workouts",
+  "profile": "Profile",
+  "settings": "Settings",
+  "dashboard": "Dashboard",
+  "admin": "Admin",
+  "home": "Home",
+  "logout": "Logout"
+}

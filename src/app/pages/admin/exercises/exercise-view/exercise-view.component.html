@@ -1,0 +1,25 @@
+@if (exercise$ | async; as item) {
+  <div class="flex gap-4 items-center">
+    <div>
+      <a href="#" routerLink="/admin/exercises"
+        ><i class="pi pi-arrow-left"></i
+      ></a>
+    </div>
+    <h1>{{ item.name }}</h1>
+  </div>
+
+  <section
+    class="flex border border-gray-200 w-1/2 rounded-md px-4 py-6 bg-white flex-col gap-4">
+    <h2>Musculo</h2>
+    <p>{{ item.muscle.name }}</p>
+    <h2>Equipo</h2>
+    <p>{{ item.equipment.name }}</p>
+  </section>
+
+  <section>
+    <h2>Instrucciones</h2>
+    <div class="mt-4" [innerHTML]="byPassHTML(item.description)"></div>
+  </section>
+} @else {
+  <p-progressSpinner [style]="{ width: '40px', height: '40px' }" />
+}

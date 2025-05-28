@@ -1,0 +1,38 @@
+<div>
+  <div>
+    <input
+      type="file"
+      accept="image/*"
+      (change)="uploadImage($event, measureId, contentType)"
+      id="image"
+      name="image"
+      class="hidden"
+      #filePost />
+    <button
+      type="button"
+      class="py-2.5 px-5 me-2 mb-2 text-sm font-medium inline-flex items-center text-gray-900 focus:outline-none bg-white border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100"
+      (click)="filePost.click()">
+      <i class="pi pi-camera me-2"></i>
+      <span>Subir Imagen</span>
+    </button>
+  </div>
+
+  <div class="grid grid-cols-2 gap-1">
+    @for (image of images$ | async; track image.id) {
+      <div class="relative">
+        <p-image
+          [src]="image.photo"
+          alt="image-{{ image.id }}]"
+          [preview]="true"
+          imageClass="w-full object-cover" />
+        <button
+          (click)="deleteImage(image.id, measureId)"
+          class="absolute right-2 top-2 rounded-full bg-red-500 px-2 py-1 text-white hover:bg-red-600">
+          <i class="pi pi-trash"></i>
+        </button>
+      </div>
+    }
+  </div>
+</div>
+
+<p-confirmdialog />

@@ -1,0 +1,85 @@
+<div class="w-2/3">
+  <div class="flex gap-4 items-center mb-4">
+    <div>
+      <a href="#" routerLink="/admin/workouts"
+        ><i class="pi pi-arrow-left"></i
+      ></a>
+    </div>
+    <h1>{{ title }}</h1>
+  </div>
+
+  <form [formGroup]="workoutForm" (ngSubmit)="handleSubmit()">
+    <div class="grid grid-cols-3 gap-2">
+      <div class="col-span-2">
+        <app-prime-input
+          [form]="workoutForm"
+          controlName="title"
+          label="Titulo" />
+      </div>
+      <div>
+        <app-prime-select
+          [form]="workoutForm"
+          controlName="client"
+          label="Cliente"
+          [options]="clients" />
+      </div>
+    </div>
+
+    <app-prime-editor
+      [form]="workoutForm"
+      controlName="description"
+      label="Descripción" />
+
+    <div class="mb-4">
+      <div class="flex items-center">
+        <label for="is_active" class="form-label mr-4">Es Activo?</label>
+        <p-checkbox
+          inputId="is_active"
+          name="is_active"
+          [binary]="true"
+          formControlName="is_active" />
+      </div>
+    </div>
+
+    <div formArrayName="routines" class="mb-4">
+      <label for="routine" class="form-label">Rutinas</label>
+
+      @for (tab of routines.controls; track $index; let i = $index) {
+        <ng-container [formGroupName]="i">
+          <div class="flex mb-2 gap-2">
+            <p-select
+              [options]="routineList"
+              optionLabel="title"
+              optionValue="id"
+              formControlName="routine"
+              class="w-full">
+              <ng-template #selectedItem let-selectedOption>
+                <div>{{ selectedOption.title }}</div>
+              </ng-template>
+              <ng-template let-item #item>
+                <div>{{ item.title }}</div>
+              </ng-template>
+            </p-select>
+            <button
+              type="button"
+              (click)="removeRoutine(i)"
+              class="text-red-600">
+              <i class="pi pi-times"></i>
+            </button>
+          </div>
+        </ng-container>
+      }
+    </div>
+
+    <button
+      type="button"
+      (click)="addRoutine()"
+      class="bg-gray-600 flex text-sm rounded-md px-4 py-1 text-white">
+      <i class="pi pi-plus mr-1"></i> Agregar
+    </button>
+
+    <div class="flex justify-end mt-4">
+      <button class="btn-primary" type="submit">Guardar</button>
+    </div>
+  </form>
+</div>
