@@ -2,8 +2,8 @@ import { Component, inject, OnInit } from '@angular/core';
 import { AsyncPipe, DatePipe } from '@angular/common';
 import { Observable, Subject, takeUntil } from 'rxjs';
 
-import { Client, Measure, MeasureList } from 'app/domain';
-import { ClientService, MeasuresService } from 'app/services';
+import { Client, Workout, WorkoutList } from 'app/domain';
+import { ClientService, WorkoutService } from 'app/services';
 
 import { ProgressSpinner } from 'primeng/progressspinner';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
@@ -19,11 +19,12 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 
 import { TranslocoDirective } from '@jsverse/transloco';
-import { MeasureFormComponent } from './measure-form/measure-form.component';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 
+import { faSolidPenToSquare } from '@ng-icons/font-awesome/solid';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { faSolidCircleCheck } from '@ng-icons/font-awesome/solid';
-import { ActivatedRoute } from '@angular/router';
+import { PrimeAvatarComponent } from 'app/components/prime-avatar/prime-avatar.component';
+import { WorkoutFormComponent } from './workout-form/workout-form.component';
 
 interface Params {
   search?: string;
@@ -31,57 +32,71 @@ interface Params {
   client?: number;
   page?: number;
 }
-
 @Component({
-  selector: 'app-measures',
+  selector: 'app-workouts',
   standalone: true,
   imports: [
     AsyncPipe,
     DatePipe,
-    TableModule,
     ProgressSpinner,
     PaginatorModule,
-    ToastModule,
-    ConfirmDialogModule,
+    TableModule,
     TooltipModule,
     TranslocoDirective,
+    ToastModule,
+    ConfirmDialogModule,
+    RouterLink,
     NgIcon,
+    PrimeAvatarComponent,
   ],
   providers: [
-    MessageService,
-    ConfirmationService,
     DialogService,
-    provideIcons({ faSolidCircleCheck }),
+    ConfirmationService,
+    MessageService,
+    provideIcons({ faSolidPenToSquare }),
   ],
-  templateUrl: './measures.component.html',
-  styleUrl: './measures.component.scss',
+  templateUrl: './workouts.component.html',
+  styleUrl: './workouts.component.scss',
 })
-export class MeasuresComponent implements OnInit {
+export class WorkoutsComponent implements OnInit {
   private readonly _route = inject(ActivatedRoute);
   private readonly _confirmationService = inject(ConfirmationService);
   private readonly _messageService = inject(MessageService);
   private readonly _dialogService = inject(DialogService);
 
+  private readonly _workoutService = inject(WorkoutService);
   private readonly _clientService = inject(ClientService);
-  private readonly _measuresService = inject(MeasuresService);
 
   private readonly _unsubscribeAll: Subject<any> = new Subject<any>();
 
-  measures$!: Observable<Measure[]>;
+  workouts$!: Observable<WorkoutList>;
+  ref: DynamicDialogRef | undefined;
   client!: Client;
   avatar = 'default.jpg';
 
-  ref: DynamicDialogRef | undefined;
+  first = 0;
+  rows = 10;
+  filters: Params = {
+    search: '',
+    ordering: '',
+    client: 0,
+    page: 1,
+  };
 
   ngOnInit(): void {
-    this.loadData();
+    const params = this.getParams();
+    this.loadData(params);
 
     const client = this.getClientId();
     this.getClient(Number(client));
   }
 
-  getClientId(): string | null {
+  getClientId() {
     return this._route.snapshot.paramMap.get('id');
+  }
+
+  loadData(params: Params): void {
+    this.workouts$ = this._workoutService.search(params);
   }
 
   getClient(cliendId: number) {
@@ -98,57 +113,73 @@ export class MeasuresComponent implements OnInit {
       });
   }
 
-  loadData(): void {
-    const clientId = this.getClientId();
-    this.measures$ = this._clientService.measures(Number(clientId));
+  handlePage(event: PaginatorState) {
+    const limit = event.rows ?? 0;
+    this.first = event.first ?? 0;
+    const page = this.first / limit + 1;
+
+    const params = this.getParams();
+    Object.assign(params, this.filters);
+    params.page = page;
+    this.loadData(params);
+  }
+
+  handleFilter(filters: Params) {
+    this.filters = filters;
+
+    const params = this.getParams();
+    Object.assign(params, filters);
+
+    this.loadData(params);
   }
 
   openCreateDialog(): void {
-    const cliendId = this.getClientId();
+    const client = this.getClientId();
 
-    this.ref = this._dialogService.open(MeasureFormComponent, {
-      header: 'Crear Medidas',
+    this.ref = this._dialogService.open(WorkoutFormComponent, {
+      header: 'Crear Rutina',
       modal: true,
       position: 'top',
-      styleClass: 'w-1/2',
+      height: '80vh',
       closable: true,
       data: {
-        client: Number(cliendId),
+        client: client,
       },
     });
 
     this.ref.onClose.subscribe((data: any) => {
       if (data) {
-        this.loadData();
+        const params = this.getParams();
+        this.loadData(params);
       }
     });
   }
 
-  openEditDialog(measure: Measure): void {
-    const cliendId = this.getClientId();
+  openEditDialog(workout: Workout): void {
+    const client = this.getClientId();
 
-    this.ref = this._dialogService.open(MeasureFormComponent, {
-      header: 'Actualizar Medidas',
+    this.ref = this._dialogService.open(WorkoutFormComponent, {
+      header: 'Actualizar Rutina',
       modal: true,
       position: 'top',
-      styleClass: 'w-1/2',
       closable: true,
       data: {
-        measure: measure,
-        client: Number(cliendId),
+        client: client,
+        workout: workout,
       },
     });
 
     this.ref.onClose.subscribe((data: any) => {
       if (data) {
-        this.loadData();
+        const params = this.getParams();
+        this.loadData(params);
       }
     });
   }
 
   confirmDelete(id: number) {
     this._confirmationService.confirm({
-      message: '¿Está seguro de borrar esta medida?',
+      message: '¿Está seguro de borrar esta rutina?',
       header: 'Eliminar',
       icon: 'pi pi-info-circle',
       rejectLabel: 'Cancel',
@@ -168,11 +199,23 @@ export class MeasuresComponent implements OnInit {
   }
 
   handleDelete(id: number) {
-    this._measuresService.delete(id).subscribe({
+    this._workoutService.delete(id).subscribe({
       next: () => {
-        this.loadData();
+        const params = this.getParams();
+        this.loadData(params);
       },
       error: () => {},
     });
+  }
+
+  getParams(): Params {
+    const client = this.getClientId();
+
+    return {
+      search: '',
+      ordering: '-id',
+      client: Number(client),
+      page: 1,
+    };
   }
 }

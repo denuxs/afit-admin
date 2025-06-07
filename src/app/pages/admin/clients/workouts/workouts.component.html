@@ -15,7 +15,7 @@
   }
 
   <div class="flex justify-between mb-4">
-    <h1>Medidas</h1>
+    <h1>Rutinas</h1>
 
     <div>
       <button (click)="openCreateDialog()" class="btn-primary">
@@ -24,13 +24,13 @@
     </div>
   </div>
 
-  @if (measures$ | async; as data) {
-    <p-table [value]="data" stripedRows>
+  @if (workouts$ | async; as data) {
+    <p-table [value]="data.results" stripedRows>
       <ng-template #header>
         <tr class="uppercase">
           <th></th>
-          <th>Comentario</th>
-          <th>Activo</th>
+          <th>Titulo</th>
+          <th>Rutinas</th>
           <th>Creado</th>
           <th></th>
           <th></th>
@@ -39,16 +39,8 @@
       <ng-template #body let-item let-rowIndex="rowIndex">
         <tr>
           <td>{{ rowIndex + 1 }}</td>
-          <td>{{ item.comment }}</td>
-          <td>
-            @if (item.is_active) {
-              <ng-icon
-                class="text-green-500"
-                name="faSolidCircleCheck"></ng-icon>
-            } @else {
-              <ng-icon class="text-red-500" name="faSolidCircleCheck"></ng-icon>
-            }
-          </td>
+          <td>{{ item.title }}</td>
+          <td>{{ item.routines.length }}</td>
           <td>{{ item.created | date: 'mediumDate' }}</td>
           <td>
             <button
@@ -72,10 +64,17 @@
         </tr>
       </ng-template>
     </p-table>
+
+    <p-paginator
+      showCurrentPageReport="true"
+      currentPageReportTemplate="{first} - {last} de {totalRecords}"
+      (onPageChange)="handlePage($event)"
+      [first]="first"
+      [rows]="rows"
+      [totalRecords]="data.count" />
   } @else {
     <p-progressSpinner [style]="{ width: '40px', height: '40px' }" />
   }
 </ng-container>
-
 <p-confirmdialog />
 <p-toast />

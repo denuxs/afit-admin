@@ -59,7 +59,11 @@ export class ClientsComponent implements OnInit {
   }
 
   loadData(): void {
-    this.clients$ = this._userService.clients();
+    const params = {
+      ordering: '-id',
+      paginator: null,
+    };
+    this.clients$ = this._clientService.all(params);
   }
 
   confirmDelete(id: number) {

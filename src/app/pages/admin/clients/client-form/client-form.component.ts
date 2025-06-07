@@ -11,17 +11,19 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { Subject, takeUntil } from 'rxjs';
+import { Observable, Subject, takeUntil } from 'rxjs';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
-import { Client } from 'app/domain';
+import { Client, User } from 'app/domain';
 import { FileUploadComponent } from 'app/components/file-upload/file-upload.component';
 
 import { CheckboxModule } from 'primeng/checkbox';
 
 import { PrimeInputComponent } from 'app/components/prime-input/prime-input.component';
 import { PrimeSelectComponent } from 'app/components/prime-select/prime-select.component';
-import { ClientService } from 'app/services';
+import { ClientService, UserService } from 'app/services';
+import { AsyncPipe } from '@angular/common';
+import { is } from 'date-fns/locale';
 
 @Component({
   selector: 'app-client-form',
@@ -29,6 +31,7 @@ import { ClientService } from 'app/services';
   imports: [
     ReactiveFormsModule,
     RouterLink,
+    AsyncPipe,
     CheckboxModule,
     FileUploadComponent,
     PrimeInputComponent,
@@ -43,6 +46,8 @@ export class ClientFormComponent implements OnInit, OnDestroy {
   private readonly _formBuilder = inject(FormBuilder);
 
   private readonly _clientService = inject(ClientService);
+  private readonly _userService = inject(UserService);
+
   private readonly _unsubscribeAll: Subject<any> = new Subject<any>();
 
   clientForm: FormGroup;
@@ -52,6 +57,8 @@ export class ClientFormComponent implements OnInit, OnDestroy {
   photoField!: File;
   image = 'default.jpg';
   title = 'Crear Cliente';
+
+  coaches$!: Observable<User[]>;
 
   genders = [
     {
@@ -72,6 +79,7 @@ export class ClientFormComponent implements OnInit, OnDestroy {
       password: ['', Validators.required],
       is_active: [true, []],
       gender: ['', [Validators.required]],
+      coach: ['', [Validators.required]],
       phone: [0, [Validators.required, Validators.max(99999999)]],
       age: [0, [Validators.required, Validators.max(99)]],
       weight: [0, []],
@@ -86,6 +94,9 @@ export class ClientFormComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     const clientId = this._route.snapshot.paramMap.get('id');
+
+    this.getCoaches();
+
     if (clientId) {
       this.title = 'Editar Cliente';
       this.getClient(Number(clientId));
@@ -101,11 +112,21 @@ export class ClientFormComponent implements OnInit, OnDestroy {
           this.client = client;
 
           this.setFormFields(client);
-          if (client.photo) {
-            this.image = client.photo;
+          if (client.user.avatar) {
+            this.image = client.user.avatar;
           }
         },
       });
+  }
+
+  getCoaches(): void {
+    const params = {
+      ordering: '-id',
+      paginator: null,
+      is_staff: true,
+      is_active: true,
+    };
+    this.coaches$ = this._userService.all(params);
   }
 
   setFormFields(client: Client) {
@@ -117,6 +138,7 @@ export class ClientFormComponent implements OnInit, OnDestroy {
       last_name: last_name,
       is_active: is_active,
       phone: client.phone,
+      coach: client.coach.id,
       age: client.age,
       gender: client.gender,
       weight: client.weight,
@@ -153,6 +175,7 @@ export class ClientFormComponent implements OnInit, OnDestroy {
     formData.append('age', form.age);
     formData.append('phone', form.phone);
     formData.append('gender', form.gender);
+    formData.append('coach', form.coach);
     formData.append('weight', form.weight);
     formData.append('height', form.height);
     formData.append('experience_level', form.experience_level);
@@ -162,7 +185,7 @@ export class ClientFormComponent implements OnInit, OnDestroy {
     }
 
     if (this.photoField) {
-      formData.append('photo', this.photoField);
+      formData.append('avatar', this.photoField);
     }
 
     if (this.client) {

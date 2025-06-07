@@ -52,6 +52,14 @@
           controlName="experience_level"
           label="Experiencia" />
       </div>
+
+      @if (coaches$ | async; as coaches) {
+        <app-prime-select
+          [form]="clientForm"
+          controlName="coach"
+          label="Entrenador"
+          [options]="coaches" />
+      }
     </div>
 
     <h3 class="mb-2 mt-4">Datos de Usuario</h3>
