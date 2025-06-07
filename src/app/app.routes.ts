@@ -41,10 +41,6 @@ export const routes: Routes = [
         loadChildren: () => import('./pages/admin/users/users.routes'),
       },
       {
-        path: 'workouts',
-        loadChildren: () => import('./pages/admin/workouts/workouts.routes'),
-      },
-      {
         path: 'routines',
         loadChildren: () => import('./pages/admin/routines/routines.routes'),
       },

@@ -56,12 +56,6 @@ export class SidebarComponent implements OnInit {
       icon: 'faSolidHouse',
     },
     {
-      id: 2,
-      link: '/admin/workouts',
-      label: 'Entrenamientos',
-      icon: 'faSolidBell',
-    },
-    {
       id: 3,
       link: '/admin/clients',
       label: 'Clientes',
@@ -97,12 +91,6 @@ export class SidebarComponent implements OnInit {
       label: 'Mi Perfil',
       icon: 'faSolidUser',
     },
-    // {
-    //   id: 7,
-    //   link: '/admin/settings',
-    //   label: 'Config',
-    //   icon: 'faSolidWrench',
-    // },
   ];
 
   user!: User;
