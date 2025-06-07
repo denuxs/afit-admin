@@ -34,10 +34,10 @@ export class LoginComponent implements OnDestroy {
       .subscribe({
         next: (response: any) => {
           const { user } = response;
-          // if (!user.is_superuser) {
-          //   this.showToast('login.unauthorized');
-          //   return;
-          // }
+          if (!user.is_superuser) {
+            this.showToast('login.unauthorized');
+            return;
+          }
 
           this._router.navigateByUrl('/admin');
         },

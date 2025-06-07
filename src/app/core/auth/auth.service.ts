@@ -15,24 +15,24 @@ export class AuthService {
 
   private readonly _api: string = environment.BACKEND_API + '/auth/';
 
-  _authenticated: boolean = false;
+  _authenticated = false;
 
   constructor() {}
 
   set accessToken(token: string) {
-    localStorage.setItem('accessToken', token);
+    localStorage.setItem('aafittok', token);
   }
 
   get accessToken(): string {
-    return localStorage.getItem('accessToken') ?? '';
+    return localStorage.getItem('aafittok') ?? '';
   }
 
   set refreshToken(token: string) {
-    localStorage.setItem('refreshToken', token);
+    localStorage.setItem('arfittok', token);
   }
 
   get refreshToken(): string {
-    return localStorage.getItem('refreshToken') ?? '';
+    return localStorage.getItem('arfittok') ?? '';
   }
 
   login(form: LoginDto): Observable<LoginResponse> {
@@ -46,13 +46,13 @@ export class AuthService {
           this._userService.user = user;
 
           this._authenticated = true;
-        }),
+        })
       );
   }
 
   logout() {
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('refreshToken');
+    localStorage.removeItem('aafittok');
+    localStorage.removeItem('arfittok');
   }
 
   check(): boolean {
