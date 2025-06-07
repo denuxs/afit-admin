@@ -4,8 +4,8 @@ export interface Client {
   id: number;
   user: User;
   fullname: string;
-  photo: string;
   phone: number;
+  coach: User;
   age: number;
   gender: string;
   weight: string;

@@ -1,15 +1,10 @@
 export interface User {
   id: number;
   username: string;
-  photo: string;
-  phone: number;
-  age: number;
+  fullname: string;
+  avatar: string;
+  company: number;
   password: string;
-  gender: string;
-  user_type: string;
-  weight: string;
-  height: string;
-  experience_level: string;
   first_name: string;
   last_name: string;
   is_staff: boolean;
@@ -28,12 +23,10 @@ export interface UserList {
 
 export interface UserDto {
   username: string;
-  phone: string;
-  age: string;
   first_name: string;
   last_name: string;
-  gender: string;
   password: string;
   is_active: boolean;
+  company: number;
   // is_superuser: boolean;
 }
