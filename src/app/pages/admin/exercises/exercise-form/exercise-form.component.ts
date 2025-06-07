@@ -5,7 +5,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { Subject, takeUntil } from 'rxjs';
+import { map, Observable, Subject, takeUntil } from 'rxjs';
 import { DomSanitizer } from '@angular/platform-browser';
 
 import { Catalog, Exercise } from 'app/domain';
@@ -24,12 +24,14 @@ import { ExerciseCommentsComponent } from '../exercise-comments/exercise-comment
 import { PrimeInputComponent } from 'app/components/prime-input/prime-input.component';
 import { PrimeSelectComponent } from 'app/components/prime-select/prime-select.component';
 import { PrimeEditorComponent } from 'app/components/prime-editor/prime-editor.component';
+import { AsyncPipe } from '@angular/common';
 
 @Component({
   selector: 'app-exercise-form',
   standalone: true,
   imports: [
     ReactiveFormsModule,
+    AsyncPipe,
     FileUploadComponent,
     ExerciseCommentsComponent,
     PrimeInputComponent,
@@ -47,6 +49,7 @@ export class ExerciseFormComponent implements OnInit, OnDestroy {
   private readonly _ref = inject(DynamicDialogRef);
 
   private readonly _exerciseService = inject(ExerciseService);
+  private readonly _catalogService = inject(CatalogService);
 
   private readonly _unsubscribeAll: Subject<any> = new Subject<any>();
 
@@ -55,6 +58,7 @@ export class ExerciseFormComponent implements OnInit, OnDestroy {
   photoField!: File;
   image = 'default.jpg';
 
+  catalogs$!: Observable<Catalog[]>;
   muscles: Catalog[] = [];
   equipments: Catalog[] = [];
 
@@ -69,9 +73,8 @@ export class ExerciseFormComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     const config = this._config.data;
-    const { muscles, equipments } = config;
-    this.muscles = muscles;
-    this.equipments = equipments;
+
+    this.loadCatalogs();
 
     if (config && 'exercise' in config) {
       const { image } = config.exercise;
@@ -82,6 +85,23 @@ export class ExerciseFormComponent implements OnInit, OnDestroy {
       this.exercise = config.exercise;
       this.setFormValue(config.exercise);
     }
+  }
+
+  loadCatalogs(): void {
+    const params = {
+      ordering: '-id',
+      paginator: null,
+    };
+    this.catalogs$ = this._catalogService.all(params).pipe(
+      map((catalogs: Catalog[]) => {
+        this.muscles = catalogs.filter(catalog => catalog.key === 'muscle');
+        this.equipments = catalogs.filter(
+          catalog => catalog.key === 'equipment'
+        );
+
+        return catalogs;
+      })
+    );
   }
 
   setFormValue(exercise: Exercise) {

@@ -3,17 +3,19 @@
 
   <app-prime-input [form]="exerciseForm" controlName="name" label="Nombre" />
 
-  <app-prime-select
-    [form]="exerciseForm"
-    controlName="muscle"
-    label="Músculo"
-    [options]="muscles" />
+  @if (catalogs$ | async) {
+    <app-prime-select
+      [form]="exerciseForm"
+      controlName="muscle"
+      label="Músculo"
+      [options]="muscles" />
 
-  <app-prime-select
-    [form]="exerciseForm"
-    controlName="equipment"
-    label="Equipo"
-    [options]="equipments" />
+    <app-prime-select
+      [form]="exerciseForm"
+      controlName="equipment"
+      label="Equipo"
+      [options]="equipments" />
+  }
 
   <div class="mb-4">
     <app-prime-editor

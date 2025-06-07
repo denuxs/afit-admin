@@ -58,7 +58,6 @@ export class ExercisesComponent implements OnInit {
   private readonly _dialogService = inject(DialogService);
 
   private readonly _exerciseService = inject(ExerciseService);
-  private readonly _catalogService = inject(CatalogService);
 
   exercises$!: Observable<ExerciseList>;
   ref: DynamicDialogRef | undefined;
@@ -79,27 +78,11 @@ export class ExercisesComponent implements OnInit {
   ngOnInit(): void {
     const params = this.getParams();
 
-    this.loadCatalogs();
     this.loadData(params);
   }
 
   loadData(params: Params): void {
     this.exercises$ = this._exerciseService.search(params);
-  }
-
-  loadCatalogs(): void {
-    const params = {
-      ordering: '-id',
-      paginator: null,
-    };
-    this._catalogService.all(params).subscribe({
-      next: (catalogs: Catalog[]) => {
-        this.muscles = catalogs.filter(catalog => catalog.key === 'muscle');
-        this.equipments = catalogs.filter(
-          catalog => catalog.key === 'equipment'
-        );
-      },
-    });
   }
 
   handlePage(event: PaginatorState) {
@@ -128,10 +111,6 @@ export class ExercisesComponent implements OnInit {
       modal: true,
       position: 'top',
       closable: true,
-      data: {
-        muscles: this.muscles,
-        equipments: this.equipments,
-      },
     });
 
     this.ref.onClose.subscribe((data: any) => {
@@ -149,8 +128,6 @@ export class ExercisesComponent implements OnInit {
       position: 'top',
       closable: true,
       data: {
-        muscles: this.muscles,
-        equipments: this.equipments,
         exercise: exercise,
       },
     });
