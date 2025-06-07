@@ -7,18 +7,21 @@ export interface Measure {
   created: Date;
   is_active: boolean;
   measures: {
-    abdomen: number;
-    arm_left: number;
-    arm_right: number;
-    back: number;
-    chest: number;
-    forearm: number;
-    glutes: number;
-    hips: number;
-    leg_left: number;
-    leg_right: number;
-    waist: number;
     weight: number;
+    waist: number;
+    abdomen: number;
+    chest: number;
+    hips: number;
+    back: number;
+    left_bicep: number;
+    right_bicep: number;
+    left_forearm: number;
+    right_forearm: number;
+    left_thigh: number;
+    right_thigh: number;
+    left_calf: number;
+    right_calf: number;
+    glutes: number;
   };
 }
 
@@ -33,17 +36,20 @@ export interface MeasureDto {
   client: number;
   is_active: boolean;
   measures: {
-    abdomen: number;
-    arm_left: number;
-    arm_right: number;
-    back: number;
-    chest: number;
-    forearm: number;
-    glutes: number;
-    hips: number;
-    leg_left: number;
-    leg_right: number;
-    waist: number;
     weight: number;
+    waist: number;
+    abdomen: number;
+    chest: number;
+    hips: number;
+    back: number;
+    left_bicep: number;
+    right_bicep: number;
+    left_forearm: number;
+    right_forearm: number;
+    left_thigh: number;
+    right_thigh: number;
+    left_calf: number;
+    right_calf: number;
+    glutes: number;
   };
 }
