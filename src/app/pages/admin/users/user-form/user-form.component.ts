@@ -11,25 +11,29 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { Subject, takeUntil } from 'rxjs';
+import { Observable, Subject, takeUntil } from 'rxjs';
 
-import { User } from 'app/domain';
+import { Company, User } from 'app/domain';
 import { FileUploadComponent } from 'app/components/file-upload/file-upload.component';
 
 import { CheckboxModule } from 'primeng/checkbox';
 
-import { UserService } from 'app/services';
+import { CompanyService, UserService } from 'app/services';
 import { PrimeInputComponent } from 'app/components/prime-input/prime-input.component';
 
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
+import { PrimeSelectComponent } from 'app/components/prime-select/prime-select.component';
+import { AsyncPipe } from '@angular/common';
 @Component({
   selector: 'app-user-form',
   standalone: true,
   imports: [
     ReactiveFormsModule,
+    AsyncPipe,
     CheckboxModule,
     FileUploadComponent,
     PrimeInputComponent,
+    PrimeSelectComponent,
   ],
   templateUrl: './user-form.component.html',
   styleUrl: './user-form.component.scss',
@@ -41,6 +45,7 @@ export class UserFormComponent implements OnInit, OnDestroy {
   private readonly _ref = inject(DynamicDialogRef);
 
   private readonly _userService = inject(UserService);
+  private readonly _companyService = inject(CompanyService);
   private readonly _unsubscribeAll: Subject<any> = new Subject<any>();
 
   userForm: FormGroup;
@@ -49,6 +54,7 @@ export class UserFormComponent implements OnInit, OnDestroy {
 
   photoField!: File;
   image = 'default.jpg';
+  companies$!: Observable<Company[]>;
 
   genders = [
     {
@@ -66,6 +72,7 @@ export class UserFormComponent implements OnInit, OnDestroy {
       username: ['', [Validators.required]],
       first_name: ['', [Validators.required]],
       last_name: ['', [Validators.required]],
+      company: ['', [Validators.required]],
       password: ['', []],
       is_active: [true, []],
       is_staff: [false, []],
@@ -78,12 +85,17 @@ export class UserFormComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     const config = this.getConfig();
+    this.getCompanies();
 
     if (config && 'user' in config) {
       const { user } = config;
 
       this.user = user;
       this.setFormFields(user);
+
+      if (user.avatar) {
+        this.image = user.avatar;
+      }
     }
   }
 
@@ -91,11 +103,20 @@ export class UserFormComponent implements OnInit, OnDestroy {
     return this._config.data;
   }
 
+  getCompanies(): void {
+    const params = {
+      ordering: '-id',
+      paginator: null,
+    };
+    this.companies$ = this._companyService.all(params);
+  }
+
   setFormFields(user: User) {
     const form = {
       username: user.username,
       first_name: user.first_name,
       last_name: user.last_name,
+      company: user.company,
       is_active: user.is_active,
       is_staff: user.is_staff,
       password: '',
@@ -127,14 +148,15 @@ export class UserFormComponent implements OnInit, OnDestroy {
     formData.append('last_name', form.last_name);
     formData.append('is_active', Number(form.is_active).toString());
     formData.append('is_staff', Number(form.is_staff).toString());
+    formData.append('company', Number(form.company).toString());
 
     if (form.password) {
       formData.append('password', form.password);
     }
 
-    // if (this.photoField) {
-    //   formData.append('photo', this.photoField);
-    // }
+    if (this.photoField) {
+      formData.append('avatar', this.photoField);
+    }
 
     if (this.user) {
       this.updateUser(this.user.id, formData);
