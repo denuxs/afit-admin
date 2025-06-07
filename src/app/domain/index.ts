@@ -11,3 +11,4 @@ export * from './image';
 export * from './notification';
 export * from './routine';
 export * from './client';
+export * from './company';

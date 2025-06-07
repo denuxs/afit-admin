@@ -9,3 +9,4 @@ export * from './client.service';
 export * from './catalog.service';
 export * from './image.service';
 export * from './notification.service';
+export * from './company.service';

@@ -36,7 +36,6 @@ export class UploadImageComponent implements OnInit {
   images$!: Observable<Image[]>;
 
   ngOnInit(): void {
-    console.log(this.objectId, this.contentType);
     if (this.objectId && this.contentType) {
       this.getImages(this.objectId, this.contentType);
     }
