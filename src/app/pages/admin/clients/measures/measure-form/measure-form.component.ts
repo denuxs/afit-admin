@@ -5,15 +5,15 @@ import { Subject, takeUntil } from 'rxjs';
 import { Measure, MeasureDto } from 'app/domain';
 import { MeasuresService } from 'app/services';
 
-import { SelectModule } from 'primeng/select';
 import { CheckboxModule } from 'primeng/checkbox';
-import { InputTextModule } from 'primeng/inputtext';
-import { TextareaModule } from 'primeng/textarea';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
+import { InputTextModule } from 'primeng/inputtext';
+import { SelectModule } from 'primeng/select';
+import { TextareaModule } from 'primeng/textarea';
 
-import { MeasureImagesComponent } from '../measure-images/measure-images.component';
-import { PrimeEditorComponent } from 'app/components/prime-editor/prime-editor.component';
 import { PrimeInputComponent } from 'app/components/prime-input/prime-input.component';
+import { PrimeTextareaComponent } from 'app/components/prime-textarea/prime-textarea.component';
+import { MeasureImagesComponent } from '../measure-images/measure-images.component';
 @Component({
   selector: 'app-measure-form',
   standalone: true,
@@ -24,7 +24,7 @@ import { PrimeInputComponent } from 'app/components/prime-input/prime-input.comp
     InputTextModule,
     TextareaModule,
     MeasureImagesComponent,
-    PrimeEditorComponent,
+    PrimeTextareaComponent,
     PrimeInputComponent,
   ],
   templateUrl: './measure-form.component.html',
@@ -45,18 +45,21 @@ export class MeasureFormComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.measureForm = this._formBuilder.group({
       comment: ['', []],
-      abdomen: [0, []],
-      arm_left: [0, []],
-      arm_right: [0, []],
-      back: [0, []],
-      chest: [0, []],
-      forearm: [0, []],
-      glutes: [0, []],
-      hips: [0, []],
-      leg_left: [0, []],
-      leg_right: [0, []],
-      waist: [0, []],
       weight: [0, []],
+      waist: [0, []],
+      abdomen: [0, []],
+      chest: [0, []],
+      hips: [0, []],
+      back: [0, []],
+      left_bicep: [0, []],
+      right_bicep: [0, []],
+      left_forearm: [0, []],
+      right_forearm: [0, []],
+      left_thigh: [0, []],
+      right_thigh: [0, []],
+      left_calf: [0, []],
+      right_calf: [0, []],
+      glutes: [0, []],
       is_active: [true, []],
     });
 
@@ -79,18 +82,21 @@ export class MeasureFormComponent implements OnInit, OnDestroy {
 
     const form = {
       comment: measure.comment,
-      abdomen: measures.abdomen,
-      arm_left: measures.arm_left,
-      arm_right: measures.arm_right,
-      back: measures.back,
-      chest: measures.chest,
-      forearm: measures.forearm,
-      glutes: measures.glutes,
-      hips: measures.hips,
-      leg_left: measures.leg_left,
-      leg_right: measures.leg_right,
-      waist: measures.waist,
       weight: measures.weight,
+      waist: measures.waist,
+      abdomen: measures.abdomen,
+      chest: measures.chest,
+      hips: measures.hips,
+      back: measures.back,
+      left_bicep: measures.left_bicep,
+      right_bicep: measures.right_bicep,
+      left_forearm: measures.left_forearm,
+      right_forearm: measures.right_forearm,
+      left_thigh: measures.left_thigh,
+      right_thigh: measures.right_thigh,
+      left_calf: measures.left_calf,
+      right_calf: measures.right_calf,
+      glutes: measures.glutes,
     };
 
     this.measureForm.patchValue(form);
@@ -110,18 +116,21 @@ export class MeasureFormComponent implements OnInit, OnDestroy {
       comment: form.comment,
       is_active: form.is_active,
       measures: {
-        abdomen: form.abdomen,
-        arm_left: form.arm_left,
-        arm_right: form.arm_right,
-        back: form.back,
-        chest: form.chest,
-        forearm: form.forearm,
-        glutes: form.glutes,
-        hips: form.hips,
-        leg_left: form.leg_left,
-        leg_right: form.leg_right,
-        waist: form.waist,
         weight: form.weight,
+        waist: form.waist,
+        abdomen: form.abdomen,
+        chest: form.chest,
+        hips: form.hips,
+        back: form.back,
+        left_bicep: form.left_bicep,
+        right_bicep: form.right_bicep,
+        left_forearm: form.left_forearm,
+        right_forearm: form.right_forearm,
+        left_thigh: form.left_thigh,
+        right_thigh: form.right_thigh,
+        left_calf: form.left_calf,
+        right_calf: form.right_calf,
+        glutes: form.glutes,
       },
     };
 

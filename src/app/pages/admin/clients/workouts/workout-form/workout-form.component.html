@@ -17,9 +17,19 @@
     </div>
   </div>
 
-  <div formArrayName="routines" class="mb-4">
-    <label for="routine" class="form-label text-xl">Rutinas</label>
+  <div class="flex justify-between items-center mb-2">
+    <h2 class="mb-2">Rutinas</h2>
+    <div>
+      <button
+        type="button"
+        (click)="showDialog()"
+        class="bg-gray-600 flex text-sm rounded-md px-4 py-1 text-white">
+        <i class="pi pi-plus mr-1"></i> Agregar
+      </button>
+    </div>
+  </div>
 
+  <div formArrayName="routines" class="mb-4">
     @for (tab of routines.controls; track $index; let i = $index) {
       <ng-container [formGroupName]="i">
         <div class="flex mb-2 gap-2">
@@ -44,14 +54,66 @@
     }
   </div>
 
-  <button
+  <!-- <button
     type="button"
     (click)="addRoutine()"
     class="bg-gray-600 flex text-sm rounded-md px-4 py-1 text-white">
     <i class="pi pi-plus mr-1"></i> Agregar
-  </button>
+  </button> -->
 
   <div class="flex justify-end mt-4">
     <button class="btn-primary" type="submit">Guardar</button>
   </div>
 </form>
+
+<p-dialog
+  header="Rutinas"
+  [resizable]="false"
+  [modal]="true"
+  clo
+  appendTo="body"
+  [(visible)]="dialogVisible"
+  [style]="{ width: '75vw' }"
+  [contentStyle]="{ height: '300px' }">
+  <p-table
+    #dt2
+    dataKey="id"
+    [value]="routineList"
+    (onRowSelect)="onRowSelect($event)"
+    stripedRows
+    [rowHover]="true"
+    [(selection)]="selectedProducts"
+    [globalFilterFields]="['title']">
+    <ng-template #caption>
+      <div class="flex">
+        <p-iconfield iconPosition="left">
+          <p-inputicon>
+            <i class="pi pi-search"></i>
+          </p-inputicon>
+          <input
+            pInputText
+            type="text"
+            (input)="dt2.filterGlobal($any($event.target).value, 'contains')"
+            placeholder="Buscar rutina..." />
+        </p-iconfield>
+      </div>
+    </ng-template>
+    <ng-template #header>
+      <tr>
+        <th style="width: 4rem"></th>
+        <th>Rutina</th>
+      </tr>
+    </ng-template>
+    <ng-template #body let-item>
+      <tr [pSelectableRow]="item">
+        <td>
+          <p-tableCheckbox [value]="item" />
+        </td>
+        <td>{{ item.title }}</td>
+      </tr>
+    </ng-template>
+  </p-table>
+  <ng-template #footer>
+    <p-button label="Ok" icon="pi pi-check" (onClick)="okModal()" />
+  </ng-template>
+</p-dialog>

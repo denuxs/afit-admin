@@ -2,7 +2,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { AsyncPipe, DatePipe } from '@angular/common';
 import { Observable, Subject, takeUntil } from 'rxjs';
 
-import { Client, Measure, MeasureList } from 'app/domain';
+import { Client, Measure } from 'app/domain';
 import { ClientService, MeasuresService } from 'app/services';
 
 import { ProgressSpinner } from 'primeng/progressspinner';
@@ -23,14 +23,7 @@ import { MeasureFormComponent } from './measure-form/measure-form.component';
 
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { faSolidCircleCheck } from '@ng-icons/font-awesome/solid';
-import { ActivatedRoute } from '@angular/router';
-
-interface Params {
-  search?: string;
-  ordering?: string;
-  client?: number;
-  page?: number;
-}
+import { ActivatedRoute, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-measures',
@@ -38,6 +31,7 @@ interface Params {
   imports: [
     AsyncPipe,
     DatePipe,
+    RouterLink,
     TableModule,
     ProgressSpinner,
     PaginatorModule,

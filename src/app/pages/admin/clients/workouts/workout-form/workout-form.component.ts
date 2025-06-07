@@ -30,6 +30,12 @@ import { PrimeEditorComponent } from 'app/components/prime-editor/prime-editor.c
 import { Client, Routine, User, Workout } from 'app/domain';
 import { SelectModule } from 'primeng/select';
 import { PrimeSelectComponent } from 'app/components/prime-select/prime-select.component';
+import { ButtonModule } from 'primeng/button';
+import { DialogModule } from 'primeng/dialog';
+import { TableModule } from 'primeng/table';
+import { IconFieldModule } from 'primeng/iconfield';
+import { InputIconModule } from 'primeng/inputicon';
+import { InputTextModule } from 'primeng/inputtext';
 
 @Component({
   selector: 'app-workout-form',
@@ -42,6 +48,12 @@ import { PrimeSelectComponent } from 'app/components/prime-select/prime-select.c
     RouterLink,
     CheckboxModule,
     PrimeSelectComponent,
+    ButtonModule,
+    DialogModule,
+    TableModule,
+    IconFieldModule,
+    InputIconModule,
+    InputTextModule,
   ],
   templateUrl: './workout-form.component.html',
   styleUrl: './workout-form.component.scss',
@@ -66,6 +78,48 @@ export class WorkoutFormComponent implements OnInit, OnDestroy {
 
   routineList: Routine[] = [];
 
+  customers = [
+    {
+      id: 1000,
+      name: 'James Butt',
+      country: {
+        name: 'Algeria',
+        code: 'dz',
+      },
+      company: 'Benton, John B Jr',
+      date: '2015-09-13',
+      status: 'unqualified',
+      verified: true,
+      activity: 17,
+      representative: {
+        name: 'Ioni Bowcher',
+        image: 'ionibowcher.png',
+      },
+      balance: 70663,
+    },
+    {
+      id: 1002,
+      name: 'James Butt',
+      country: {
+        name: 'Algeria',
+        code: 'dz',
+      },
+      company: 'Benton, John B Jr',
+      date: '2015-09-13',
+      status: 'unqualified',
+      verified: true,
+      activity: 17,
+      representative: {
+        name: 'Ioni Bowcher',
+        image: 'ionibowcher.png',
+      },
+      balance: 70663,
+    },
+  ];
+
+  dialogVisible = false;
+  selectedProducts!: any;
+
   constructor() {
     this.workoutForm = this._formBuilder.group({
       title: ['', [Validators.required]],
@@ -78,7 +132,6 @@ export class WorkoutFormComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.getRoutines();
-    this.getClients();
 
     const config = this.getConfig();
 
@@ -86,6 +139,29 @@ export class WorkoutFormComponent implements OnInit, OnDestroy {
       this.workout = config.workout;
 
       this.setFormValue(config.workout);
+    }
+  }
+
+  showDialog() {
+    this.dialogVisible = true;
+  }
+
+  onRowSelect(event: any) {
+    // console.log(event);
+  }
+
+  okModal() {
+    this.dialogVisible = false;
+    this.routines.clear();
+
+    const routines = this.selectedProducts;
+
+    for (const item of routines) {
+      const formGroup: FormGroup = this._formBuilder.group({
+        routine: [{ value: item.id, disabled: true }, [Validators.required]],
+      });
+
+      this.routines.push(formGroup);
     }
   }
 
@@ -126,29 +202,6 @@ export class WorkoutFormComponent implements OnInit, OnDestroy {
       });
   }
 
-  getClients() {
-    const params = {
-      ordering: '-id',
-      paginator: null,
-    };
-
-    this._clientService
-      .all(params)
-      .pipe(
-        takeUntil(this._unsubscribeAll),
-        map((response: Client[]) => {
-          return response.map(client => {
-            return { id: client.id, name: client.fullname };
-          });
-        })
-      )
-      .subscribe({
-        next: (clients: any) => {
-          this.clients = clients;
-        },
-      });
-  }
-
   get routines(): FormArray {
     return this.workoutForm.get('routines') as FormArray;
   }
@@ -160,7 +213,7 @@ export class WorkoutFormComponent implements OnInit, OnDestroy {
 
       formGroups.push(
         this._formBuilder.group({
-          routine: [item.id],
+          routine: [{ value: item.id, disabled: true }, [Validators.required]],
         })
       );
     });
@@ -190,7 +243,7 @@ export class WorkoutFormComponent implements OnInit, OnDestroy {
 
     const config = this.getConfig();
 
-    const { title, description, routines } = this.workoutForm.value;
+    const { title, description, routines } = this.workoutForm.getRawValue();
     const routineIds = routines.map((obj: any) => obj.routine);
 
     const form = {
