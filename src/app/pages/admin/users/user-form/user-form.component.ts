@@ -24,6 +24,7 @@ import { PrimeInputComponent } from 'app/components/prime-input/prime-input.comp
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { PrimeSelectComponent } from 'app/components/prime-select/prime-select.component';
 import { AsyncPipe } from '@angular/common';
+import { PrimePasswordComponent } from 'app/components/prime-password/prime-password.component';
 @Component({
   selector: 'app-user-form',
   standalone: true,
@@ -34,6 +35,7 @@ import { AsyncPipe } from '@angular/common';
     FileUploadComponent,
     PrimeInputComponent,
     PrimeSelectComponent,
+    PrimePasswordComponent,
   ],
   templateUrl: './user-form.component.html',
   styleUrl: './user-form.component.scss',

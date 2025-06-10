@@ -23,7 +23,7 @@ import { PrimeInputComponent } from 'app/components/prime-input/prime-input.comp
 import { PrimeSelectComponent } from 'app/components/prime-select/prime-select.component';
 import { ClientService, UserService } from 'app/services';
 import { AsyncPipe } from '@angular/common';
-import { is } from 'date-fns/locale';
+import { PrimePasswordComponent } from 'app/components/prime-password/prime-password.component';
 
 @Component({
   selector: 'app-client-form',
@@ -36,6 +36,7 @@ import { is } from 'date-fns/locale';
     FileUploadComponent,
     PrimeInputComponent,
     PrimeSelectComponent,
+    PrimePasswordComponent,
   ],
   templateUrl: './client-form.component.html',
   styleUrl: './client-form.component.scss',
