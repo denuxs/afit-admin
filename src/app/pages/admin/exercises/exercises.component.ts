@@ -2,8 +2,8 @@ import { Component, inject, OnInit } from '@angular/core';
 import { AsyncPipe, DatePipe } from '@angular/common';
 import { Observable } from 'rxjs';
 
-import { Catalog, Exercise, ExerciseList } from 'app/domain';
-import { CatalogService, ExerciseService } from 'app/services';
+import { Exercise, ExerciseList } from 'app/domain';
+import { ExerciseService } from 'app/services';
 
 import { ProgressSpinner } from 'primeng/progressspinner';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
@@ -61,9 +61,6 @@ export class ExercisesComponent implements OnInit {
 
   exercises$!: Observable<ExerciseList>;
   ref: DynamicDialogRef | undefined;
-
-  muscles: Catalog[] = [];
-  equipments: Catalog[] = [];
 
   first = 0;
   rows = 10;

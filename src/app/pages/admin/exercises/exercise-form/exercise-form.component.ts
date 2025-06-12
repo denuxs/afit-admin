@@ -7,6 +7,7 @@ import {
 } from '@angular/forms';
 import { map, Observable, Subject, takeUntil } from 'rxjs';
 import { DomSanitizer } from '@angular/platform-browser';
+import { AsyncPipe } from '@angular/common';
 
 import { Catalog, Exercise } from 'app/domain';
 import { CatalogService, ExerciseService } from 'app/services';
@@ -20,11 +21,9 @@ import {
 import { MessageService } from 'primeng/api';
 
 import { FileUploadComponent } from 'app/components/file-upload/file-upload.component';
-import { ExerciseCommentsComponent } from '../exercise-comments/exercise-comments.component';
 import { PrimeInputComponent } from 'app/components/prime-input/prime-input.component';
 import { PrimeSelectComponent } from 'app/components/prime-select/prime-select.component';
 import { PrimeEditorComponent } from 'app/components/prime-editor/prime-editor.component';
-import { AsyncPipe } from '@angular/common';
 
 @Component({
   selector: 'app-exercise-form',
@@ -33,7 +32,6 @@ import { AsyncPipe } from '@angular/common';
     ReactiveFormsModule,
     AsyncPipe,
     FileUploadComponent,
-    ExerciseCommentsComponent,
     PrimeInputComponent,
     PrimeSelectComponent,
     PrimeEditorComponent,

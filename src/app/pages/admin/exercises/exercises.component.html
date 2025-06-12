@@ -2,10 +2,7 @@
   <h1 class="mb-4">Ejercicios</h1>
 
   <div class="flex justify-between mb-2">
-    <app-exercise-filter
-      [muscles]="muscles"
-      [equipments]="equipments"
-      (filterChange)="handleFilter($event)" />
+    <app-exercise-filter (filterChange)="handleFilter($event)" />
     <div>
       <button (click)="openCreateDialog()" class="btn-primary">
         <i class="pi pi-plus"></i> Nuevo

@@ -7,17 +7,21 @@
         controlName="search"
         label="" />
 
-      <app-prime-select
-        [form]="filterForm"
-        controlName="muscle"
-        label=""
-        [options]="muscles" />
+      @if (catalogs$ | async) {
+        <app-prime-select
+          [form]="filterForm"
+          controlName="muscle"
+          placeholder="Musculo"
+          label=""
+          [options]="muscles" />
 
-      <app-prime-select
-        [form]="filterForm"
-        controlName="equipment"
-        label=""
-        [options]="equipments" />
+        <app-prime-select
+          [form]="filterForm"
+          controlName="equipment"
+          placeholder="Equipo"
+          label=""
+          [options]="equipments" />
+      }
 
       <div>
         <button class="btn-primary" type="submit">
