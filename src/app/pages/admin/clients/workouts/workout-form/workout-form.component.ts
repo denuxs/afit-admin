@@ -7,35 +7,24 @@ import {
   UntypedFormGroup,
   Validators,
 } from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { map, Observable, Subject, takeUntil } from 'rxjs';
+import { ActivatedRoute } from '@angular/router';
+import { Observable, Subject, takeUntil } from 'rxjs';
 
 import {
   DialogService,
-  DynamicDialogComponent,
   DynamicDialogConfig,
   DynamicDialogRef,
 } from 'primeng/dynamicdialog';
 import { CheckboxModule } from 'primeng/checkbox';
-
-import { PrimeInputComponent } from 'app/components/prime-input/prime-input.component';
-import {
-  ClientService,
-  RoutineService,
-  UserService,
-  WorkoutService,
-} from 'app/services';
-import { PrimeEditorComponent } from 'app/components/prime-editor/prime-editor.component';
-
-import { Client, Routine, User, Workout } from 'app/domain';
-import { SelectModule } from 'primeng/select';
-import { PrimeSelectComponent } from 'app/components/prime-select/prime-select.component';
 import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
-import { TableModule } from 'primeng/table';
-import { IconFieldModule } from 'primeng/iconfield';
-import { InputIconModule } from 'primeng/inputicon';
-import { InputTextModule } from 'primeng/inputtext';
+
+import { WorkoutService } from 'app/services';
+import { Client, Routine, Workout } from 'app/domain';
+
+import { PrimeInputComponent } from 'app/components/prime-input/prime-input.component';
+import { PrimeEditorComponent } from 'app/components/prime-editor/prime-editor.component';
+import { RoutineListComponent } from '../routine-list/routine-list.component';
 
 @Component({
   selector: 'app-workout-form',
@@ -43,125 +32,47 @@ import { InputTextModule } from 'primeng/inputtext';
   imports: [
     ReactiveFormsModule,
     PrimeInputComponent,
-    SelectModule,
     PrimeEditorComponent,
-    RouterLink,
     CheckboxModule,
-    PrimeSelectComponent,
     ButtonModule,
     DialogModule,
-    TableModule,
-    IconFieldModule,
-    InputIconModule,
-    InputTextModule,
   ],
+  providers: [DialogService],
   templateUrl: './workout-form.component.html',
   styleUrl: './workout-form.component.scss',
 })
 export class WorkoutFormComponent implements OnInit, OnDestroy {
   private readonly _route = inject(ActivatedRoute);
-  private readonly _router = inject(Router);
   private readonly _formBuilder = inject(UntypedFormBuilder);
   private readonly _config = inject(DynamicDialogConfig);
   private readonly _ref = inject(DynamicDialogRef);
+  private readonly _dialogService = inject(DialogService);
 
   private readonly _workoutService = inject(WorkoutService);
-  private readonly _routineService = inject(RoutineService);
-  private readonly _clientService = inject(ClientService);
-
   private readonly _unsubscribeAll: Subject<any> = new Subject<any>();
+  ref: DynamicDialogRef | undefined;
 
   workoutForm!: UntypedFormGroup;
   workout!: Workout;
   clients!: Client[];
   routines$!: Observable<Routine[]>;
 
-  routineList: Routine[] = [];
-
-  customers = [
-    {
-      id: 1000,
-      name: 'James Butt',
-      country: {
-        name: 'Algeria',
-        code: 'dz',
-      },
-      company: 'Benton, John B Jr',
-      date: '2015-09-13',
-      status: 'unqualified',
-      verified: true,
-      activity: 17,
-      representative: {
-        name: 'Ioni Bowcher',
-        image: 'ionibowcher.png',
-      },
-      balance: 70663,
-    },
-    {
-      id: 1002,
-      name: 'James Butt',
-      country: {
-        name: 'Algeria',
-        code: 'dz',
-      },
-      company: 'Benton, John B Jr',
-      date: '2015-09-13',
-      status: 'unqualified',
-      verified: true,
-      activity: 17,
-      representative: {
-        name: 'Ioni Bowcher',
-        image: 'ionibowcher.png',
-      },
-      balance: 70663,
-    },
-  ];
-
-  dialogVisible = false;
-  selectedProducts!: any;
-
   constructor() {
     this.workoutForm = this._formBuilder.group({
       title: ['', [Validators.required]],
       description: ['', []],
-      // client: ['', [Validators.required]],
       is_active: [true, []],
       routines: this._formBuilder.array([]),
     });
   }
 
   ngOnInit(): void {
-    this.getRoutines();
-
     const config = this.getConfig();
 
     if (config && 'workout' in config) {
       this.workout = config.workout;
 
       this.setFormValue(config.workout);
-    }
-  }
-
-  showDialog() {
-    this.dialogVisible = true;
-  }
-
-  onRowSelect(event: any) {
-    // console.log(event);
-  }
-
-  okModal() {
-    this.dialogVisible = false;
-    this.routines.clear();
-
-    const routines = this.selectedProducts;
-
-    for (const item of routines) {
-      const formGroup: FormGroup = this._formBuilder.group({
-        routine: [{ value: item.id, disabled: true }, [Validators.required]],
-      });
-
-      this.routines.push(formGroup);
     }
   }
 
@@ -186,22 +97,6 @@ export class WorkoutFormComponent implements OnInit, OnDestroy {
     return this._route.snapshot.paramMap.get('id');
   }
 
-  getRoutines() {
-    const params = {
-      ordering: '-id',
-      paginator: null,
-    };
-
-    this._routineService
-      .all(params)
-      .pipe(takeUntil(this._unsubscribeAll))
-      .subscribe({
-        next: (routine: Routine[]) => {
-          this.routineList = routine;
-        },
-      });
-  }
-
   get routines(): FormArray {
     return this.workoutForm.get('routines') as FormArray;
   }
@@ -209,11 +104,10 @@ export class WorkoutFormComponent implements OnInit, OnDestroy {
   setRoutines(data: any) {
     const formGroups: any = [];
     data.forEach((item: any) => {
-      const { id } = item;
-
       formGroups.push(
         this._formBuilder.group({
           routine: [{ value: item.id, disabled: true }, [Validators.required]],
+          title: [{ value: item.title, disabled: true }, [Validators.required]],
         })
       );
     });
@@ -223,9 +117,28 @@ export class WorkoutFormComponent implements OnInit, OnDestroy {
     });
   }
 
-  addRoutine(): void {
+  openRoutineModal(): void {
+    this.ref = this._dialogService.open(RoutineListComponent, {
+      header: 'Rutinas',
+      modal: true,
+      position: 'top',
+      appendTo: 'body',
+      closable: true,
+      // contentStyle: { height: '300px' },
+    });
+
+    this.ref.onClose.subscribe((data: any) => {
+      if (data) {
+        console.log(data);
+        this.addRoutine(data);
+      }
+    });
+  }
+
+  addRoutine(item: Routine): void {
     const formGroup: FormGroup = this._formBuilder.group({
-      routine: ['', Validators.required],
+      routine: [{ value: item.id, disabled: true }, [Validators.required]],
+      title: [{ value: item.title, disabled: true }, [Validators.required]],
     });
 
     this.routines.push(formGroup);
