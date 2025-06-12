@@ -12,19 +12,18 @@ import {
   Validators,
 } from '@angular/forms';
 import { Observable, Subject, takeUntil } from 'rxjs';
+import { AsyncPipe } from '@angular/common';
 
 import { Company, User } from 'app/domain';
-import { FileUploadComponent } from 'app/components/file-upload/file-upload.component';
+import { CompanyService, UserService } from 'app/services';
 
 import { CheckboxModule } from 'primeng/checkbox';
-
-import { CompanyService, UserService } from 'app/services';
-import { PrimeInputComponent } from 'app/components/prime-input/prime-input.component';
-
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
+
+import { PrimeInputComponent } from 'app/components/prime-input/prime-input.component';
 import { PrimeSelectComponent } from 'app/components/prime-select/prime-select.component';
-import { AsyncPipe } from '@angular/common';
 import { PrimePasswordComponent } from 'app/components/prime-password/prime-password.component';
+import { FileUploadComponent } from 'app/components/file-upload/file-upload.component';
 @Component({
   selector: 'app-user-form',
   standalone: true,
@@ -94,10 +93,6 @@ export class UserFormComponent implements OnInit, OnDestroy {
 
       this.user = user;
       this.setFormFields(user);
-
-      if (user.avatar) {
-        this.image = user.avatar;
-      }
     }
   }
 
@@ -121,11 +116,13 @@ export class UserFormComponent implements OnInit, OnDestroy {
       company: user.company,
       is_active: user.is_active,
       is_staff: user.is_staff,
-      password: '',
-      // is_superuser: user.is_superuser,
     };
 
     this.userForm.patchValue(form);
+
+    if (user.avatar) {
+      this.image = user.avatar;
+    }
   }
 
   generatePin() {

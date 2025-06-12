@@ -15,7 +15,6 @@ import {
   DynamicDialogRef,
 } from 'primeng/dynamicdialog';
 
-import { UserFilterComponent } from './user-filter/user-filter.component';
 import { UserService } from 'app/services';
 import { User, UserList } from 'app/domain';
 
@@ -29,9 +28,11 @@ import {
 import { TimeAgoPipe } from 'app/pipes/time-ago.pipe';
 import { PrimeAvatarComponent } from 'app/components/prime-avatar/prime-avatar.component';
 import { UserFormComponent } from './user-form/user-form.component';
+import { UserFilterComponent } from './user-filter/user-filter.component';
 interface Params {
   search?: string;
   ordering?: string;
+  is_staff: boolean;
   page?: number;
 }
 
@@ -77,6 +78,7 @@ export class UsersComponent implements OnInit {
     search: '',
     ordering: '',
     page: 1,
+    is_staff: true,
   };
 
   ngOnInit(): void {
@@ -176,7 +178,7 @@ export class UsersComponent implements OnInit {
           severity: 'error',
           summary: 'Error',
           detail:
-            'Algunas rutinas,medidas o notificaciones se encuentran asociados a este usuario',
+            'Algunas rutinas o medidas se encuentran asociados a este usuario',
         });
       },
     });
@@ -185,6 +187,7 @@ export class UsersComponent implements OnInit {
   getParams(): Params {
     return {
       search: '',
+      is_staff: true,
       ordering: '-id',
       page: 1,
     };

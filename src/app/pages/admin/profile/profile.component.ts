@@ -1,19 +1,14 @@
-import {
-  AfterViewInit,
-  Component,
-  inject,
-  OnDestroy,
-  OnInit,
-} from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { delay, Observable, Subject, takeUntil } from 'rxjs';
+import { Observable, Subject, takeUntil } from 'rxjs';
+import { AsyncPipe } from '@angular/common';
 
-import { FileUploadComponent } from 'app/components/file-upload/file-upload.component';
+import { CompanyService, UserService } from 'app/services';
 import { Company, User } from 'app/domain';
 
 import { MessageService } from 'primeng/api';
@@ -22,9 +17,8 @@ import { ToastModule } from 'primeng/toast';
 
 import { PrimeInputComponent } from 'app/components/prime-input/prime-input.component';
 import { PrimeSelectComponent } from 'app/components/prime-select/prime-select.component';
-import { CompanyService, UserService } from 'app/services';
-import { AsyncPipe } from '@angular/common';
-
+import { PrimePasswordComponent } from 'app/components/prime-password/prime-password.component';
+import { FileUploadComponent } from 'app/components/file-upload/file-upload.component';
 @Component({
   selector: 'app-profile',
   standalone: true,
@@ -35,6 +29,7 @@ import { AsyncPipe } from '@angular/common';
     FileUploadComponent,
     PrimeInputComponent,
     PrimeSelectComponent,
+    PrimePasswordComponent,
     ToastModule,
   ],
   providers: [MessageService],
@@ -88,9 +83,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
         this.user = user;
 
         this.setFormFields(user);
-        if (user.avatar) {
-          this.image = user.avatar;
-        }
       },
     });
   }
@@ -106,6 +98,12 @@ export class ProfileComponent implements OnInit, OnDestroy {
     };
 
     this.userForm.patchValue(form);
+    this.userForm.get('username')?.disable();
+    this.userForm.get('company')?.disable();
+
+    if (user.avatar) {
+      this.image = user.avatar;
+    }
   }
 
   getCompanies(): void {
@@ -125,11 +123,9 @@ export class ProfileComponent implements OnInit, OnDestroy {
     const form = this.userForm.value;
 
     const formData = new FormData();
-    formData.append('username', form.username);
     formData.append('first_name', form.first_name);
     formData.append('last_name', form.last_name);
     formData.append('is_active', Number(form.is_active).toString());
-    formData.append('company', Number(form.company).toString());
 
     if (form.password) {
       formData.append('password', form.password);
