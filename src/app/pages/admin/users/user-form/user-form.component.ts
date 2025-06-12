@@ -74,7 +74,7 @@ export class UserFormComponent implements OnInit, OnDestroy {
       first_name: ['', [Validators.required]],
       last_name: ['', [Validators.required]],
       company: ['', [Validators.required]],
-      password: ['', []],
+      password: ['', [Validators.required]],
       is_active: [true, []],
       is_staff: [false, []],
     });
@@ -119,6 +119,7 @@ export class UserFormComponent implements OnInit, OnDestroy {
     };
 
     this.userForm.patchValue(form);
+    this.userForm.get('password')?.clearValidators();
 
     if (user.avatar) {
       this.image = user.avatar;

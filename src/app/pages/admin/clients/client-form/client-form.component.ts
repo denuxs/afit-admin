@@ -149,6 +149,7 @@ export class ClientFormComponent implements OnInit, OnDestroy {
     };
 
     this.clientForm.patchValue(form);
+    this.clientForm.get('password')?.clearValidators();
   }
 
   generatePin() {
