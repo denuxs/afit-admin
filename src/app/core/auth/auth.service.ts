@@ -41,11 +41,13 @@ export class AuthService {
       .pipe(
         tap((response: LoginResponse) => {
           const { access, refresh, user } = response;
-          this.accessToken = access;
-          this.refreshToken = refresh;
-          this._userService.user = user;
 
-          this._authenticated = true;
+          if (user.is_superuser) {
+            this.accessToken = access;
+            this.refreshToken = refresh;
+            this._userService.user = user;
+            this._authenticated = true;
+          }
         })
       );
   }
