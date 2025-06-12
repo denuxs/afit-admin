@@ -291,9 +291,6 @@ export class RoutineFormComponent implements OnInit, OnDestroy {
       return;
     }
 
-    // console.log(this.routineForm.value);
-    // return;
-
     const { title, description, level, exercises, is_active } =
       this.routineForm.value;
 
@@ -305,7 +302,6 @@ export class RoutineFormComponent implements OnInit, OnDestroy {
     const form: any = {
       title,
       description,
-      // user: this.userId,
       exercises,
       is_active,
       level,

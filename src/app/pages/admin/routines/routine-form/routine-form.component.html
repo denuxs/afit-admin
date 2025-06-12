@@ -33,15 +33,13 @@
           label="Descripción" />
       </div>
 
-      <div class="mb-4">
-        <div class="flex items-center">
-          <label for="is_active" class="form-label mr-4">Es Activo?</label>
-          <p-checkbox
-            inputId="is_active"
-            name="is_active"
-            [binary]="true"
-            formControlName="is_active" />
-        </div>
+      <div class="flex items-center mb-4">
+        <p-checkbox
+          inputId="is_active"
+          name="is_active"
+          [binary]="true"
+          formControlName="is_active" />
+        <label for="is_active" class="ml-2">Es Activo?</label>
       </div>
 
       <div formArrayName="exercises">

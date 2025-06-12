@@ -1,5 +1,10 @@
 import { Component, inject, OnDestroy, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { Subject, takeUntil } from 'rxjs';
 
 import { Measure, MeasureDto } from 'app/domain';
@@ -44,7 +49,7 @@ export class MeasureFormComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.measureForm = this._formBuilder.group({
-      comment: ['', []],
+      comment: ['', [Validators.required]],
       weight: [0, []],
       waist: [0, []],
       abdomen: [0, []],
