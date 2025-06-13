@@ -85,7 +85,6 @@ export class ClientFormComponent implements OnInit, OnDestroy {
       age: [0, [Validators.required, Validators.max(99)]],
       weight: [0, []],
       height: [0, []],
-      experience_level: ['', Validators.required],
     });
 
     // this.clientForm.patchValue({
@@ -144,8 +143,6 @@ export class ClientFormComponent implements OnInit, OnDestroy {
       gender: client.gender,
       weight: client.weight,
       height: client.height,
-      experience_level: client.experience_level,
-      // is_superuser: user.is_superuser,
     };
 
     this.clientForm.patchValue(form);
@@ -180,7 +177,6 @@ export class ClientFormComponent implements OnInit, OnDestroy {
     formData.append('coach', form.coach);
     formData.append('weight', form.weight);
     formData.append('height', form.height);
-    formData.append('experience_level', form.experience_level);
 
     if (form.password) {
       formData.append('password', form.password);

@@ -10,7 +10,6 @@ export interface Client {
   gender: string;
   weight: string;
   height: string;
-  experience_level: string;
 }
 
 export interface ClientList {
