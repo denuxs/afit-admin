@@ -118,10 +118,8 @@ export class RoutineFormComponent implements OnInit, OnDestroy {
       title: ['', [Validators.required]],
       description: ['', []],
       level: ['', [Validators.required]],
-      // day: ['', [Validators.required]],
       user: [0, [Validators.required]],
       exercises: this._formBuilder.array([]),
-      is_active: [true, []],
     });
   }
 
@@ -159,15 +157,12 @@ export class RoutineFormComponent implements OnInit, OnDestroy {
   }
 
   setFormFields(routine: Routine) {
-    const { title, description, level, user, is_active, exercises } = routine;
+    const { title, description, level, exercises } = routine;
 
     const form = {
       title: title,
       description: description,
-      // day: day,
       level: level,
-      // user: user.id,
-      // is_active: is_active,
     };
 
     this.routineForm.patchValue(form);
@@ -197,14 +192,20 @@ export class RoutineFormComponent implements OnInit, OnDestroy {
 
   addExercise(exercise: Exercise): void {
     const { name, id } = exercise;
+    const routineId = this.routine ? this.routine.id : null;
+    const nextOrder =
+      this.exercises.length > 0
+        ? Math.max(...this.exercises.controls.map(c => c.get('order')?.value)) +
+          1
+        : 1;
 
     const formGroup = this._formBuilder.group({
       id: [null],
-      routine: [this.routine.id, []],
+      routine: [routineId, []],
       exercise: [id, []],
       name: [name, []],
       description: ['', []],
-      order: [0, []],
+      order: [nextOrder, []],
       sets: this._formBuilder.array([
         this._formBuilder.group({
           sets: [4, []],
@@ -233,25 +234,27 @@ export class RoutineFormComponent implements OnInit, OnDestroy {
 
     if (!exerciseId) {
       this.exercises.removeAt(index);
+      this.handleOrder();
       return;
     }
 
-    // this._routineService.deleteDetailExercise(exerciseId).subscribe({
-    //   next: () => {
-    //     this.exercises.removeAt(index);
-    //   },
-    // });
+    this._routineService.deleteDetailExercise(exerciseId).subscribe({
+      next: () => {
+        this.exercises.removeAt(index);
+        this.handleOrder();
+      },
+    });
   }
 
   removeSet(exerciseIndex: any, index: any) {
     this.sets(exerciseIndex).removeAt(index);
   }
 
-  setExercises(exercises: any) {
+  setExercises(exercises: any[]) {
     const formGroups: any = [];
 
     exercises.forEach((item: any) => {
-      const { exercise, sets, routine, description, level } = item;
+      const { exercise, sets, routine, description, level, order } = item;
 
       const new_sets: any = [];
       if (sets) {
@@ -273,7 +276,7 @@ export class RoutineFormComponent implements OnInit, OnDestroy {
           exercise: [exercise.id],
           name: [exercise.name],
           level: [level],
-          order: [exercise.order],
+          order: [order],
           description: [description],
           sets: this._formBuilder.array(new_sets),
         })
@@ -291,19 +294,12 @@ export class RoutineFormComponent implements OnInit, OnDestroy {
       return;
     }
 
-    const { title, description, level, exercises, is_active } =
-      this.routineForm.value;
-
-    // exercises set order with index of exercises
-    exercises.forEach((item: any, index: number) => {
-      item.order = index + 1;
-    });
+    const { title, description, level, exercises } = this.routineForm.value;
 
     const form: any = {
       title,
       description,
       exercises,
-      is_active,
       level,
     };
 
@@ -352,15 +348,18 @@ export class RoutineFormComponent implements OnInit, OnDestroy {
     this.routineForm.markAllAsTouched();
   }
 
-  drop(event: any) {
-    moveItemInArray(
-      this.exercises.controls,
-      event.previousIndex,
-      event.currentIndex
-    );
+  handleDragDrop(event: CdkDragDrop<any>) {
+    const previousIndex = event.previousIndex;
+    const currentIndex = event.currentIndex;
 
-    this.exercises.controls[event.currentIndex].patchValue({
-      order: event.previousIndex,
+    moveItemInArray(this.exercises.controls, previousIndex, currentIndex);
+
+    this.handleOrder();
+  }
+
+  handleOrder(): void {
+    this.exercises.controls.forEach((control, index) => {
+      control.get('order')?.setValue(index + 1);
     });
   }
 

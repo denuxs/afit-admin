@@ -38,7 +38,7 @@ export class RoutineService {
 
   deleteDetailExercise(id: number) {
     return this._httpClient.delete(
-      environment.BACKEND_API + `/workouts-detail/${id}/`
+      environment.BACKEND_API + `/routineexercises/${id}/`
     );
   }
 }

@@ -33,17 +33,10 @@
           label="Descripción" />
       </div>
 
-      <div class="flex items-center mb-4">
-        <p-checkbox
-          inputId="is_active"
-          name="is_active"
-          [binary]="true"
-          formControlName="is_active" />
-        <label for="is_active" class="ml-2">Es Activo?</label>
-      </div>
+      <h2 class="mb-2">Ejercicios</h2>
 
       <div formArrayName="exercises">
-        <p-accordion cdkDropList (cdkDropListDropped)="drop($event)">
+        <p-accordion cdkDropList (cdkDropListDropped)="handleDragDrop($event)">
           @for (tab of exercises.controls; track $index; let i = $index) {
             <p-accordion-panel [formGroupName]="i" [value]="i" cdkDrag>
               <p-accordion-header>
@@ -146,49 +139,47 @@
     </div>
     <!-- end col-span-2 -->
 
-    @if (routine) {
-      <div
-        class="border border-gray-300 m-2 bg-gray-50 px-4 py-6 rounded-md h-screen">
-        <input
-          type="text"
-          [formControl]="searchControl"
-          class="w-full rounded-md mb-4 bg-gray-100 border border-gray-300"
-          placeholder="Buscar ejercicio" />
+    <div
+      class="border border-gray-300 m-2 bg-gray-50 px-4 py-6 rounded-md h-screen">
+      <input
+        type="text"
+        [formControl]="searchControl"
+        class="w-full rounded-md mb-4 bg-gray-100 border border-gray-300"
+        placeholder="Buscar ejercicio" />
 
-        <p-scrollpanel styleClass="h-4/5">
-          <table class="w-full">
-            @for (item of filteredExercises; track item.id) {
-              <tr class="odd:bg-white even:bg-gray-100 hover:bg-gray-100">
-                <td class="pt-2">
-                  <button
-                    type="button"
-                    (click)="selectExercise(item)"
-                    class="text-blue-700 px-4">
-                    <i class="pi pi-plus"></i>
-                  </button>
-                </td>
-                <td class="pt-2">
-                  <div class="flex gap-2">
-                    <div>
-                      @let image = 'default.jpg';
-                      <img
-                        [src]="item.image ? item.image : image"
-                        class="rounded-full h-10 w-10 border border-gray-300 object-cover"
-                        alt="exercise" />
-                    </div>
-                    <div>
-                      <h3>{{ item.name }}</h3>
-                      <p class="text-gray-400 text-sm">
-                        {{ item.muscle.name }}
-                      </p>
-                    </div>
+      <p-scrollpanel styleClass="h-4/5">
+        <table class="w-full">
+          @for (item of filteredExercises; track item.id) {
+            <tr class="odd:bg-white even:bg-gray-100 hover:bg-gray-100">
+              <td class="pt-2">
+                <button
+                  type="button"
+                  (click)="addExercise(item)"
+                  class="text-blue-700 px-4">
+                  <i class="pi pi-plus"></i>
+                </button>
+              </td>
+              <td class="pt-2">
+                <div class="flex gap-2">
+                  <div>
+                    @let image = 'default.jpg';
+                    <img
+                      [src]="item.image ? item.image : image"
+                      class="rounded-full h-10 w-10 border border-gray-300 object-cover"
+                      alt="exercise" />
                   </div>
-                </td>
-              </tr>
-            }
-          </table>
-        </p-scrollpanel>
-      </div>
-    }
+                  <div>
+                    <h3>{{ item.name }}</h3>
+                    <p class="text-gray-400 text-sm">
+                      {{ item.muscle.name }}
+                    </p>
+                  </div>
+                </div>
+              </td>
+            </tr>
+          }
+        </table>
+      </p-scrollpanel>
+    </div>
   </div>
 </form>
