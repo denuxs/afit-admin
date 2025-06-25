@@ -1,23 +1,37 @@
 import { Component, inject, OnDestroy, OnInit } from '@angular/core';
-
 import { Router } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
-
-import { Toast } from 'primeng/toast';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 
 import { AuthService } from 'app/core/auth/auth.service';
-import { LoginFormComponent } from './login-form/login-form.component';
 
 import { TranslocoService } from '@jsverse/transloco';
 import { ToastMessageService } from 'app/core/services/toast-message.service';
+
+import { Toast } from 'primeng/toast';
+import { ButtonModule } from 'primeng/button';
+import { PrimeInputComponent, PrimePasswordComponent } from 'app/components';
+
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [Toast, LoginFormComponent],
+  imports: [
+    Toast,
+    ReactiveFormsModule,
+    PrimeInputComponent,
+    PrimePasswordComponent,
+    ButtonModule,
+  ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
 })
-export class LoginComponent implements OnDestroy {
+export class LoginComponent implements OnInit, OnDestroy {
+  private readonly _formBuilder = inject(FormBuilder);
   private readonly _router = inject(Router);
 
   private readonly _translocoService = inject(TranslocoService);
@@ -27,7 +41,30 @@ export class LoginComponent implements OnDestroy {
 
   private readonly _unsubscribeAll: Subject<any> = new Subject<any>();
 
-  onFormChange(form: { username: string; password: string }) {
+  loginForm: FormGroup;
+
+  loading = false;
+
+  constructor() {
+    this.loginForm = this._formBuilder.group({
+      username: ['', [Validators.required]],
+      password: ['', [Validators.required]],
+    });
+  }
+
+  ngOnInit(): void {}
+
+  handleSubmit() {
+    if (this.loginForm.invalid) {
+      this.loginForm.markAllAsTouched();
+      return;
+    }
+    this.loginForm.disable();
+
+    const form = this.loginForm.value;
+
+    this.loading = true;
+
     this._authService
       .login(form)
       .pipe(takeUntil(this._unsubscribeAll))
@@ -38,10 +75,14 @@ export class LoginComponent implements OnDestroy {
             this.showToast('login.unauthorized');
             return;
           }
+          this.loading = false;
+          this.loginForm.enable();
 
           this._router.navigateByUrl('/admin');
         },
-        error: err => {
+        error: () => {
+          this.loading = false;
+          this.loginForm.enable();
           this.showToast('login.error');
         },
       });
