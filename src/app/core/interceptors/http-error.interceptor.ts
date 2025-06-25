@@ -13,28 +13,28 @@ export const httpErrorInterceptor: HttpInterceptorFn = (req, next) => {
 
   return next(req).pipe(
     catchError((error: HttpErrorResponse) => {
-      if (error.status == HttpStatusCode.BadRequest) {
-        const errors = error.error;
+      // if (error.status == HttpStatusCode.BadRequest) {
+      //   const errors = error.error;
 
-        _toastMessageService.sendMessage('Error guardando los datos.');
-        return throwError(() => errors);
-      }
+      //   _toastMessageService.sendMessage('Error guardando los datos.');
+      //   return throwError(() => errors);
+      // }
 
-      if (error.status == HttpStatusCode.Unauthorized) {
-        _toastMessageService.sendMessage(
-          'No está autorizado para realizar esta acción.'
-        );
-      }
+      // if (error.status == HttpStatusCode.Unauthorized) {
+      //   _toastMessageService.sendMessage(
+      //     'No está autorizado para realizar esta acción.'
+      //   );
+      // }
 
-      if (error.status == HttpStatusCode.Forbidden) {
-        _toastMessageService.sendMessage(
-          'No está autorizado para realizar esta acción.'
-        );
-      }
+      // if (error.status == HttpStatusCode.Forbidden) {
+      //   _toastMessageService.sendMessage(
+      //     'No está autorizado para realizar esta acción.'
+      //   );
+      // }
 
-      if (error.status == HttpStatusCode.NotFound) {
-        _toastMessageService.sendMessage('No se encontró el recurso.');
-      }
+      // if (error.status == HttpStatusCode.NotFound) {
+      //   _toastMessageService.sendMessage('No se encontró el recurso.');
+      // }
 
       if (error.status == HttpStatusCode.InternalServerError) {
         _toastMessageService.sendMessage('Error interno del servidor.');
