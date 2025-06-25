@@ -1,6 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { AsyncPipe, DatePipe } from '@angular/common';
 import { Observable } from 'rxjs';
+import { RouterLink } from '@angular/router';
 
 import { TableModule } from 'primeng/table';
 import { ProgressSpinner } from 'primeng/progressspinner';
@@ -9,14 +10,9 @@ import { ToastModule } from 'primeng/toast';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { TooltipModule } from 'primeng/tooltip';
-import {
-  DialogService,
-  DynamicDialog,
-  DynamicDialogRef,
-} from 'primeng/dynamicdialog';
 
 import { UserService } from 'app/services';
-import { User, UserList } from 'app/domain';
+import { UserList } from 'app/domain';
 
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import {
@@ -27,12 +23,11 @@ import {
 
 import { TimeAgoPipe } from 'app/pipes/time-ago.pipe';
 import { PrimeAvatarComponent } from 'app/components/prime-avatar/prime-avatar.component';
-import { UserFormComponent } from './user-form/user-form.component';
 import { UserFilterComponent } from './user-filter/user-filter.component';
 interface Params {
   search?: string;
   ordering?: string;
-  is_staff: boolean;
+  // role__in: string;
   page?: number;
 }
 
@@ -52,9 +47,9 @@ interface Params {
     TimeAgoPipe,
     DatePipe,
     PrimeAvatarComponent,
+    RouterLink,
   ],
   providers: [
-    DialogService,
     MessageService,
     ConfirmationService,
     provideIcons({ faSolidCircleCheck, faSolidPenToSquare, faSolidDumbbell }),
@@ -65,12 +60,10 @@ interface Params {
 export class UsersComponent implements OnInit {
   private readonly _confirmationService = inject(ConfirmationService);
   private readonly _messageService = inject(MessageService);
-  private readonly _dialogService = inject(DialogService);
 
   private readonly _userService = inject(UserService);
 
   users$!: Observable<UserList>;
-  ref: DynamicDialogRef | undefined;
 
   first = 0;
   rows = 10;
@@ -78,7 +71,7 @@ export class UsersComponent implements OnInit {
     search: '',
     ordering: '',
     page: 1,
-    is_staff: true,
+    // role__in: 'client',
   };
 
   ngOnInit(): void {
@@ -109,41 +102,6 @@ export class UsersComponent implements OnInit {
     Object.assign(params, filters);
 
     this.loadData(params);
-  }
-
-  openCreateDialog(): void {
-    this.ref = this._dialogService.open(UserFormComponent, {
-      header: 'Crear Usuario',
-      modal: true,
-      position: 'top',
-      closable: true,
-    });
-
-    this.ref.onClose.subscribe((data: any) => {
-      if (data) {
-        const params = this.getParams();
-        this.loadData(params);
-      }
-    });
-  }
-
-  openEditDialog(user: User): void {
-    this.ref = this._dialogService.open(UserFormComponent, {
-      header: 'Actualizar Usuario',
-      modal: true,
-      position: 'top',
-      closable: true,
-      data: {
-        user: user,
-      },
-    });
-
-    this.ref.onClose.subscribe((data: any) => {
-      if (data) {
-        const params = this.getParams();
-        this.loadData(params);
-      }
-    });
   }
 
   confirmDelete(id: number) {
@@ -187,7 +145,7 @@ export class UsersComponent implements OnInit {
   getParams(): Params {
     return {
       search: '',
-      is_staff: true,
+      // role__in: 'admin, coach',
       ordering: '-id',
       page: 1,
     };

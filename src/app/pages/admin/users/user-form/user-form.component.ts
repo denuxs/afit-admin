@@ -6,44 +6,68 @@ import {
   OnDestroy,
 } from '@angular/core';
 import {
+  FormArray,
   FormBuilder,
   FormGroup,
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { Observable, Subject, takeUntil } from 'rxjs';
+import { forkJoin, Observable, Subject, switchMap, takeUntil } from 'rxjs';
 import { AsyncPipe } from '@angular/common';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
-import { Company, User } from 'app/domain';
+import { Company, GENDERS, ROLES, Routine, User } from 'app/domain';
 import { CompanyService, UserService } from 'app/services';
 
-import { CheckboxModule } from 'primeng/checkbox';
-import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
+import { InputTextModule } from 'primeng/inputtext';
+import {
+  DialogService,
+  DynamicDialogConfig,
+  DynamicDialogRef,
+} from 'primeng/dynamicdialog';
 
-import { PrimeInputComponent } from 'app/components/prime-input/prime-input.component';
-import { PrimeSelectComponent } from 'app/components/prime-select/prime-select.component';
-import { PrimePasswordComponent } from 'app/components/prime-password/prime-password.component';
-import { FileUploadComponent } from 'app/components/file-upload/file-upload.component';
+import {
+  CdkDragDrop,
+  CdkDropList,
+  CdkDrag,
+  moveItemInArray,
+} from '@angular/cdk/drag-drop';
+
+import {
+  PrimeCheckboxComponent,
+  PrimeFileComponent,
+  PrimeInputComponent,
+  PrimePasswordComponent,
+  PrimeSelectComponent,
+} from 'app/components';
+import { RoutineListComponent } from '../routine-list/routine-list.component';
+
 @Component({
   selector: 'app-user-form',
   standalone: true,
   imports: [
     ReactiveFormsModule,
     AsyncPipe,
-    CheckboxModule,
-    FileUploadComponent,
+    InputTextModule,
+    PrimeFileComponent,
     PrimeInputComponent,
     PrimeSelectComponent,
     PrimePasswordComponent,
+    PrimeCheckboxComponent,
+    CdkDropList,
+    CdkDrag,
+    RouterLink,
   ],
+  providers: [DialogService],
   templateUrl: './user-form.component.html',
   styleUrl: './user-form.component.scss',
 })
 export class UserFormComponent implements OnInit, OnDestroy {
+  private readonly _route = inject(ActivatedRoute);
+  private readonly _router = inject(Router);
   private readonly _formBuilder = inject(FormBuilder);
 
-  private readonly _config = inject(DynamicDialogConfig);
-  private readonly _ref = inject(DynamicDialogRef);
+  private readonly _dialogService = inject(DialogService);
 
   private readonly _userService = inject(UserService);
   private readonly _companyService = inject(CompanyService);
@@ -55,18 +79,14 @@ export class UserFormComponent implements OnInit, OnDestroy {
 
   photoField!: File;
   image = 'default.jpg';
-  companies$!: Observable<Company[]>;
 
-  genders = [
-    {
-      name: 'Masculino',
-      id: 'male',
-    },
-    {
-      name: 'Femenino',
-      id: 'female',
-    },
-  ];
+  companies!: Company[];
+  coaches!: User[];
+
+  genders = GENDERS;
+  roles = ROLES;
+
+  title = 'Crear Usuario';
 
   constructor() {
     this.userForm = this._formBuilder.group({
@@ -75,8 +95,10 @@ export class UserFormComponent implements OnInit, OnDestroy {
       last_name: ['', [Validators.required]],
       company: ['', [Validators.required]],
       password: ['', [Validators.required]],
+      role: ['', [Validators.required]],
+      coach: ['', []],
       is_active: [true, []],
-      is_staff: [false, []],
+      routines: this._formBuilder.array([]),
     });
 
     // this.userForm.patchValue({
@@ -85,27 +107,56 @@ export class UserFormComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    const config = this.getConfig();
-    this.getCompanies();
+    this.getData();
 
-    if (config && 'user' in config) {
-      const { user } = config;
+    const userId = this._route.snapshot.paramMap.get('id');
 
-      this.user = user;
-      this.setFormFields(user);
+    if (userId) {
+      this.title = 'Editar Usuario';
+      this.getUser(Number(userId));
     }
   }
 
-  getConfig() {
-    return this._config.data;
-  }
-
-  getCompanies(): void {
+  getData(): void {
     const params = {
       ordering: '-id',
       paginator: null,
     };
-    this.companies$ = this._companyService.all(params);
+    const companies$ = this._companyService.all(params);
+
+    const params2 = {
+      ordering: '-id',
+      paginator: null,
+      role: 'coach',
+    };
+    const coaches$ = this._userService.all(params2);
+
+    forkJoin([coaches$, companies$])
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe({
+        next: ([coaches, companies]) => {
+          this.companies = companies;
+          this.coaches = coaches;
+        },
+      });
+  }
+
+  getUser(userId: number): void {
+    this._userService
+      .get(userId)
+      .pipe(takeUntil(this._unsubscribeAll))
+      .pipe(
+        switchMap(user => {
+          this.user = user;
+          this.setFormFields(user);
+          return this._userService.routines(user.id);
+        })
+      )
+      .subscribe({
+        next: (routines: any) => {
+          this.setRoutines(routines);
+        },
+      });
   }
 
   setFormFields(user: User) {
@@ -115,15 +166,33 @@ export class UserFormComponent implements OnInit, OnDestroy {
       last_name: user.last_name,
       company: user.company,
       is_active: user.is_active,
-      is_staff: user.is_staff,
+      role: user.role,
+      coach: user.coach,
     };
 
     this.userForm.patchValue(form);
     this.userForm.get('password')?.clearValidators();
+    this.userForm.get('username')?.disable();
 
     if (user.avatar) {
       this.image = user.avatar;
     }
+  }
+
+  setRoutines(data: any) {
+    for (const item of data) {
+      const formGroup = this._formBuilder.group({
+        routine: [item.routine.id, [Validators.required]],
+        order: [item.order, [Validators.required]],
+        title: [item.routine.title, []],
+      });
+
+      this.routines.push(formGroup);
+    }
+  }
+
+  get routines(): FormArray {
+    return this.userForm.get('routines') as FormArray;
   }
 
   generatePin() {
@@ -143,12 +212,16 @@ export class UserFormComponent implements OnInit, OnDestroy {
     const form = this.userForm.value;
 
     const formData = new FormData();
-    formData.append('username', form.username);
     formData.append('first_name', form.first_name);
     formData.append('last_name', form.last_name);
+    formData.append('role', form.role);
+    formData.append('coach', form.coach);
     formData.append('is_active', Number(form.is_active).toString());
-    formData.append('is_staff', Number(form.is_staff).toString());
     formData.append('company', Number(form.company).toString());
+
+    if (form.username) {
+      formData.append('username', form.username);
+    }
 
     if (form.password) {
       formData.append('password', form.password);
@@ -157,6 +230,9 @@ export class UserFormComponent implements OnInit, OnDestroy {
     if (this.photoField) {
       formData.append('avatar', this.photoField);
     }
+
+    const routines = form.routines;
+    formData.append('routines', JSON.stringify(routines));
 
     if (this.user) {
       this.updateUser(this.user.id, formData);
@@ -172,7 +248,8 @@ export class UserFormComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe({
         next: () => {
-          this.closeDialog();
+          const url = `/admin/users`;
+          this._router.navigateByUrl(url);
         },
         error: errors => this.setFormErrors(errors),
       });
@@ -184,14 +261,11 @@ export class UserFormComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe({
         next: () => {
-          this.closeDialog();
+          const url = `/admin/users`;
+          this._router.navigateByUrl(url);
         },
         error: errors => this.setFormErrors(errors),
       });
-  }
-
-  closeDialog() {
-    this._ref.close(true);
   }
 
   setFormErrors(errors: any) {
@@ -205,16 +279,65 @@ export class UserFormComponent implements OnInit, OnDestroy {
     this.userForm.markAllAsTouched();
   }
 
+  openRoutineModal(): void {
+    const ref = this._dialogService.open(RoutineListComponent, {
+      header: 'Rutinas',
+      modal: true,
+      position: 'top',
+      appendTo: 'body',
+      closable: true,
+      // contentStyle: { height: '300px' },
+    });
+
+    ref.onClose.subscribe((data: any) => {
+      if (data) {
+        this.addRoutine(data);
+      }
+    });
+  }
+
+  addRoutine(item: Routine): void {
+    const nextOrder =
+      this.routines.length > 0
+        ? Math.max(...this.routines.controls.map(c => c.get('order')?.value)) +
+          1
+        : 1;
+
+    const formGroup: FormGroup = this._formBuilder.group({
+      routine: [item.id, [Validators.required]],
+      order: [nextOrder, [Validators.required]],
+      title: [item.title, []],
+    });
+
+    this.routines.push(formGroup);
+  }
+
+  handleDragDrop(event: CdkDragDrop<any>) {
+    const previousIndex = event.previousIndex;
+    const currentIndex = event.currentIndex;
+
+    moveItemInArray(this.routines.controls, previousIndex, currentIndex);
+
+    this.handleOrder();
+  }
+
+  handleOrder(): void {
+    this.routines.controls.forEach((control, index) => {
+      control.get('order')?.setValue(index + 1);
+    });
+  }
+
   handleFile(file: File): void {
     this.photoField = file;
+  }
+
+  removeRoutine(index: number): void {
+    this.routines.removeAt(index);
+    this.handleOrder();
   }
 
   ngOnDestroy(): void {
     this._unsubscribeAll.next(null);
     this._unsubscribeAll.complete();
-
-    if (this._ref) {
-      this._ref.close();
-    }
   }
 }

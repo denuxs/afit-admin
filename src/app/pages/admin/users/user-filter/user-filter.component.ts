@@ -6,19 +6,18 @@ import {
   ReactiveFormsModule,
 } from '@angular/forms';
 
-import { RouterLink } from '@angular/router';
-
 import { TranslocoDirective } from '@jsverse/transloco';
+import { PrimeInputComponent, PrimeSelectComponent } from 'app/components';
 
-import { PrimeInputComponent } from 'app/components/prime-input/prime-input.component';
+import { ROLES } from 'app/domain';
 
 @Component({
   selector: 'app-user-filter',
   standalone: true,
   imports: [
     ReactiveFormsModule,
-    RouterLink,
     TranslocoDirective,
+    PrimeSelectComponent,
     PrimeInputComponent,
   ],
   templateUrl: './user-filter.component.html',
@@ -31,11 +30,14 @@ export class UserFilterComponent {
 
   filterForm: FormGroup;
 
+  roles = ROLES;
+
   @Output() filterChange: EventEmitter<any> = new EventEmitter<any>();
 
   constructor() {
     this.filterForm = this._formBuilder.group({
       search: ['', []],
+      role: ['', []],
     });
   }
 

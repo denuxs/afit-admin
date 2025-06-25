@@ -4,9 +4,9 @@
   <app-user-filter (filterChange)="handleFilter($event)" />
 
   <div>
-    <button (click)="openCreateDialog()" class="btn-primary">
-      <i class="pi pi-plus"></i> Nuevo
-    </button>
+    <a href="#" routerLink="create" class="btn-primary inline-block"
+      ><i class="pi pi-plus"></i> Nuevo</a
+    >
   </div>
 </div>
 
@@ -17,8 +17,7 @@
         <th></th>
         <th>Usuario</th>
         <th>Último Acceso</th>
-        <th>Coach</th>
-        <th>Admin</th>
+        <th>Perfil</th>
         <th>Activo</th>
         <th>Creado</th>
         <th></th>
@@ -45,18 +44,7 @@
           }
         </td>
         <td>
-          @if (item.is_staff) {
-            <ng-icon class="text-green-500" name="faSolidCircleCheck"></ng-icon>
-          } @else {
-            <ng-icon class="text-red-500" name="faSolidCircleCheck"></ng-icon>
-          }
-        </td>
-        <td>
-          @if (item.is_superuser) {
-            <ng-icon class="text-green-500" name="faSolidCircleCheck"></ng-icon>
-          } @else {
-            <ng-icon class="text-red-500" name="faSolidCircleCheck"></ng-icon>
-          }
+          {{ item.role }}
         </td>
         <td>
           @if (item.is_active) {
@@ -67,13 +55,14 @@
         </td>
         <td>{{ item.date_joined | date: 'mediumDate' }}</td>
         <td>
-          <button
+          <a
+            href="#"
             pTooltip="Editar"
             tooltipPosition="top"
-            (click)="openEditDialog(item)"
-            class="text-blue-600">
-            <i class="pi pi-pen-to-square"></i>
-          </button>
+            [routerLink]="[item.id, 'edit']"
+            class="text-blue-600"
+            ><i class="pi pi-pen-to-square"></i
+          ></a>
         </td>
         <td>
           @if (!item.is_superuser) {

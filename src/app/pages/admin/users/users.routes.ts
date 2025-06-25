@@ -34,6 +34,10 @@ export default [
     path: 'create',
     component: UserFormComponent,
   },
+  // {
+  //   path: ':id/workouts',
+  //   component: UserWorkoutsComponent,
+  // },
   {
     path: ':id/edit',
     component: UserFormComponent,
