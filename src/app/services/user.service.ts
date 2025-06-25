@@ -58,6 +58,10 @@ export class UserService {
     return this._httpClient.get<Client[]>(this._api + 'clients/');
   }
 
+  routines(userId: number): Observable<any> {
+    return this._httpClient.get<any>(this._api + `${userId}/routines/`);
+  }
+
   saveFirebaseToken(form: {
     token: string;
     user: number;

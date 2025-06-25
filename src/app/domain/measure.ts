@@ -33,7 +33,7 @@ export interface MeasureList {
 }
 export interface MeasureDto {
   comment: string;
-  client: number;
+  user: number;
   is_active: boolean;
   measures: {
     weight: number;

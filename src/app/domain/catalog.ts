@@ -2,7 +2,7 @@ export interface Catalog {
   id: number;
   name: string;
   key: string;
-  image: string | null;
+  image: string;
   created: Date;
 }
 

@@ -1,3 +1,33 @@
+export const GENDERS = [
+  {
+    name: 'Masculino',
+    id: 'male',
+  },
+  {
+    name: 'Femenino',
+    id: 'female',
+  },
+];
+
+export const ROLES = [
+  {
+    name: 'Seleccione',
+    id: '',
+  },
+  {
+    name: 'Admin',
+    id: 'admin',
+  },
+  {
+    name: 'Entrenador',
+    id: 'coach',
+  },
+  {
+    name: 'Cliente',
+    id: 'client',
+  },
+];
+
 export interface User {
   id: number;
   username: string;
@@ -10,6 +40,8 @@ export interface User {
   is_staff: boolean;
   is_superuser: boolean;
   is_active: boolean;
+  role: string;
+  coach: number;
   date_joined: Date;
   last_login: Date;
 }
