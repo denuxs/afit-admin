@@ -15,6 +15,7 @@ export class PrimeSelectComponent {
   @Input() label!: string;
   @Input() controlName!: string;
   @Input() placeholder = '';
+  @Input() filter = false;
 
   @Input() options!: any;
 }
