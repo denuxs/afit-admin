@@ -15,7 +15,11 @@ import {
   withPreloading,
   PreloadAllModules,
 } from '@angular/router';
-import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import {
+  provideHttpClient,
+  withFetch,
+  withInterceptors,
+} from '@angular/common/http';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideServiceWorker } from '@angular/service-worker';
 
@@ -30,13 +34,28 @@ import Aura from '@primeng/themes/aura';
 import { definePreset } from '@primeng/themes';
 
 const MyPreset = definePreset(Aura, {
-  components: {
-    button: {
-      root: {
-        borderRadius: '0px',
-      },
+  semantic: {
+    primary: {
+      50: '{blue.50}',
+      100: '{blue.100}',
+      200: '{blue.200}',
+      300: '{blue.300}',
+      400: '{blue.400}',
+      500: '{blue.500}',
+      600: '{blue.600}',
+      700: '{blue.700}',
+      800: '{blue.800}',
+      900: '{blue.900}',
+      950: '{blue.950}',
     },
   },
+  // components: {
+  //   button: {
+  //     root: {
+  //       borderRadius: '0px',
+  //     },
+  //   },
+  // },
 });
 
 import localeEs from '@angular/common/locales/es';
@@ -63,6 +82,7 @@ export const appConfig: ApplicationConfig = {
       withPreloading(PreloadAllModules)
     ),
     provideHttpClient(
+      withFetch(),
       withInterceptors([authInterceptor, httpErrorInterceptor])
     ),
     {
@@ -73,7 +93,7 @@ export const appConfig: ApplicationConfig = {
     provideAnimationsAsync(),
     providePrimeNG({
       theme: {
-        preset: Aura,
+        preset: MyPreset,
         options: { darkModeSelector: '.app-dark' },
       },
     }),
