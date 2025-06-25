@@ -5,28 +5,28 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { Observable, Subject, takeUntil } from 'rxjs';
-import { AsyncPipe } from '@angular/common';
+import { forkJoin, Observable, Subject, takeUntil } from 'rxjs';
 
 import { CompanyService, UserService } from 'app/services';
-import { Company, User } from 'app/domain';
+import { Company, GENDERS, ROLES, User } from 'app/domain';
 
 import { MessageService } from 'primeng/api';
-import { CheckboxModule } from 'primeng/checkbox';
 import { ToastModule } from 'primeng/toast';
+import {
+  PrimeFileComponent,
+  PrimeCheckboxComponent,
+  PrimeInputComponent,
+  PrimePasswordComponent,
+  PrimeSelectComponent,
+} from 'app/components';
 
-import { PrimeInputComponent } from 'app/components/prime-input/prime-input.component';
-import { PrimeSelectComponent } from 'app/components/prime-select/prime-select.component';
-import { PrimePasswordComponent } from 'app/components/prime-password/prime-password.component';
-import { FileUploadComponent } from 'app/components/file-upload/file-upload.component';
 @Component({
   selector: 'app-profile',
   standalone: true,
   imports: [
     ReactiveFormsModule,
-    CheckboxModule,
-    AsyncPipe,
-    FileUploadComponent,
+    PrimeCheckboxComponent,
+    PrimeFileComponent,
     PrimeInputComponent,
     PrimeSelectComponent,
     PrimePasswordComponent,
@@ -49,20 +49,14 @@ export class ProfileComponent implements OnInit, OnDestroy {
   user!: User;
 
   photoField!: File;
-  image = 'default.jpg';
+
   companies$!: Observable<Company[]>;
+
+  companies!: Company[];
   loading = true;
 
-  genders = [
-    {
-      name: 'Masculino',
-      id: 'male',
-    },
-    {
-      name: 'Femenino',
-      id: 'female',
-    },
-  ];
+  genders = GENDERS;
+  roles = ROLES;
 
   constructor() {
     this.userForm = this._formBuilder.group({
@@ -70,19 +64,31 @@ export class ProfileComponent implements OnInit, OnDestroy {
       first_name: ['', [Validators.required]],
       last_name: ['', [Validators.required]],
       company: ['', [Validators.required]],
+      role: ['', [Validators.required]],
       password: ['', []],
       is_active: [true, []],
     });
   }
 
   ngOnInit(): void {
-    this.getCompanies();
+    this.getData();
+  }
 
-    this._userService.user$.subscribe({
-      next: (user: User) => {
-        this.user = user;
+  getData(): void {
+    const profile$ = this._userService.profile();
 
-        this.setFormFields(user);
+    const params = {
+      ordering: '-id',
+      paginator: null,
+    };
+    const companies$ = this._companyService.all(params);
+
+    forkJoin([profile$, companies$]).subscribe({
+      next: ([profile, companies]) => {
+        this.user = profile;
+        this.setFormFields(profile);
+
+        this.companies = companies;
       },
     });
   }
@@ -94,24 +100,15 @@ export class ProfileComponent implements OnInit, OnDestroy {
       last_name: user.last_name,
       is_active: user.is_active,
       company: user.company,
+
+      role: user.role,
       password: '',
     };
 
     this.userForm.patchValue(form);
     this.userForm.get('username')?.disable();
     this.userForm.get('company')?.disable();
-
-    if (user.avatar) {
-      this.image = user.avatar;
-    }
-  }
-
-  getCompanies(): void {
-    const params = {
-      ordering: '-id',
-      paginator: null,
-    };
-    this.companies$ = this._companyService.all(params);
+    // this.userForm.get('role')?.disable();
   }
 
   handleSubmit(): void {
@@ -125,6 +122,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
     const formData = new FormData();
     formData.append('first_name', form.first_name);
     formData.append('last_name', form.last_name);
+    formData.append('role', form.role);
     formData.append('is_active', Number(form.is_active).toString());
 
     if (form.password) {

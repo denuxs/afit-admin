@@ -1,14 +1,13 @@
 <div class="w-1/2">
   <form [formGroup]="userForm" (ngSubmit)="handleSubmit()">
-    <app-file-upload [image]="image" (fileChange)="handleFile($event)" />
-
-    @if (companies$ | async; as companies) {
-      <app-prime-select
-        [form]="userForm"
-        controlName="company"
-        label="Compañia"
-        [options]="companies" />
+    @if (user) {
+      <app-prime-file [image]="user.avatar" (fileChange)="handleFile($event)" />
     }
+    <app-prime-select
+      [form]="userForm"
+      controlName="company"
+      label="Compañia"
+      [options]="companies" />
 
     <div class="grid grid-cols-2 gap-2">
       <app-prime-input
@@ -28,14 +27,16 @@
       controlName="password"
       label="Contraseña" />
 
-    <div class="flex items-center">
-      <p-checkbox
-        inputId="is_active"
-        name="is_active"
-        [binary]="true"
-        formControlName="is_active" />
-      <label for="is_active" class="ml-2">Es Activo?</label>
-    </div>
+    <app-prime-select
+      [form]="userForm"
+      controlName="role"
+      label="Rol"
+      [options]="roles" />
+
+    <app-prime-checkbox
+      [form]="userForm"
+      controlName="is_active"
+      label="Activo" />
 
     <div class="flex justify-end">
       <button class="btn-primary mt-4" type="submit">Guardar</button>
