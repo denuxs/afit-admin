@@ -2,7 +2,6 @@ import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
-  FormsModule,
   ReactiveFormsModule,
   UntypedFormArray,
   FormArray,
@@ -15,34 +14,27 @@ import {
 } from '@angular/forms';
 import { Observable, Subject } from 'rxjs';
 import { debounceTime, takeUntil } from 'rxjs/operators';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
 import { ExerciseService, RoutineService } from 'app/services';
 import { Exercise, Routine, RoutineDto, UserList } from 'app/domain';
 
-import { SelectModule } from 'primeng/select';
-import { EditorModule } from 'primeng/editor';
-import { ButtonModule } from 'primeng/button';
-import { CheckboxModule } from 'primeng/checkbox';
-
-import { RadioButtonModule } from 'primeng/radiobutton';
-import { InputTextModule } from 'primeng/inputtext';
 import {
   CdkDragDrop,
   CdkDropList,
   CdkDrag,
   moveItemInArray,
 } from '@angular/cdk/drag-drop';
+
 import { AccordionModule } from 'primeng/accordion';
-import { AutoCompleteModule } from 'primeng/autocomplete';
-import { SelectButtonModule } from 'primeng/selectbutton';
-import { TableModule } from 'primeng/table';
+
 import { ScrollPanelModule } from 'primeng/scrollpanel';
 
-import { PrimeInputComponent } from 'app/components/prime-input/prime-input.component';
-import { PrimeSelectComponent } from 'app/components/prime-select/prime-select.component';
-import { PrimeEditorComponent } from 'app/components/prime-editor/prime-editor.component';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { PrimeAvatarComponent } from 'app/components/prime-avatar/prime-avatar.component';
+import {
+  PrimeEditorComponent,
+  PrimeInputComponent,
+  PrimeSelectComponent,
+} from 'app/components';
 
 @Component({
   selector: 'app-routine-form',
@@ -50,23 +42,13 @@ import { PrimeAvatarComponent } from 'app/components/prime-avatar/prime-avatar.c
   imports: [
     ReactiveFormsModule,
     RouterLink,
-    ButtonModule,
-    SelectModule,
-    EditorModule,
-    CheckboxModule,
-    RadioButtonModule,
-    InputTextModule,
     CdkDropList,
     CdkDrag,
     AccordionModule,
-    AutoCompleteModule,
-    SelectButtonModule,
-    TableModule,
     ScrollPanelModule,
     PrimeInputComponent,
     PrimeSelectComponent,
     PrimeEditorComponent,
-    PrimeAvatarComponent,
   ],
   templateUrl: './routine-form.component.html',
   styleUrl: './routine-form.component.scss',
@@ -251,41 +233,33 @@ export class RoutineFormComponent implements OnInit, OnDestroy {
   }
 
   setExercises(exercises: any[]) {
-    const formGroups: any = [];
-
-    exercises.forEach((item: any) => {
+    for (const item of exercises) {
       const { exercise, sets, routine, description, level, order } = item;
 
       const new_sets: any = [];
-      if (sets) {
-        sets.forEach((item: any) => {
-          new_sets.push(
-            this._formBuilder.group({
-              sets: [item.sets, []],
-              rept: [item.rept, []],
-              weight: [item.weight, []],
-            })
-          );
+      for (const item of sets) {
+        const formGroup = this._formBuilder.group({
+          sets: [item.sets, []],
+          rept: [item.rept, []],
+          weight: [item.weight, []],
         });
+
+        new_sets.push(formGroup);
       }
 
-      formGroups.push(
-        this._formBuilder.group({
-          id: [item.id],
-          routine: [routine],
-          exercise: [exercise.id],
-          name: [exercise.name],
-          level: [level],
-          order: [order],
-          description: [description],
-          sets: this._formBuilder.array(new_sets),
-        })
-      );
-    });
+      const formGroup = this._formBuilder.group({
+        id: [item.id],
+        routine: [routine],
+        exercise: [exercise.id],
+        name: [exercise.name],
+        level: [level],
+        order: [order],
+        description: [description],
+        sets: this._formBuilder.array(new_sets),
+      });
 
-    formGroups.forEach((item: any) => {
-      this.exercises.push(item);
-    });
+      this.exercises.push(formGroup);
+    }
   }
 
   handleSubmit(): void {

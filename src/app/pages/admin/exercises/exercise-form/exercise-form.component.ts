@@ -20,10 +20,12 @@ import {
 } from 'primeng/dynamicdialog';
 import { MessageService } from 'primeng/api';
 
-import { FileUploadComponent } from 'app/components/file-upload/file-upload.component';
-import { PrimeInputComponent } from 'app/components/prime-input/prime-input.component';
-import { PrimeSelectComponent } from 'app/components/prime-select/prime-select.component';
-import { PrimeEditorComponent } from 'app/components/prime-editor/prime-editor.component';
+import {
+  PrimeFileComponent,
+  PrimeInputComponent,
+  PrimeSelectComponent,
+  PrimeEditorComponent,
+} from 'app/components';
 
 @Component({
   selector: 'app-exercise-form',
@@ -31,7 +33,7 @@ import { PrimeEditorComponent } from 'app/components/prime-editor/prime-editor.c
   imports: [
     ReactiveFormsModule,
     AsyncPipe,
-    FileUploadComponent,
+    PrimeFileComponent,
     PrimeInputComponent,
     PrimeSelectComponent,
     PrimeEditorComponent,

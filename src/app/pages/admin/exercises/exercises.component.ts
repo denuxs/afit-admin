@@ -108,6 +108,7 @@ export class ExercisesComponent implements OnInit {
       modal: true,
       position: 'top',
       closable: true,
+      dismissableMask: true,
     });
 
     this.ref.onClose.subscribe((data: any) => {
@@ -124,6 +125,7 @@ export class ExercisesComponent implements OnInit {
       modal: true,
       position: 'top',
       closable: true,
+      dismissableMask: true,
       data: {
         exercise: exercise,
       },

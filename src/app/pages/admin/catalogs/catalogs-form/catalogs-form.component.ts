@@ -20,9 +20,11 @@ import { MessageService } from 'primeng/api';
 
 import { CatalogService } from 'app/services';
 
-import { PrimeInputComponent } from 'app/components/prime-input/prime-input.component';
-import { PrimeSelectComponent } from 'app/components/prime-select/prime-select.component';
-import { FileUploadComponent } from 'app/components/file-upload/file-upload.component';
+import {
+  PrimeFileComponent,
+  PrimeInputComponent,
+  PrimeSelectComponent,
+} from 'app/components';
 
 @Component({
   selector: 'app-catalogs-form',
@@ -31,7 +33,7 @@ import { FileUploadComponent } from 'app/components/file-upload/file-upload.comp
     ReactiveFormsModule,
     PrimeInputComponent,
     PrimeSelectComponent,
-    FileUploadComponent,
+    PrimeFileComponent,
   ],
   providers: [DialogService, MessageService],
   templateUrl: './catalogs-form.component.html',
@@ -66,14 +68,25 @@ export class CatalogsFormComponent implements OnInit, OnDestroy {
     this.categories = categories;
 
     if (config && 'catalog' in config) {
-      const { image } = config.catalog;
-      if (image) {
-        this.image = image;
-      }
-
-      this.catalog = config.catalog;
-      this.setFormValue(config.catalog);
+      this.getCatalog(config.catalog);
     }
+  }
+
+  getCatalog(catalog: number) {
+    this._catalogService
+      .get(catalog)
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe({
+        next: (catalog: Catalog) => {
+          this.catalog = catalog;
+
+          if (catalog.image) {
+            this.image = catalog.image;
+          }
+
+          this.setFormValue(catalog);
+        },
+      });
   }
 
   setFormValue(catalog: Catalog) {
