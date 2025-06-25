@@ -1,27 +1,4 @@
 <ng-container *transloco="let t">
-  <div class="flex gap-4 items-center mb-2">
-    <div>
-      <a href="#" routerLink="/admin/clients"
-        ><i class="pi pi-arrow-left"></i
-      ></a>
-    </div>
-  </div>
-
-  @if (client) {
-    <div class="flex gap-2 mb-6">
-      <div>
-        <img
-          [src]="avatar"
-          alt="avatar"
-          class="w-20 h-20 rounded-full object-cover" />
-      </div>
-      <div class="flex flex-col">
-        <h2>{{ client.fullname }}</h2>
-        <p class="text-sm text-gray-500">Coach: {{ client.coach.fullname }}</p>
-      </div>
-    </div>
-  }
-
   <div class="flex justify-between mb-4">
     <h1>Medidas</h1>
 
@@ -33,11 +10,11 @@
   </div>
 
   @if (measures$ | async; as data) {
-    <p-table [value]="data" stripedRows>
+    <p-table [value]="data.results" stripedRows>
       <ng-template #header>
         <tr class="uppercase">
           <th></th>
-          <th>Comentario</th>
+          <th>Cliente</th>
           <th>Activo</th>
           <th>Creado</th>
           <th></th>
@@ -47,7 +24,7 @@
       <ng-template #body let-item let-rowIndex="rowIndex">
         <tr>
           <td>{{ rowIndex + 1 }}</td>
-          <td>{{ item.comment }}</td>
+          <td>{{ item.fullname }}</td>
           <td>
             @if (item.is_active) {
               <ng-icon

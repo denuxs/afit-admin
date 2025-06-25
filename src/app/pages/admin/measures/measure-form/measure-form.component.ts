@@ -5,32 +5,31 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { Subject, takeUntil } from 'rxjs';
+import { Observable, Subject, takeUntil } from 'rxjs';
+import { AsyncPipe } from '@angular/common';
 
-import { Measure, MeasureDto } from 'app/domain';
-import { MeasuresService } from 'app/services';
+import { Measure, MeasureDto, User } from 'app/domain';
+import { MeasuresService, UserService } from 'app/services';
 
-import { CheckboxModule } from 'primeng/checkbox';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
-import { InputTextModule } from 'primeng/inputtext';
-import { SelectModule } from 'primeng/select';
-import { TextareaModule } from 'primeng/textarea';
 
-import { PrimeInputComponent } from 'app/components/prime-input/prime-input.component';
-import { PrimeTextareaComponent } from 'app/components/prime-textarea/prime-textarea.component';
-import { MeasureImagesComponent } from '../measure-images/measure-images.component';
+import {
+  PrimeCheckboxComponent,
+  PrimeInputComponent,
+  PrimeSelectComponent,
+  PrimeTextareaComponent,
+} from 'app/components';
+
 @Component({
   selector: 'app-measure-form',
   standalone: true,
   imports: [
     ReactiveFormsModule,
-    SelectModule,
-    CheckboxModule,
-    InputTextModule,
-    TextareaModule,
-    MeasureImagesComponent,
     PrimeTextareaComponent,
     PrimeInputComponent,
+    PrimeSelectComponent,
+    AsyncPipe,
+    PrimeCheckboxComponent,
   ],
   templateUrl: './measure-form.component.html',
   styleUrl: './measure-form.component.scss',
@@ -44,12 +43,17 @@ export class MeasureFormComponent implements OnInit, OnDestroy {
   private readonly _measureService = inject(MeasuresService);
   private readonly _unsubscribeAll: Subject<any> = new Subject<any>();
 
+  private readonly _userService = inject(UserService);
+
   measureForm!: FormGroup;
   measure!: Measure;
 
+  users$!: Observable<User[]>;
+
   ngOnInit(): void {
     this.measureForm = this._formBuilder.group({
-      comment: ['', [Validators.required]],
+      user: ['', [Validators.required]],
+      comment: ['', []],
       weight: [0, []],
       waist: [0, []],
       abdomen: [0, []],
@@ -68,6 +72,8 @@ export class MeasureFormComponent implements OnInit, OnDestroy {
       is_active: [true, []],
     });
 
+    this.getClients();
+
     const config = this.getConfig();
 
     if (config && 'measure' in config) {
@@ -78,6 +84,15 @@ export class MeasureFormComponent implements OnInit, OnDestroy {
     }
   }
 
+  getClients() {
+    const params = {
+      ordering: '-id',
+      paginator: null,
+      role: 'client',
+    };
+    this.users$ = this._userService.all(params);
+  }
+
   getConfig() {
     return this._config.data;
   }
@@ -86,6 +101,7 @@ export class MeasureFormComponent implements OnInit, OnDestroy {
     const measures = measure.measures;
 
     const form = {
+      user: measure.user,
       comment: measure.comment,
       weight: measures.weight,
       waist: measures.waist,
@@ -114,10 +130,9 @@ export class MeasureFormComponent implements OnInit, OnDestroy {
     }
 
     const form = this.measureForm.value;
-    const config = this.getConfig();
 
     const body: MeasureDto = {
-      client: config.client,
+      user: form.user,
       comment: form.comment,
       is_active: form.is_active,
       measures: {

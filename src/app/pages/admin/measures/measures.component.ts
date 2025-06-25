@@ -1,9 +1,10 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { AsyncPipe, DatePipe } from '@angular/common';
-import { Observable, Subject, takeUntil } from 'rxjs';
+import { Observable } from 'rxjs';
+import { ActivatedRoute } from '@angular/router';
 
-import { Client, Measure } from 'app/domain';
-import { ClientService, MeasuresService } from 'app/services';
+import { Client, Measure, MeasureList } from 'app/domain';
+import { MeasuresService } from 'app/services';
 
 import { ProgressSpinner } from 'primeng/progressspinner';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
@@ -23,7 +24,6 @@ import { MeasureFormComponent } from './measure-form/measure-form.component';
 
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { faSolidCircleCheck } from '@ng-icons/font-awesome/solid';
-import { ActivatedRoute, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-measures',
@@ -31,7 +31,6 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
   imports: [
     AsyncPipe,
     DatePipe,
-    RouterLink,
     TableModule,
     ProgressSpinner,
     PaginatorModule,
@@ -56,12 +55,9 @@ export class MeasuresComponent implements OnInit {
   private readonly _messageService = inject(MessageService);
   private readonly _dialogService = inject(DialogService);
 
-  private readonly _clientService = inject(ClientService);
   private readonly _measuresService = inject(MeasuresService);
 
-  private readonly _unsubscribeAll: Subject<any> = new Subject<any>();
-
-  measures$!: Observable<Measure[]>;
+  measures$!: Observable<MeasureList>;
   client!: Client;
   avatar = 'default.jpg';
 
@@ -70,48 +66,28 @@ export class MeasuresComponent implements OnInit {
   ngOnInit(): void {
     this.loadData();
 
-    const client = this.getClientId();
-    this.getClient(Number(client));
-  }
-
-  getClientId(): string | null {
-    return this._route.snapshot.paramMap.get('id');
-  }
-
-  getClient(cliendId: number) {
-    this._clientService
-      .get(cliendId)
-      .pipe(takeUntil(this._unsubscribeAll))
-      .subscribe({
-        next: (client: Client) => {
-          this.client = client;
-          if (client.user.avatar) {
-            this.avatar = client.user.avatar;
-          }
-        },
-      });
+    // const measureId = this._route.snapshot.paramMap.get('id');
   }
 
   loadData(): void {
-    const clientId = this.getClientId();
-    this.measures$ = this._clientService.measures(Number(clientId));
+    const params = {
+      id: '-id',
+    };
+    this.measures$ = this._measuresService.search(params);
   }
 
   openCreateDialog(): void {
-    const cliendId = this.getClientId();
-
-    this.ref = this._dialogService.open(MeasureFormComponent, {
+    const ref = this._dialogService.open(MeasureFormComponent, {
       header: 'Crear Medidas',
       modal: true,
       position: 'top',
       styleClass: 'w-1/2',
       closable: true,
-      data: {
-        client: Number(cliendId),
-      },
+      dismissableMask: true,
+      data: {},
     });
 
-    this.ref.onClose.subscribe((data: any) => {
+    ref.onClose.subscribe((data: any) => {
       if (data) {
         this.loadData();
       }
@@ -119,21 +95,19 @@ export class MeasuresComponent implements OnInit {
   }
 
   openEditDialog(measure: Measure): void {
-    const cliendId = this.getClientId();
-
-    this.ref = this._dialogService.open(MeasureFormComponent, {
+    const ref = this._dialogService.open(MeasureFormComponent, {
       header: 'Actualizar Medidas',
       modal: true,
       position: 'top',
       styleClass: 'w-1/2',
       closable: true,
+      dismissableMask: true,
       data: {
         measure: measure,
-        client: Number(cliendId),
       },
     });
 
-    this.ref.onClose.subscribe((data: any) => {
+    ref.onClose.subscribe((data: any) => {
       if (data) {
         this.loadData();
       }

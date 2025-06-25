@@ -1,6 +1,14 @@
 <!-- <measure-images [measureId]="measureId"></measure-images> -->
 
 <form [formGroup]="measureForm" (ngSubmit)="handleSubmit()" class="col-span-2">
+  @if (users$ | async; as clients) {
+    <app-prime-select
+      [form]="measureForm"
+      controlName="user"
+      label="Cliente"
+      [options]="clients" />
+  }
+
   <app-prime-textarea
     [form]="measureForm"
     controlName="comment"
@@ -62,14 +70,10 @@
       label="Gluteos" />
   </div>
 
-  <div class="flex items-center mb-4">
-    <p-checkbox
-      inputId="is_active"
-      name="is_active"
-      [binary]="true"
-      formControlName="is_active" />
-    <label for="is_active" class="ml-2">Es Activo?</label>
-  </div>
+  <app-prime-checkbox
+    [form]="measureForm"
+    controlName="is_active"
+    label="Activo" />
 
   <div class="flex justify-end">
     <button class="btn-primary mt-4" type="submit">Guardar</button>
