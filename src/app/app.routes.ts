@@ -1,14 +1,14 @@
 import { Routes } from '@angular/router';
 import { adminGuard } from './core/guards/admin.guard';
 
-import { adminResolver } from './resolvers/admin.resolver';
-
 import { AdminLayoutComponent } from './layouts/admin-layout/admin-layout.component';
+import { noAuthGuard } from './core/guards/no-auth.guard';
 
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'admin' },
   {
     path: 'signin',
+    canActivate: [noAuthGuard],
     loadComponent: () =>
       import('./pages/auth/login/login.component').then(c => c.LoginComponent),
   },
@@ -45,12 +45,12 @@ export const routes: Routes = [
         loadChildren: () => import('./pages/admin/routines/routines.routes'),
       },
       {
-        path: 'exercises',
-        loadChildren: () => import('./pages/admin/exercises/exercises.routes'),
+        path: 'measures',
+        loadChildren: () => import('./pages/admin/measures/measures.routes'),
       },
       {
-        path: 'clients',
-        loadChildren: () => import('./pages/admin/clients/clients.routes'),
+        path: 'exercises',
+        loadChildren: () => import('./pages/admin/exercises/exercises.routes'),
       },
       {
         path: 'catalogs',
