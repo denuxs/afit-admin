@@ -1,0 +1,94 @@
+<div class="flex gap-4 items-center">
+  <div>
+    <a href="#" routerLink="/admin/users"><i class="pi pi-arrow-left"></i></a>
+  </div>
+  <h1>{{ title }}</h1>
+</div>
+
+<form [formGroup]="userForm" (ngSubmit)="handleSubmit()" class="w-2/3">
+  <app-prime-file [image]="user?.avatar" (fileChange)="handleFile($event)" />
+
+  <app-prime-select
+    [form]="userForm"
+    controlName="company"
+    label="Compania"
+    [options]="companies" />
+
+  <div class="grid grid-cols-2 gap-2">
+    <app-prime-input
+      [form]="userForm"
+      controlName="first_name"
+      label="Nombres" />
+    <app-prime-input
+      [form]="userForm"
+      controlName="last_name"
+      label="Apellidos" />
+  </div>
+
+  <app-prime-input [form]="userForm" controlName="username" label="Usuario" />
+
+  <app-prime-password
+    [form]="userForm"
+    controlName="password"
+    label="Contraseña" />
+
+  <app-prime-select
+    [form]="userForm"
+    controlName="role"
+    label="Rol"
+    [options]="roles" />
+
+  @if (userForm.get('role')?.value === 'client') {
+    <app-prime-select
+      [form]="userForm"
+      controlName="coach"
+      label="Entrenador"
+      [options]="coaches" />
+  }
+
+  <app-prime-checkbox
+    [form]="userForm"
+    controlName="is_active"
+    label="Activo" />
+
+  <h1 class="mb-4">Rutinas</h1>
+
+  <div formArrayName="routines" class="mb-4">
+    <div cdkDropList (cdkDropListDropped)="handleDragDrop($event)">
+      @for (item of routines.controls; track $index; let i = $index) {
+        <div [formGroupName]="i" cdkDrag>
+          <div
+            class="grid grid-cols-12 mb-2 gap-2 bg-white px-4 py-2 cursor-move">
+            <div class="col-span-11">
+              <h3>{{ item.value.title }}</h3>
+
+              <input type="hidden" formControlName="routine" />
+              <input type="hidden" formControlName="order" />
+            </div>
+            <div class="col-span-1 text-center">
+              <button
+                type="button"
+                (click)="removeRoutine(i)"
+                class="text-red-600">
+                <i class="pi pi-times"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+
+  <div>
+    <button
+      type="button"
+      (click)="openRoutineModal()"
+      class="bg-orange-400 flex text-sm rounded-md px-4 py-1 text-white">
+      <i class="pi pi-plus mr-1"></i> Agregar
+    </button>
+  </div>
+
+  <div class="flex justify-end">
+    <button class="btn-primary mt-4" type="submit">Guardar</button>
+  </div>
+</form>

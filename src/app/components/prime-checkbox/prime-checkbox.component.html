@@ -1,0 +1,24 @@
+<div class="flex items-center mb-4" [formGroup]="form">
+  <p-checkbox
+    [inputId]="controlName"
+    [name]="controlName"
+    [binary]="true"
+    [formControlName]="controlName" />
+  <label [for]="controlName" class="ml-2">{{ label }}</label>
+
+  @if (form.get(controlName)?.invalid && form.get(controlName)?.touched) {
+    @if (form.get(controlName)?.hasError('required')) {
+      <p class="form-error">Este campo es obligatorio</p>
+    }
+
+    @if (form.get(controlName)?.hasError('email')) {
+      <p class="form-error">Email inválido</p>
+    }
+
+    @if (form.get(controlName)?.hasError('server')) {
+      <p class="form-error">
+        {{ form.get(controlName)?.errors?.['server'] }}
+      </p>
+    }
+  }
+</div>

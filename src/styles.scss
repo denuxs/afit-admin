@@ -1,0 +1,90 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@import 'primeicons/primeicons.css';
+
+// @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
+// .poppins-regular {
+//   font-family: 'Poppins', serif;
+//   font-weight: 400;
+//   font-style: normal;
+// }
+
+// .poppins-semibold {
+//   font-family: 'Poppins', serif;
+//   font-weight: 600;
+//   font-style: normal;
+// }
+
+// .poppins-bold {
+//   font-family: 'Poppins', serif;
+//   font-weight: 700;
+//   font-style: normal;
+// }
+
+// @font-face {
+//     font-family: 'Poppins';
+//     src: url('/fonts/Poppins/Poppins.ttf');
+// }
+
+body {
+  @apply bg-gray-100;
+}
+
+h1 {
+  @apply text-2xl text-gray-800;
+}
+
+h2 {
+  @apply text-xl text-gray-700;
+}
+
+h3 {
+  @apply text-lg text-gray-600;
+}
+
+.link {
+  @apply text-blue-600 hover:text-blue-800 px-4 py-2 hover:underline;
+}
+
+.menu-active {
+  @apply text-gray-50 bg-[#25282a];
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-[#1780ea] hover:bg-[#0e4d8c] text-white rounded-md  px-3 py-2;
+  }
+
+  .btn-secondary {
+    @apply text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 rounded-md px-3 py-2;
+  }
+
+  .form-label {
+    @apply inline-block mb-2 text-sm;
+  }
+
+  .card {
+    @apply bg-white border border-gray-200 rounded-md px-6 py-10;
+  }
+}
+
+// .form-input {
+//   @apply block w-full rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50;
+// }
+
+.form-error {
+  @apply text-red-600 text-sm mt-2;
+}
+
+.ng-invalid.ng-touched {
+  @apply border-red-600;
+}
+
+// .ng-valid {
+//   @apply border-gray-600;
+// }
+
+// html, body { height: 100%; }
+// body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }

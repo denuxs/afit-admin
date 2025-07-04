@@ -1,0 +1,30 @@
+<ng-container *transloco="let t">
+  <h1 class="mb-4">Catálogos</h1>
+
+  <div class="flex justify-between">
+    <app-catalog-filter
+      [catalogTypes]="categories"
+      (filterChange)="handleFilter($event)" />
+
+    <div>
+      <button (click)="openCreateDialog()" class="btn-primary">
+        <i class="pi pi-plus"></i> Nuevo
+      </button>
+    </div>
+  </div>
+
+  @if (catalogs$ | async; as data) {
+    <app-prime-table
+      [data]="data.results"
+      [total]="data.count"
+      [columns]="columns"
+      [first]="first"
+      (itemDeleted)="confirmDelete($event)"
+      (dialogOpened)="openEditDialog($event)"
+      (pageChanged)="handlePage($event)" />
+  } @else {
+    <p-progressSpinner [style]="{ width: '40px', height: '40px' }" />
+  }
+</ng-container>
+<p-confirmdialog />
+<p-toast />

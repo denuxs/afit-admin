@@ -1,0 +1,27 @@
+<h1 class="mb-4">Notificaciones</h1>
+
+@if (!loading) {
+  <section class="border bg-white border-gray-200 rounded-md p-4 w-1/2">
+    @for (item of notifications; track item.id; let idx = $index) {
+      <article
+        class="flex justify-between gap-2 mb-2 border-b border-gray-200 pb-2">
+        <div class="flex gap-2">
+          <img
+            [src]="item.user.avatar"
+            alt="Avatar"
+            class="w-10 h-10 rounded-full object-cover" />
+          <a href="#" routerLink="/admin/comment">
+            <strong>{{ item.user.username }}</strong> comento:
+            {{ item.comment.content }}
+            <p class="text-sm text-gray-500">{{ item.created | timeAgo }}</p>
+          </a>
+        </div>
+        <button class="px-4 text-red-500" (click)="handleDelete(item.id, idx)">
+          <i class="pi pi-times"></i>
+        </button>
+      </article>
+    }
+  </section>
+} @else {
+  <p-progressSpinner [style]="{ width: '40px', height: '40px' }" />
+}

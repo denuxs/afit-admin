@@ -1,0 +1,26 @@
+<h2 class="mb-2">Comentarios</h2>
+
+@if (comments$ | async; as comments) {
+  @if (comments.length === 0) {
+    <p>No hay comentarios</p>
+  }
+
+  @for (comment of comments; track comment.id) {
+    <div class="flex mb-2 gap-2">
+      <div>
+        <img
+          [src]="comment.user.avatar"
+          alt="photo"
+          class="rounded-full w-10 h-10 object-cover" />
+      </div>
+      <div>
+        <p>
+          <strong>{{ comment.user.username }}</strong
+          ><br />{{ comment.content }}
+        </p>
+      </div>
+    </div>
+  }
+} @else {
+  <p>Cargando...</p>
+}

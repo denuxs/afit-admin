@@ -1,0 +1,24 @@
+<div class="flex justify-between mb-4">
+  <h1>Publicaciones</h1>
+</div>
+
+@if (posts$ | async; as data) {
+  <p-table [value]="data" stripedRows>
+    <ng-template #header>
+      <tr>
+        <th>Usuario</th>
+        <th>Comentario</th>
+        <th>Creado</th>
+        <th></th>
+      </tr>
+    </ng-template>
+    <ng-template #body let-item>
+      <tr>
+        <td>{{ item.user.username }}</td>
+        <td>{{ item.content }}</td>
+        <td>{{ item.created | date: "mediumDate" }}</td>
+        <td></td>
+      </tr>
+    </ng-template>
+  </p-table>
+}

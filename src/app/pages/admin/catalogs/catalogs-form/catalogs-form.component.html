@@ -1,0 +1,15 @@
+<form [formGroup]="catalogForm" (ngSubmit)="handleSubmit()">
+  <app-prime-file [image]="catalog?.image" (fileChange)="handleFile($event)" />
+
+  <app-prime-select
+    [form]="catalogForm"
+    controlName="key"
+    label="Categoría"
+    [options]="categories" />
+
+  <app-prime-input [form]="catalogForm" controlName="name" label="Nombre" />
+
+  <div class="flex justify-end mt-4">
+    <button class="btn-primary" type="submit">Guardar</button>
+  </div>
+</form>

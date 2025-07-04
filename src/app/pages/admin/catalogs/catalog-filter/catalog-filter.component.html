@@ -1,0 +1,24 @@
+<ng-container *transloco="let t">
+  <form [formGroup]="filterForm" (ngSubmit)="handleFilter()">
+    <div class="flex space-x-2">
+      <app-prime-input
+        [form]="filterForm"
+        placeholder="Buscar..."
+        controlName="search"
+        label="" />
+
+      <app-prime-select
+        [form]="filterForm"
+        controlName="key"
+        placeholder="Categoria"
+        label=""
+        [options]="catalogTypes" />
+
+      <div>
+        <button class="btn-primary" type="submit">
+          <i class="pi pi-search"></i> {{ t('search') }}
+        </button>
+      </div>
+    </div>
+  </form>
+</ng-container>

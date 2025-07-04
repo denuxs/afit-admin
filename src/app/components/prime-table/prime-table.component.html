@@ -1,0 +1,58 @@
+<p-table [value]="data" stripedRows>
+  <ng-template #header>
+    <tr class="uppercase">
+      <th></th>
+      @for (col of columns; track col.field) {
+        <th>{{ col.header }}</th>
+      }
+      <th></th>
+      <th></th>
+    </tr>
+  </ng-template>
+  <ng-template #body let-item let-rowIndex="rowIndex">
+    <tr>
+      <td>{{ rowIndex + 1 }}</td>
+      @for (col of columns; track col.field) {
+        <td>
+          @if (col.avatar) {
+            <div class="flex gap-2">
+              <app-prime-avatar [avatar]="item.image" />
+              {{ item[col.field] }}
+            </div>
+          }
+
+          @if (col.date) {
+            {{ item[col.field] | date: 'mediumDate' }}
+          }
+        </td>
+      }
+      <td>
+        <button
+          pTooltip="Editar"
+          tooltipPosition="top"
+          (click)="openEditDialog(item.id)"
+          class="text-blue-600">
+          <i class="pi pi-pen-to-square"></i>
+        </button>
+      </td>
+      <td>
+        <button
+          type="button"
+          pTooltip="Borrar"
+          tooltipPosition="top"
+          (click)="handleDelete(item.id)"
+          class="text-red-600">
+          <i class="pi pi-trash"></i>
+        </button>
+      </td>
+    </tr>
+  </ng-template>
+</p-table>
+
+<p-paginator
+  showCurrentPageReport="true"
+  currentPageReportTemplate="{first} - {last} de {totalRecords}"
+  (onPageChange)="handlePagination($event)"
+  [first]="first"
+  [rows]="rows"
+  [totalRecords]="total" />

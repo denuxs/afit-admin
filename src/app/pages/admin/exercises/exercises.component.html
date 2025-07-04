@@ -1,0 +1,80 @@
+<ng-container *transloco="let t">
+  <h1 class="mb-4">Ejercicios</h1>
+
+  <div class="flex justify-between mb-2">
+    <app-exercise-filter (filterChange)="handleFilter($event)" />
+    <div>
+      <button (click)="openCreateDialog()" class="btn-primary">
+        <i class="pi pi-plus"></i> Nuevo
+      </button>
+    </div>
+  </div>
+
+  @if (exercises$ | async; as data) {
+    <p-table [value]="data.results" stripedRows>
+      <ng-template #header>
+        <tr class="uppercase">
+          <th></th>
+          <th>Nombre</th>
+          <th>Musculo</th>
+          <th>Equipo</th>
+          <th>Creado por</th>
+          <th>Creado</th>
+          <th></th>
+          <th></th>
+        </tr>
+      </ng-template>
+      <ng-template #body let-item let-rowIndex="rowIndex">
+        <tr>
+          <td>{{ rowIndex + 1 }}</td>
+          <td>
+            <div class="flex gap-2">
+              <div>
+                <app-prime-avatar [avatar]="item.image" />
+              </div>
+              <div>
+                <h3>{{ item.name }}</h3>
+              </div>
+            </div>
+          </td>
+          <td>{{ item.muscle.name }}</td>
+          <td>{{ item.equipment.name }}</td>
+          <td>{{ item.user.username }}</td>
+          <td>{{ item.created | date: 'mediumDate' }}</td>
+          <td>
+            <button
+              [pTooltip]="t('edit')"
+              tooltipPosition="top"
+              (click)="openEditDialog(item)"
+              class="text-blue-600">
+              <i class="pi pi-pen-to-square"></i>
+            </button>
+          </td>
+          <td>
+            <button
+              type="button"
+              pTooltip="Borrar"
+              tooltipPosition="top"
+              (click)="confirmDelete(item.id)"
+              class="text-red-600">
+              <i class="pi pi-trash"></i>
+            </button>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+
+    <p-paginator
+      showCurrentPageReport="true"
+      currentPageReportTemplate="{first} - {last} de {totalRecords}"
+      (onPageChange)="handlePage($event)"
+      [first]="first"
+      [rows]="rows"
+      [totalRecords]="data.count" />
+  } @else {
+    <p-progressSpinner [style]="{ width: '40px', height: '40px' }" />
+  }
+</ng-container>
+
+<p-confirmdialog />
+<p-toast />

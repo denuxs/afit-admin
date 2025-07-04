@@ -1,0 +1,29 @@
+<div [formGroup]="form" class="mb-4">
+  <label [for]="controlName" class="form-label">{{ label }}</label>
+
+  <textarea
+    pTextarea
+    [id]="controlName"
+    [name]="controlName"
+    [placeholder]="placeholder"
+    [formControlName]="controlName"
+    fluid="true"></textarea>
+
+  <p class="form-error">{{ help }}</p>
+
+  @if (form.get(controlName)?.invalid && form.get(controlName)?.touched) {
+    @if (form.get(controlName)?.hasError('required')) {
+      <p class="form-error">Este campo es obligatorio</p>
+    }
+
+    @if (form.get(controlName)?.hasError('email')) {
+      <p class="form-error">Email inválido</p>
+    }
+
+    @if (form.get(controlName)?.hasError('server')) {
+      <p class="form-error">
+        {{ form.get(controlName)?.errors?.['server'] }}
+      </p>
+    }
+  }
+</div>

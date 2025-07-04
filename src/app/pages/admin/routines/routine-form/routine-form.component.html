@@ -1,0 +1,185 @@
+<div class="flex gap-4 items-center">
+  <div>
+    <a href="#" routerLink="/admin/routines"
+      ><i class="pi pi-arrow-left"></i
+    ></a>
+  </div>
+  <h1>{{ title }}</h1>
+</div>
+
+<form [formGroup]="routineForm" (ngSubmit)="handleSubmit()" class="mt-6">
+  <div class="grid grid-cols-3 gap-6">
+    <div class="col-span-2">
+      <div class="grid grid-cols-3 gap-2">
+        <div class="col-span-2">
+          <app-prime-input
+            [form]="routineForm"
+            controlName="title"
+            label="Nombre" />
+        </div>
+        <div>
+          <app-prime-select
+            [form]="routineForm"
+            controlName="level"
+            label="Nivel"
+            [options]="levels" />
+        </div>
+      </div>
+
+      <div>
+        <app-prime-editor
+          [form]="routineForm"
+          controlName="description"
+          label="Descripción" />
+      </div>
+
+      <h2 class="mb-2">Ejercicios</h2>
+
+      <div formArrayName="exercises">
+        <p-accordion cdkDropList (cdkDropListDropped)="handleDragDrop($event)">
+          @for (tab of exercises.controls; track $index; let i = $index) {
+            <p-accordion-panel [formGroupName]="i" [value]="i" cdkDrag>
+              <p-accordion-header>
+                <div class="flex w-full justify-between">
+                  <div>{{ tab.value.name }}</div>
+                  <div class="items-center">
+                    <button
+                      type="button"
+                      (click)="removeExercise(i, tab)"
+                      class="text-red-600 mr-4">
+                      <i class="pi pi-times"></i>
+                    </button>
+                  </div>
+                </div>
+              </p-accordion-header>
+              <p-accordion-content>
+                <div class="flex mb-2">
+                  <div class="flex flex-auto flex-col">
+                    <label for="description" class="form-label"
+                      >Descripción</label
+                    >
+                    <input
+                      type="text"
+                      id="description"
+                      name="description"
+                      formControlName="description"
+                      class="w-full rounded-md border-gray-300" />
+                    <input
+                      type="hidden"
+                      id="order"
+                      name="order"
+                      formControlName="order" />
+                  </div>
+                </div>
+
+                <div formArrayName="sets" class="mt-4">
+                  <div class="grid grid-cols-4 gap-1">
+                    <div class="text-sm">Serie</div>
+                    <div class="text-sm">Repetición</div>
+                    <div class="text-sm">Peso</div>
+                    <div></div>
+                  </div>
+                  @for (s of sets(i).controls; track $index; let j = $index) {
+                    <div
+                      class="grid grid-cols-4 gap-1 mb-2"
+                      [formGroupName]="j">
+                      <div>
+                        <input
+                          type="number"
+                          id="sets"
+                          name="sets"
+                          formControlName="sets"
+                          class="rounded-md border-gray-300 p-1 w-full" />
+                      </div>
+                      <div>
+                        <input
+                          type="number"
+                          id="rept"
+                          name="rept"
+                          formControlName="rept"
+                          class="rounded-md border-gray-300 p-1 w-full" />
+                      </div>
+                      <div>
+                        <input
+                          type="number"
+                          id="weight"
+                          name="weight"
+                          formControlName="weight"
+                          class="rounded-md border-gray-300 p-1 w-full" />
+                      </div>
+                      <div class="flex items-end">
+                        <button
+                          type="button"
+                          (click)="removeSet(i, j)"
+                          class="text-red-600">
+                          <i class="pi pi-times"></i>
+                        </button>
+                      </div>
+                    </div>
+                  }
+                  <div>
+                    <button
+                      type="button"
+                      (click)="addSet(i)"
+                      class="bg-gray-600 flex text-sm rounded-md px-4 py-1 text-white">
+                      <i class="pi pi-plus mr-1"></i> Agregar
+                    </button>
+                  </div>
+                </div>
+                <!-- end of sets -->
+              </p-accordion-content>
+            </p-accordion-panel>
+          }
+        </p-accordion>
+      </div>
+
+      <div class="mt-6">
+        <button class="btn-primary" type="submit">Guardar</button>
+      </div>
+    </div>
+    <!-- end col-span-2 -->
+
+    <div
+      class="border border-gray-300 m-2 bg-gray-50 px-4 py-6 rounded-md h-screen">
+      <input
+        type="text"
+        [formControl]="searchControl"
+        class="w-full rounded-md mb-4 bg-gray-100 border border-gray-300"
+        placeholder="Buscar ejercicio" />
+
+      <p-scrollpanel styleClass="h-4/5">
+        <table class="w-full">
+          @for (item of filteredExercises; track item.id) {
+            <tr class="odd:bg-white even:bg-gray-100 hover:bg-gray-100">
+              <td class="pt-2">
+                <button
+                  type="button"
+                  (click)="addExercise(item)"
+                  class="text-blue-700 px-4">
+                  <i class="pi pi-plus"></i>
+                </button>
+              </td>
+              <td class="pt-2">
+                <div class="flex gap-2">
+                  <div>
+                    @let image = 'default.jpg';
+                    <img
+                      [src]="item.image ? item.image : image"
+                      class="rounded-full h-10 w-10 border border-gray-300 object-cover"
+                      alt="exercise" />
+                  </div>
+                  <div>
+                    <h3>{{ item.name }}</h3>
+                    <p class="text-gray-400 text-sm">
+                      {{ item.muscle.name }}
+                    </p>
+                  </div>
+                </div>
+              </td>
+            </tr>
+          }
+        </table>
+      </p-scrollpanel>
+    </div>
+  </div>
+</form>

@@ -1,0 +1,66 @@
+<h1 class="mb-4">Comentarios</h1>
+
+<div class="flex justify-between mb-2">
+  <form [formGroup]="filterForm" (ngSubmit)="handleFilter()">
+    <div class="flex space-x-2">
+      <div>
+        <input
+          type="text"
+          placeholder="Buscar..."
+          class="rounded-md"
+          formControlName="search" />
+      </div>
+      <div>
+        <button class="btn-primary" type="submit">
+          <i class="pi pi-search"></i> Buscar
+        </button>
+      </div>
+    </div>
+  </form>
+</div>
+
+@if (comments$ | async; as data) {
+  <p-table [value]="data" stripedRows>
+    <ng-template #header>
+      <tr>
+        <th>Usuario</th>
+        <th>Comentario</th>
+        <th>Creado</th>
+        <th></th>
+        <th></th>
+      </tr>
+    </ng-template>
+    <ng-template #body let-item>
+      <tr>
+        <td>
+          {{ item.user.first_name }} {{ item.user.last_name }} ({{
+            item.user.username
+          }})
+        </td>
+        <td>{{ item.content }}</td>
+        <td>{{ item.created | timeAgo }}</td>
+        <td>
+          <a
+            href="#"
+            pTooltip="Comentarios"
+            tooltipPosition="top"
+            [routerLink]="[item.user.id, 'view']"
+            class="text-blue-600"
+            ><i class="pi pi-eye"></i
+          ></a>
+        </td>
+        <td>
+          <button
+            type="button"
+            pTooltip="Borrar"
+            tooltipPosition="top"
+            class="text-red-600"
+            (click)="handleDelete(item.id)">
+            <i class="pi pi-trash"></i>
+          </button>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+}
+<p-confirmdialog />

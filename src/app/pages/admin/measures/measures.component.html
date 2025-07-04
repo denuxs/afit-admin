@@ -1,0 +1,66 @@
+<ng-container *transloco="let t">
+  <div class="flex justify-between mb-4">
+    <h1>Medidas</h1>
+
+    <div>
+      <button (click)="openCreateDialog()" class="btn-primary">
+        <i class="pi pi-plus"></i> Nuevo
+      </button>
+    </div>
+  </div>
+
+  @if (measures$ | async; as data) {
+    <p-table [value]="data.results" stripedRows>
+      <ng-template #header>
+        <tr class="uppercase">
+          <th></th>
+          <th>Cliente</th>
+          <th>Activo</th>
+          <th>Creado</th>
+          <th></th>
+          <th></th>
+        </tr>
+      </ng-template>
+      <ng-template #body let-item let-rowIndex="rowIndex">
+        <tr>
+          <td>{{ rowIndex + 1 }}</td>
+          <td>{{ item.fullname }}</td>
+          <td>
+            @if (item.is_active) {
+              <ng-icon
+                class="text-green-500"
+                name="faSolidCircleCheck"></ng-icon>
+            } @else {
+              <ng-icon class="text-red-500" name="faSolidCircleCheck"></ng-icon>
+            }
+          </td>
+          <td>{{ item.created | date: 'mediumDate' }}</td>
+          <td>
+            <button
+              [pTooltip]="t('edit')"
+              tooltipPosition="top"
+              (click)="openEditDialog(item)"
+              class="text-blue-600">
+              <i class="pi pi-pen-to-square"></i>
+            </button>
+          </td>
+          <td>
+            <button
+              type="button"
+              pTooltip="Borrar"
+              tooltipPosition="top"
+              (click)="confirmDelete(item.id)"
+              class="text-red-600">
+              <i class="pi pi-trash"></i>
+            </button>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  } @else {
+    <p-progressSpinner [style]="{ width: '40px', height: '40px' }" />
+  }
+</ng-container>
+
+<p-confirmdialog />
+<p-toast />

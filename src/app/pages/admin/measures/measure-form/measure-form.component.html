@@ -1,0 +1,81 @@
+<!-- <measure-images [measureId]="measureId"></measure-images> -->
+
+<form [formGroup]="measureForm" (ngSubmit)="handleSubmit()" class="col-span-2">
+  @if (users$ | async; as clients) {
+    <app-prime-select
+      [form]="measureForm"
+      controlName="user"
+      label="Cliente"
+      [options]="clients" />
+  }
+
+  <app-prime-textarea
+    [form]="measureForm"
+    controlName="comment"
+    label="Notas" />
+
+  <div class="grid grid-cols-4 gap-4">
+    <app-prime-input
+      [form]="measureForm"
+      controlName="weight"
+      label="Peso Corporal" />
+    <app-prime-input [form]="measureForm" controlName="waist" label="Cintura" />
+    <app-prime-input
+      [form]="measureForm"
+      controlName="abdomen"
+      label="Abdomen" />
+    <app-prime-input [form]="measureForm" controlName="chest" label="Pecho" />
+    <app-prime-input [form]="measureForm" controlName="hips" label="Cadera" />
+    <app-prime-input [form]="measureForm" controlName="back" label="Espalda" />
+
+    <app-prime-input
+      [form]="measureForm"
+      controlName="left_bicep"
+      label="Bicep Izquierdo" />
+    <app-prime-input
+      [form]="measureForm"
+      controlName="right_bicep"
+      label="Bicep Derecho" />
+
+    <app-prime-input
+      [form]="measureForm"
+      controlName="left_forearm"
+      label="Antebrazo Izquierdo" />
+    <app-prime-input
+      [form]="measureForm"
+      controlName="right_forearm"
+      label="Antebrazo Derecho" />
+
+    <app-prime-input
+      [form]="measureForm"
+      controlName="left_thigh"
+      label="Muslo Izquierdo" />
+    <app-prime-input
+      [form]="measureForm"
+      controlName="right_thigh"
+      label="Muslo Derecho" />
+
+    <app-prime-input
+      [form]="measureForm"
+      controlName="left_calf"
+      label="Pantorilla Izquierda" />
+    <app-prime-input
+      [form]="measureForm"
+      controlName="right_calf"
+      label="Pantorilla Derecha" />
+
+    <app-prime-input
+      [form]="measureForm"
+      controlName="glutes"
+      label="Gluteos" />
+  </div>
+
+  <app-prime-checkbox
+    [form]="measureForm"
+    controlName="is_active"
+    label="Activo" />
+
+  <div class="flex justify-end">
+    <button class="btn-primary mt-4" type="submit">Guardar</button>
+  </div>
+</form>

@@ -1,0 +1,30 @@
+<form [formGroup]="exerciseForm" (ngSubmit)="handleSubmit()">
+  <app-prime-file [image]="exercise?.image" (fileChange)="handleFile($event)" />
+
+  <app-prime-input [form]="exerciseForm" controlName="name" label="Nombre" />
+
+  @if (catalogs$ | async) {
+    <app-prime-select
+      [form]="exerciseForm"
+      controlName="muscle"
+      label="Músculo"
+      [options]="muscles" />
+
+    <app-prime-select
+      [form]="exerciseForm"
+      controlName="equipment"
+      label="Equipo"
+      [options]="equipments" />
+  }
+
+  <div class="mb-4">
+    <app-prime-editor
+      [form]="exerciseForm"
+      controlName="description"
+      label="Instrucciones" />
+  </div>
+
+  <div class="flex justify-end">
+    <button class="btn-primary mt-4" type="submit">Guardar</button>
+  </div>
+</form>

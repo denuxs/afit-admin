@@ -1,0 +1,47 @@
+<div class="w-1/2">
+  <form [formGroup]="userForm" (ngSubmit)="handleSubmit()">
+    @if (user) {
+      <app-prime-file [image]="user.avatar" (fileChange)="handleFile($event)" />
+    }
+    <app-prime-select
+      [form]="userForm"
+      controlName="company"
+      label="Compañia"
+      [options]="companies" />
+
+    <div class="grid grid-cols-2 gap-2">
+      <app-prime-input
+        [form]="userForm"
+        controlName="first_name"
+        label="Nombres" />
+      <app-prime-input
+        [form]="userForm"
+        controlName="last_name"
+        label="Apellidos" />
+    </div>
+
+    <app-prime-input [form]="userForm" controlName="username" label="Usuario" />
+
+    <app-prime-password
+      [form]="userForm"
+      controlName="password"
+      label="Contraseña" />
+
+    <app-prime-select
+      [form]="userForm"
+      controlName="role"
+      label="Rol"
+      [options]="roles" />
+
+    <app-prime-checkbox
+      [form]="userForm"
+      controlName="is_active"
+      label="Activo" />
+
+    <div class="flex justify-end">
+      <button class="btn-primary mt-4" type="submit">Guardar</button>
+    </div>
+  </form>
+</div>
+
+<p-toast />

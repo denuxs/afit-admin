@@ -1,0 +1,5 @@
+<h1>Comentarios</h1>
+
+@for (item of comments$ | async; track item.id) {
+  <p>{{ item.content }}</p>
+}
