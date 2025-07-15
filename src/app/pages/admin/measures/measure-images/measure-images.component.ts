@@ -6,7 +6,7 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ConfirmationService } from 'primeng/api';
 import { ImageModule } from 'primeng/image';
 
-import { Image } from 'app/domain';
+import { Image } from 'app/interfaces';
 import { ImageService } from 'app/services/image.service';
 
 @Component({

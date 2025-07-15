@@ -1,7 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
-import { Notification as Notif, NotificationList } from 'app/domain';
+import { Notification as Notif, NotificationList } from 'app/interfaces';
 import { NotificationService } from 'app/services';
 
 import { ProgressSpinnerModule } from 'primeng/progressspinner';

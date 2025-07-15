@@ -9,7 +9,7 @@ import { map, Observable, Subject, takeUntil } from 'rxjs';
 import { DomSanitizer } from '@angular/platform-browser';
 import { AsyncPipe } from '@angular/common';
 
-import { Catalog, Exercise } from 'app/domain';
+import { Catalog, Exercise } from 'app/interfaces';
 import { CatalogService, ExerciseService } from 'app/services';
 
 import {

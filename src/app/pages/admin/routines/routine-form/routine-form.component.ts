@@ -17,7 +17,7 @@ import { debounceTime, takeUntil } from 'rxjs/operators';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
 import { ExerciseService, RoutineService } from 'app/services';
-import { Exercise, Routine, RoutineDto, UserList } from 'app/domain';
+import { Exercise, Routine, RoutineDto, UserList } from 'app/interfaces';
 
 import {
   CdkDragDrop,

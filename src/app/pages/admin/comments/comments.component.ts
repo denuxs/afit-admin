@@ -4,7 +4,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { map, Observable } from 'rxjs';
 
-import { Comment } from 'app/domain';
+import { Comment } from 'app/interfaces';
 import { CommentService } from 'app/services';
 
 import { TableModule } from 'primeng/table';

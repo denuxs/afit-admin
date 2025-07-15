@@ -3,7 +3,7 @@ import { AsyncPipe, DatePipe, NgIf } from '@angular/common';
 import { Observable } from 'rxjs';
 import { RouterLink } from '@angular/router';
 
-import { Post } from 'app/domain';
+import { Post } from 'app/interfaces';
 import { PostService } from 'app/services/post.service';
 
 import { TableModule } from 'primeng/table';

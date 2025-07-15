@@ -3,7 +3,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
 
-import { Comment } from 'app/domain';
+import { Comment } from 'app/interfaces';
 import { CommentService } from 'app/services';
 
 @Component({

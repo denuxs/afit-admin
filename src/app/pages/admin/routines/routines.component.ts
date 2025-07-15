@@ -2,7 +2,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { AsyncPipe, DatePipe } from '@angular/common';
 import { Observable } from 'rxjs';
 
-import { RoutineList } from 'app/domain';
+import { RoutineList } from 'app/interfaces';
 import { RoutineService } from 'app/services';
 
 import { TableModule } from 'primeng/table';

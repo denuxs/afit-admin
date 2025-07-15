@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, ReplaySubject, tap } from 'rxjs';
 
 import { environment } from 'environments/environment';
-import { Client, User, UserList } from 'app/domain';
+import { Client, User, UserList } from 'app/interfaces';
 
 @Injectable({
   providedIn: 'root',

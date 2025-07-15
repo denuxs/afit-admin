@@ -9,7 +9,7 @@ import {
 import { TranslocoDirective } from '@jsverse/transloco';
 import { PrimeInputComponent, PrimeSelectComponent } from 'app/components';
 
-import { ROLES } from 'app/domain';
+import { ROLES } from 'app/interfaces';
 
 @Component({
   selector: 'app-user-filter',

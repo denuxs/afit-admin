@@ -2,7 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 
-import { LoginDto, LoginResponse } from 'app/domain';
+import { LoginDto, LoginResponse } from 'app/interfaces';
 import { environment } from 'environments/environment';
 import { UserService } from 'app/services';
 

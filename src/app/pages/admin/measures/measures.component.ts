@@ -3,7 +3,7 @@ import { AsyncPipe, DatePipe } from '@angular/common';
 import { Observable } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 
-import { Client, Measure, MeasureList } from 'app/domain';
+import { Client, Measure, MeasureList } from 'app/interfaces';
 import { MeasuresService } from 'app/services';
 
 import { ProgressSpinner } from 'primeng/progressspinner';

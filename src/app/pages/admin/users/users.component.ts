@@ -12,7 +12,7 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { TooltipModule } from 'primeng/tooltip';
 
 import { UserService } from 'app/services';
-import { UserList } from 'app/domain';
+import { UserList } from 'app/interfaces';
 
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import {

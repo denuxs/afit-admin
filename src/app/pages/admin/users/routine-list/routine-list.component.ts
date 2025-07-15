@@ -4,7 +4,7 @@ import { TableModule } from 'primeng/table';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 import { InputTextModule } from 'primeng/inputtext';
-import { Routine } from 'app/domain';
+import { Routine } from 'app/interfaces';
 import { RoutineService } from 'app/services';
 import { Subject, takeUntil } from 'rxjs';
 

@@ -2,7 +2,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { AsyncPipe, DatePipe } from '@angular/common';
 import { Observable } from 'rxjs';
 
-import { Exercise, ExerciseList } from 'app/domain';
+import { Exercise, ExerciseList } from 'app/interfaces';
 import { ExerciseService } from 'app/services';
 
 import { ProgressSpinner } from 'primeng/progressspinner';

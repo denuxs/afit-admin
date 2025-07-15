@@ -8,7 +8,7 @@ import {
 import { forkJoin, Observable, Subject, takeUntil } from 'rxjs';
 
 import { CompanyService, UserService } from 'app/services';
-import { Company, GENDERS, ROLES, User } from 'app/domain';
+import { Company, GENDERS, ROLES, User } from 'app/interfaces';
 
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';

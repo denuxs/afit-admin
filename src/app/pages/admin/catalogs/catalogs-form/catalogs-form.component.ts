@@ -8,7 +8,7 @@ import {
 } from '@angular/forms';
 import { Subject, takeUntil } from 'rxjs';
 
-import { Catalog } from 'app/domain';
+import { Catalog } from 'app/interfaces';
 
 import {
   DialogService,

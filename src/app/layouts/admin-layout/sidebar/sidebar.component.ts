@@ -3,7 +3,7 @@ import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 
 import { AuthService } from 'app/core/auth/auth.service';
 import { UserService } from 'app/services';
-import { User } from 'app/domain';
+import { User } from 'app/interfaces';
 
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import {

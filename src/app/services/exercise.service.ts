@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 import { environment } from '../../environments/environment';
-import { Comment, Exercise, ExerciseList } from 'app/domain';
+import { Comment, Exercise, ExerciseList } from 'app/interfaces';
 
 @Injectable({
   providedIn: 'root',

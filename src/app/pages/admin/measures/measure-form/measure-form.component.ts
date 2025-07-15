@@ -8,7 +8,7 @@ import {
 import { Observable, Subject, takeUntil } from 'rxjs';
 import { AsyncPipe } from '@angular/common';
 
-import { Measure, MeasureDto, User } from 'app/domain';
+import { Measure, MeasureDto, User } from 'app/interfaces';
 import { MeasuresService, UserService } from 'app/services';
 
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';

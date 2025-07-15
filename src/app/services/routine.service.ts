@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 import { environment } from '../../environments/environment';
-import { Routine, RoutineDto, RoutineList } from 'app/domain';
+import { Routine, RoutineDto, RoutineList } from 'app/interfaces';
 
 @Injectable({
   providedIn: 'root',

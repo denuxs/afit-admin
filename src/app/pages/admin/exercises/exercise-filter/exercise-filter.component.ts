@@ -10,7 +10,7 @@ import { AsyncPipe } from '@angular/common';
 
 import { TranslocoDirective } from '@jsverse/transloco';
 
-import { Catalog } from 'app/domain';
+import { Catalog } from 'app/interfaces';
 import { CatalogService } from 'app/services';
 
 import { PrimeInputComponent } from 'app/components/prime-input/prime-input.component';

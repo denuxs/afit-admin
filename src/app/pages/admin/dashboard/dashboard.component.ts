@@ -2,7 +2,7 @@ import { AsyncPipe } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 
-import { Dashboard, User } from 'app/domain';
+import { Dashboard, User } from 'app/interfaces';
 import { DashboardService } from 'app/services/dashboard.service';
 import { UserService } from 'app/services';
 

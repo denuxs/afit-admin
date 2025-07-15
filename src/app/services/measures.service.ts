@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 import { environment } from '../../environments/environment';
-import { Measure, MeasureDto, MeasureList } from 'app/domain';
+import { Measure, MeasureDto, MeasureList } from 'app/interfaces';
 
 @Injectable({
   providedIn: 'root',

@@ -10,7 +10,7 @@ import { AsyncPipe, NgOptimizedImage } from '@angular/common';
 import { Observable, Subject, takeUntil } from 'rxjs';
 
 import { ImageService } from 'app/services';
-import { Image } from 'app/domain';
+import { Image } from 'app/interfaces';
 
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ConfirmationService } from 'primeng/api';

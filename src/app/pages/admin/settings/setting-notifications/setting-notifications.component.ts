@@ -17,7 +17,7 @@ import { getMessaging, getToken } from 'firebase/messaging';
 import { environment } from '../../../../../environments/environment';
 
 import { UserService } from 'app/services';
-import { User } from 'app/domain';
+import { User } from 'app/interfaces';
 
 @Component({
   selector: 'app-setting-notifications',

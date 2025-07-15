@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 import { environment } from '../../environments/environment';
-import { Dashboard } from 'app/domain/dashboard';
+import { Dashboard } from 'app/interfaces';
 
 @Injectable({
   providedIn: 'root',

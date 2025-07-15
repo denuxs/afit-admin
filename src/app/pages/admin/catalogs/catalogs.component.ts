@@ -2,7 +2,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { AsyncPipe, DatePipe } from '@angular/common';
 import { Observable } from 'rxjs';
 
-import { CatalogList } from 'app/domain';
+import { CatalogList } from 'app/interfaces';
 import { CatalogService } from 'app/services';
 
 import { ProgressSpinner } from 'primeng/progressspinner';

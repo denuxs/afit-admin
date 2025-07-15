@@ -16,7 +16,7 @@ import { forkJoin, Observable, Subject, switchMap, takeUntil } from 'rxjs';
 import { AsyncPipe } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
-import { Company, GENDERS, ROLES, Routine, User } from 'app/domain';
+import { Company, GENDERS, ROLES, Routine, User } from 'app/interfaces';
 import { CompanyService, UserService } from 'app/services';
 
 import { InputTextModule } from 'primeng/inputtext';

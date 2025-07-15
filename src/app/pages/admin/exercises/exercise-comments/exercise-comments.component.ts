@@ -2,7 +2,7 @@ import { Component, inject, Input, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 import { AsyncPipe } from '@angular/common';
 
-import { Comment, Exercise } from 'app/domain';
+import { Comment, Exercise } from 'app/interfaces';
 import { ExerciseService } from 'app/services';
 
 @Component({

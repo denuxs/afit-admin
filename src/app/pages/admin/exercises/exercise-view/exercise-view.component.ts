@@ -4,7 +4,7 @@ import { AsyncPipe } from '@angular/common';
 import { Observable } from 'rxjs';
 import { DomSanitizer } from '@angular/platform-browser';
 
-import { Exercise } from 'app/domain';
+import { Exercise } from 'app/interfaces';
 import { ExerciseService } from 'app/services';
 
 import { ProgressSpinner } from 'primeng/progressspinner';
