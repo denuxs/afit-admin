@@ -1,5 +1,5 @@
 <form [formGroup]="catalogForm" (ngSubmit)="handleSubmit()">
-  <app-prime-file [image]="catalog?.image" (fileChange)="handleFile($event)" />
+  <app-prime-file [image]="catalog.image" (fileChange)="handleFile($event)" />
 
   <app-prime-select
     [form]="catalogForm"

@@ -9,7 +9,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
   styleUrl: './prime-file.component.scss',
 })
 export class PrimeFileComponent implements OnInit {
-  @Input() image!: string | undefined;
+  @Input() image!: string | null;
   @Output() fileChange: EventEmitter<File> = new EventEmitter<File>();
 
   ngOnInit(): void {

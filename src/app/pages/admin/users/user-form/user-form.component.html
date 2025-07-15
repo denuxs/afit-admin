@@ -6,7 +6,7 @@
 </div>
 
 <form [formGroup]="userForm" (ngSubmit)="handleSubmit()" class="w-2/3">
-  <app-prime-file [image]="user?.avatar" (fileChange)="handleFile($event)" />
+  <app-prime-file [image]="user.avatar" (fileChange)="handleFile($event)" />
 
   <app-prime-select
     [form]="userForm"

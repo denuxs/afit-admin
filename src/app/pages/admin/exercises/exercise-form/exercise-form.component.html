@@ -1,5 +1,5 @@
 <form [formGroup]="exerciseForm" (ngSubmit)="handleSubmit()">
-  <app-prime-file [image]="exercise?.image" (fileChange)="handleFile($event)" />
+  <app-prime-file [image]="exercise.image" (fileChange)="handleFile($event)" />
 
   <app-prime-input [form]="exerciseForm" controlName="name" label="Nombre" />
 
