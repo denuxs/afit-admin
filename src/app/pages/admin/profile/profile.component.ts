@@ -7,8 +7,9 @@ import {
 } from '@angular/forms';
 import { forkJoin, Observable, Subject, takeUntil } from 'rxjs';
 
-import { CompanyService, UserService } from 'app/services';
+import { CompanyService } from 'app/services';
 import { Company, GENDERS, ROLES, User } from 'app/interfaces';
+import { UserService } from 'app/core';
 
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';

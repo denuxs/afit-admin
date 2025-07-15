@@ -4,7 +4,7 @@ import { Observable, tap } from 'rxjs';
 
 import { LoginDto, LoginResponse } from 'app/interfaces';
 import { environment } from 'environments/environment';
-import { UserService } from 'app/services';
+import { UserService } from './user.service';
 
 @Injectable({
   providedIn: 'root',

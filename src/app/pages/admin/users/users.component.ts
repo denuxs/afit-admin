@@ -11,7 +11,7 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { TooltipModule } from 'primeng/tooltip';
 
-import { UserService } from 'app/services';
+import { UserService } from 'app/core';
 import { UserList } from 'app/interfaces';
 
 import { NgIcon, provideIcons } from '@ng-icons/core';

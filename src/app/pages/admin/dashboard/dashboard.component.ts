@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 
 import { Dashboard, User } from 'app/interfaces';
 import { DashboardService } from 'app/services/dashboard.service';
-import { UserService } from 'app/services';
+import { UserService } from 'app/core';
 
 import { ProgressSpinner } from 'primeng/progressspinner';
 

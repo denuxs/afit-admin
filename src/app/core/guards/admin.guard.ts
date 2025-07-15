@@ -2,7 +2,7 @@ import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 
 import { AuthService } from '../auth/auth.service';
-import { UserService } from 'app/services';
+import { UserService } from 'app/core';
 import { map, tap } from 'rxjs';
 import { User } from 'app/interfaces';
 

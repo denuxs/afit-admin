@@ -17,7 +17,8 @@ import { AsyncPipe } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
 import { Company, GENDERS, ROLES, Routine, User } from 'app/interfaces';
-import { CompanyService, UserService } from 'app/services';
+import { CompanyService } from 'app/services';
+import { UserService } from 'app/core';
 
 import { InputTextModule } from 'primeng/inputtext';
 import {

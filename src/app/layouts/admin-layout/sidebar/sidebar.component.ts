@@ -2,7 +2,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 
 import { AuthService } from 'app/core/auth/auth.service';
-import { UserService } from 'app/services';
+import { UserService } from 'app/core';
 import { User } from 'app/interfaces';
 
 import { NgIcon, provideIcons } from '@ng-icons/core';

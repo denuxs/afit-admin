@@ -16,7 +16,7 @@ import { initializeApp } from 'firebase/app';
 import { getMessaging, getToken } from 'firebase/messaging';
 import { environment } from '../../../../../environments/environment';
 
-import { UserService } from 'app/services';
+import { UserService } from 'app/core';
 import { User } from 'app/interfaces';
 
 @Component({
