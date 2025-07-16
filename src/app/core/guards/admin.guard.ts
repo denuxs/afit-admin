@@ -1,32 +1,29 @@
 import { inject } from '@angular/core';
-import { CanActivateFn, Router } from '@angular/router';
+import {
+  ActivatedRouteSnapshot,
+  CanActivateFn,
+  Router,
+  RouterStateSnapshot,
+} from '@angular/router';
 
 import { AuthService } from '../auth/auth.service';
-import { UserService } from 'app/core';
-import { map, tap } from 'rxjs';
-import { User } from 'app/interfaces';
+import { of, switchMap } from 'rxjs';
 
-export const adminGuard: CanActivateFn = (route, state) => {
+export const adminGuard: CanActivateFn = (
+  route: ActivatedRouteSnapshot,
+  state: RouterStateSnapshot
+) => {
   const _router: Router = inject(Router);
   const _authService = inject(AuthService);
-  const _userService = inject(UserService);
 
-  if (!_authService.check()) {
-    _router.navigateByUrl('/signin');
-    return false;
-  }
-
-  _userService.profile().subscribe();
-
-  return _userService.user$.pipe(
-    map((user: User) => {
-      if (user.role == 'admin' && user.is_active) {
-        return true;
+  return _authService.check().pipe(
+    switchMap(authenticated => {
+      if (!authenticated) {
+        const urlTree = _router.parseUrl('/signin');
+        return of(urlTree);
       }
 
-      _authService.logout();
-      _router.navigateByUrl('/signin');
-      return false;
+      return of(true);
     })
   );
 };

@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, tap } from 'rxjs';
+import { Observable, of, tap } from 'rxjs';
 
 import { LoginDto, LoginResponse } from 'app/interfaces';
 import { environment } from 'environments/environment';
@@ -13,57 +13,52 @@ export class AuthService {
   private readonly _httpClient = inject(HttpClient);
   private readonly _userService = inject(UserService);
 
-  private readonly _api: string = environment.BACKEND_API + '/auth/token/';
+  private readonly _api: string = environment.BACKEND_API + '/';
 
   _authenticated = false;
 
-  constructor() {}
-
-  set accessToken(token: string) {
-    localStorage.setItem('aafittok', token);
+  set isloggedIn(value: string) {
+    localStorage.setItem('isloggedIn', value);
   }
 
-  get accessToken(): string {
-    return localStorage.getItem('aafittok') ?? '';
-  }
-
-  set refreshToken(token: string) {
-    localStorage.setItem('arfittok', token);
-  }
-
-  get refreshToken(): string {
-    return localStorage.getItem('arfittok') ?? '';
+  get isloggedIn(): string {
+    return localStorage.getItem('isloggedIn') ?? '';
   }
 
   login(form: LoginDto): Observable<LoginResponse> {
-    return this._httpClient.post<LoginResponse>(this._api, form).pipe(
-      tap((response: LoginResponse) => {
-        const { access, refresh, user } = response;
+    return this._httpClient
+      .post<LoginResponse>(this._api + 'login/', form)
+      .pipe(
+        tap((response: LoginResponse) => {
+          const { user } = response;
 
-        if (user.role == 'admin') {
-          this.accessToken = access;
-          this.refreshToken = refresh;
-          this._userService.user = user;
-        }
-      })
-    );
+          if (user.role == 'admin') {
+            this._userService.user = user;
+            this.isloggedIn = 'true';
+            this._authenticated = true;
+          }
+        })
+      );
   }
 
   logout() {
-    localStorage.removeItem('aafittok');
-    localStorage.removeItem('arfittok');
+    localStorage.removeItem('isloggedIn');
     this._authenticated = false;
   }
 
-  check(): boolean {
+  isAuthenticated(): boolean {
+    return !!this.isloggedIn;
+  }
+
+  check(): Observable<boolean> {
     if (this._authenticated) {
-      return true;
+      return of(true);
     }
 
-    if (!this.accessToken) {
-      return false;
+    if (!this.isloggedIn) {
+      return of(false);
     }
 
-    return true;
+    return of(true);
   }
 }

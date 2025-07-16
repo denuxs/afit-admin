@@ -3,6 +3,7 @@ import { adminGuard } from './core/guards/admin.guard';
 
 import { AdminLayoutComponent } from './layouts/admin-layout/admin-layout.component';
 import { noAuthGuard } from './core/guards/no-auth.guard';
+import { adminResolver } from './resolvers/admin.resolver';
 
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'admin' },
@@ -15,9 +16,9 @@ export const routes: Routes = [
   {
     path: 'admin',
     component: AdminLayoutComponent,
-    // resolve: {
-    //   initialData: adminResolver,
-    // },
+    resolve: {
+      initialData: adminResolver,
+    },
     canActivate: [adminGuard],
     children: [
       {

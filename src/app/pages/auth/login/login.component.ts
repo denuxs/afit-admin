@@ -30,7 +30,7 @@ import { PrimeInputComponent, PrimePasswordComponent } from 'app/components';
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
 })
-export class LoginComponent implements OnInit, OnDestroy {
+export class LoginComponent implements OnDestroy {
   private readonly _formBuilder = inject(FormBuilder);
   private readonly _router = inject(Router);
 
@@ -41,19 +41,14 @@ export class LoginComponent implements OnInit, OnDestroy {
 
   private readonly _unsubscribeAll: Subject<any> = new Subject<any>();
 
-  loginForm: FormGroup;
   loading = false;
 
   ROLES = ['admin'];
 
-  constructor() {
-    this.loginForm = this._formBuilder.group({
-      username: ['', [Validators.required]],
-      password: ['', [Validators.required]],
-    });
-  }
-
-  ngOnInit(): void {}
+  loginForm: FormGroup = this._formBuilder.group({
+    username: ['', [Validators.required]],
+    password: ['', [Validators.required]],
+  });
 
   handleSubmit() {
     if (this.loginForm.invalid) {
