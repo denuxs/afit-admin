@@ -1,0 +1,15 @@
+<form [formGroup]="loginForm" (ngSubmit)="handleSubmit()">
+  <app-prime-input [form]="loginForm" controlName="username" label="Usuario" />
+
+  <app-prime-password
+    [form]="loginForm"
+    controlName="password"
+    label="Contraseña" />
+
+  <p-button
+    [disabled]="loginForm.invalid"
+    [loading]="loading"
+    fluid="true"
+    type="submit"
+    label="Iniciar Sesión" />
+</form>

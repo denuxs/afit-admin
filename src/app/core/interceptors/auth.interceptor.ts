@@ -19,7 +19,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     catchError((error: HttpErrorResponse) => {
       if (
         error instanceof HttpErrorResponse &&
-        // !newReq.url.includes('auth/login') &&
+        req.url.includes('/admin') &&
         (error.status === HttpStatusCode.Unauthorized ||
           error.status === HttpStatusCode.Forbidden)
       ) {

@@ -1,12 +1,6 @@
-import { Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, inject, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
-import {
-  FormBuilder,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
 
 import { AuthService } from 'app/core/auth/auth.service';
 
@@ -14,24 +8,16 @@ import { TranslocoService } from '@jsverse/transloco';
 import { ToastMessageService } from 'app/core/services/toast-message.service';
 
 import { Toast } from 'primeng/toast';
-import { ButtonModule } from 'primeng/button';
-import { PrimeInputComponent, PrimePasswordComponent } from 'app/components';
+import { LoginFormComponent } from './components/login-form/login-form.component';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [
-    Toast,
-    ReactiveFormsModule,
-    PrimeInputComponent,
-    PrimePasswordComponent,
-    ButtonModule,
-  ],
+  imports: [Toast, LoginFormComponent],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
 })
 export class LoginComponent implements OnDestroy {
-  private readonly _formBuilder = inject(FormBuilder);
   private readonly _router = inject(Router);
 
   private readonly _translocoService = inject(TranslocoService);
@@ -45,20 +31,10 @@ export class LoginComponent implements OnDestroy {
 
   ROLES = ['admin'];
 
-  loginForm: FormGroup = this._formBuilder.group({
-    username: ['', [Validators.required]],
-    password: ['', [Validators.required]],
-  });
+  handleSubmit($event: any) {
+    const form = $event;
 
-  handleSubmit() {
-    if (this.loginForm.invalid) {
-      this.loginForm.markAllAsTouched();
-      return;
-    }
-    this.loginForm.disable();
     this.loading = true;
-
-    const form = this.loginForm.value;
 
     this._authService
       .login(form)
@@ -68,8 +44,6 @@ export class LoginComponent implements OnDestroy {
           const { user } = response;
 
           this.loading = false;
-          this.loginForm.enable();
-
           const roles = this.ROLES;
 
           if (roles.includes(user.role)) {
@@ -81,7 +55,6 @@ export class LoginComponent implements OnDestroy {
         },
         error: () => {
           this.loading = false;
-          this.loginForm.enable();
           this.showToast('login.error');
         },
       });
