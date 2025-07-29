@@ -16,7 +16,7 @@ SPA para crear Rutinas de Gimnasio. (**En desarrollo**)
 
 ### Funcionalidades
 
-- Autenticación con Firebase
+- Autenticación JWT
 - CRUD de usuarios
 - CRUD de catálogos
 - CRUD de ejercicios
@@ -33,10 +33,14 @@ npm install
 ng server
 ```
 
+### Cambios
+
+- Autenticación con Firebase, rama firebase_auth
+
 ### Despliegue
 
-- Backend hosting en PythonanyWhere
-- Frontend hosting en Netflify
+- En desarollo se usa el hosting de PythonanyWhere y Frontend en Netflify
+- En producción se usa un servidor Free Tier con AWS EC2 y S3, configuración de dominio y SSL con Namecheap
 
 ### TO DO
 
