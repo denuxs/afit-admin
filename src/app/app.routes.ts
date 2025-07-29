@@ -16,9 +16,9 @@ export const routes: Routes = [
   {
     path: 'admin',
     component: AdminLayoutComponent,
-    resolve: {
-      initialData: adminResolver,
-    },
+    // resolve: {
+    //   initialData: adminResolver,
+    // },
     canActivate: [adminGuard],
     children: [
       {

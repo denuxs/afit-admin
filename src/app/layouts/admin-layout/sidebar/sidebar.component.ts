@@ -3,7 +3,6 @@ import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 
 import { AuthService } from 'app/core/auth/auth.service';
 import { UserService } from 'app/core';
-import { User } from 'app/interfaces';
 
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import {
@@ -93,22 +92,19 @@ export class SidebarComponent implements OnInit {
     },
   ];
 
-  user!: User;
+  user!: any;
 
   ngOnInit(): void {
     this.getUser();
   }
 
   getUser() {
-    this._userService.user$.subscribe({
-      next: (response: User) => {
-        this.user = response;
-      },
-    });
+    this.user = this._userService.currentUser();
   }
 
   logout(): void {
-    this._authService.logout();
-    this._router.navigate(['/signin']);
+    this._authService.logout().then(() => {
+      this._router.navigate(['/signin']);
+    });
   }
 }

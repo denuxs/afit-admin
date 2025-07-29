@@ -1,24 +1,26 @@
-<h1 class="mb-4">Hola, {{ user.username }}</h1>
+@if (user) {
+  <h1 class="mb-4">Hola, {{ user.email }}</h1>
 
-@if (dashboard$ | async; as data) {
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
-    <div class="rounded-md border border-gray-300 bg-gray-50 py-2 px-4">
-      <h2 class="mb-4">Clientes</h2>
-      <h1 class="mb-1">{{ data.clients }}</h1>
+  @if (dashboard$ | async; as data) {
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
+      <div class="rounded-md border border-gray-300 bg-gray-50 py-2 px-4">
+        <h2 class="mb-4">Clientes</h2>
+        <h1 class="mb-1">{{ data.clients }}</h1>
+      </div>
+      <div class="rounded-md border border-gray-300 bg-gray-50 py-2 px-4">
+        <h2 class="mb-4">Entrenadores</h2>
+        <h1 class="mb-1">{{ data.coaches }}</h1>
+      </div>
+      <div class="rounded-md border border-gray-300 bg-gray-50 py-2 px-4">
+        <h2 class="mb-4">Rutinas</h2>
+        <h1 class="mb-1">{{ data.routines }}</h1>
+      </div>
+      <div class="rounded-md border border-gray-300 bg-gray-50 py-2 px-4">
+        <h2 class="mb-4">Ejercicios</h2>
+        <h1 class="mb-1">{{ data.exercises }}</h1>
+      </div>
     </div>
-    <div class="rounded-md border border-gray-300 bg-gray-50 py-2 px-4">
-      <h2 class="mb-4">Entrenadores</h2>
-      <h1 class="mb-1">{{ data.coaches }}</h1>
-    </div>
-    <div class="rounded-md border border-gray-300 bg-gray-50 py-2 px-4">
-      <h2 class="mb-4">Rutinas</h2>
-      <h1 class="mb-1">{{ data.routines }}</h1>
-    </div>
-    <div class="rounded-md border border-gray-300 bg-gray-50 py-2 px-4">
-      <h2 class="mb-4">Ejercicios</h2>
-      <h1 class="mb-1">{{ data.exercises }}</h1>
-    </div>
-  </div>
-} @else {
-  <p-progressSpinner [style]="{ width: '40px', height: '40px' }" />
+  } @else {
+    <p-progressSpinner [style]="{ width: '40px', height: '40px' }" />
+  }
 }

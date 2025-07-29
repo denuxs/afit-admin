@@ -1,4 +1,4 @@
-<div class="w-1/2">
+<div class="w-full md:w-1/2 md:mx-auto">
   <form [formGroup]="userForm" (ngSubmit)="handleSubmit()">
     @if (user) {
       <app-prime-file [image]="user.avatar" (fileChange)="handleFile($event)" />
