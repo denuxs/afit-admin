@@ -4,10 +4,7 @@
   </div>
 
   <form [formGroup]="loginForm" (ngSubmit)="handleSubmit()">
-    <app-prime-input
-      [form]="loginForm"
-      controlName="username"
-      label="Usuario" />
+    <app-prime-input [form]="loginForm" controlName="email" label="Email" />
 
     <app-prime-password
       [form]="loginForm"

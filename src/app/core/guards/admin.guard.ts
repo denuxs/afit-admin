@@ -16,7 +16,7 @@ export const adminGuard: CanActivateFn = (
   const _router: Router = inject(Router);
   const _authService = inject(AuthService);
 
-  return _authService.check().pipe(
+  return _authService.getAuthState().pipe(
     switchMap(authenticated => {
       if (!authenticated) {
         const urlTree = _router.parseUrl('/signin');

@@ -5,6 +5,8 @@ import { Observable, ReplaySubject, tap } from 'rxjs';
 import { environment } from 'environments/environment';
 import { Client, User, UserList } from 'app/interfaces';
 
+import { Auth } from '@angular/fire/auth';
+
 @Injectable({
   providedIn: 'root',
 })
@@ -13,6 +15,8 @@ export class UserService {
   private _api: string = environment.BACKEND_API + '/users/';
 
   private readonly _user: ReplaySubject<User> = new ReplaySubject<User>(1);
+
+  private _auth: Auth = inject(Auth);
 
   set user(value: User) {
     this._user.next(value);
@@ -28,6 +32,10 @@ export class UserService {
         this._user.next(user);
       })
     );
+  }
+
+  currentUser() {
+    return this._auth.currentUser;
   }
 
   all(params?: any): Observable<User[]> {

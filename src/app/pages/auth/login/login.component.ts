@@ -1,4 +1,4 @@
-import { Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, inject, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 import {
@@ -16,6 +16,7 @@ import { ToastMessageService } from 'app/core/services/toast-message.service';
 import { Toast } from 'primeng/toast';
 import { ButtonModule } from 'primeng/button';
 import { PrimeInputComponent, PrimePasswordComponent } from 'app/components';
+import { UserService } from 'app/core';
 
 @Component({
   selector: 'app-login',
@@ -37,6 +38,7 @@ export class LoginComponent implements OnDestroy {
   private readonly _translocoService = inject(TranslocoService);
 
   private readonly _authService = inject(AuthService);
+  private readonly _userService = inject(UserService);
   private readonly _toastMessage = inject(ToastMessageService);
 
   private readonly _unsubscribeAll: Subject<any> = new Subject<any>();
@@ -46,7 +48,7 @@ export class LoginComponent implements OnDestroy {
   ROLES = ['admin'];
 
   loginForm: FormGroup = this._formBuilder.group({
-    username: ['', [Validators.required]],
+    email: ['', [Validators.required]],
     password: ['', [Validators.required]],
   });
 
@@ -58,32 +60,19 @@ export class LoginComponent implements OnDestroy {
     this.loginForm.disable();
     this.loading = true;
 
-    const form = this.loginForm.value;
+    const { email, password } = this.loginForm.value;
 
     this._authService
-      .login(form)
-      .pipe(takeUntil(this._unsubscribeAll))
-      .subscribe({
-        next: (response: any) => {
-          const { user } = response;
-
-          this.loading = false;
-          this.loginForm.enable();
-
-          const roles = this.ROLES;
-
-          if (roles.includes(user.role)) {
-            this._router.navigateByUrl('admin');
-            return;
-          }
-
-          this.showToast('login.unauthorized');
-        },
-        error: () => {
-          this.loading = false;
-          this.loginForm.enable();
-          this.showToast('login.error');
-        },
+      .loginWithFirebase(email, password)
+      .then(() => {
+        this.loading = false;
+        this.loginForm.enable();
+        this._router.navigateByUrl('admin');
+      })
+      .catch(() => {
+        this.loading = false;
+        this.loginForm.enable();
+        this.showToast('login.error');
       });
   }
 

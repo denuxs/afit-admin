@@ -67,6 +67,11 @@ import { provideTransloco } from '@jsverse/transloco';
 import { ToastMessageService } from './core/services/toast-message.service';
 import { AuthService } from './core/auth/auth.service';
 
+import { provideFirebaseApp, initializeApp } from '@angular/fire/app';
+import { provideAuth, getAuth } from '@angular/fire/auth';
+
+import { environment } from 'environments/environment';
+
 export const appConfig: ApplicationConfig = {
   providers: [
     { provide: LOCALE_ID, useValue: 'es' },
@@ -106,6 +111,8 @@ export const appConfig: ApplicationConfig = {
       useValue: () => inject(ToastMessageService),
       multi: true,
     },
+    provideFirebaseApp(() => initializeApp(environment.firebaseConfig)),
+    provideAuth(() => getAuth()),
     // provideQuillConfig({
     //   modules: {
     //     toolbar: [

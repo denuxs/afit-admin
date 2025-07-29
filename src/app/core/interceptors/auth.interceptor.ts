@@ -1,34 +1,30 @@
 import {
   HttpErrorResponse,
+  HttpHandlerFn,
   HttpInterceptorFn,
+  HttpRequest,
   HttpStatusCode,
 } from '@angular/common/http';
 import { inject } from '@angular/core';
-import { catchError, throwError } from 'rxjs';
+import { catchError, from, switchMap, throwError } from 'rxjs';
 
 import { AuthService } from '../auth/auth.service';
 
-export const authInterceptor: HttpInterceptorFn = (req, next) => {
+export const authInterceptor: HttpInterceptorFn = (
+  req: HttpRequest<any>,
+  next: HttpHandlerFn
+) => {
   const _authService = inject(AuthService);
 
-  req = req.clone({
-    withCredentials: true,
-  });
-
-  return next(req).pipe(
-    catchError((error: HttpErrorResponse) => {
-      if (
-        error instanceof HttpErrorResponse &&
-        // !newReq.url.includes('auth/login') &&
-        (error.status === HttpStatusCode.Unauthorized ||
-          error.status === HttpStatusCode.Forbidden)
-      ) {
-        _authService.logout();
-        location.reload();
-        // _router.navigate(['/signin']);
+  return from(_authService.getToken()).pipe(
+    switchMap(token => {
+      if (token) {
+        const authReq = req.clone({
+          setHeaders: { Authorization: `Bearer ${token}` },
+        });
+        return next(authReq);
       }
-
-      return throwError(() => error);
+      return next(req);
     })
   );
 };
