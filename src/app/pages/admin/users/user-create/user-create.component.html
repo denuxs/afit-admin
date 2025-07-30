@@ -1,0 +1,16 @@
+<div class="flex gap-4 items-center mb-6">
+  <div>
+    <a href="#" routerLink="/admin/users"><i class="pi pi-arrow-left"></i></a>
+  </div>
+  <h1>Crear Usuario</h1>
+</div>
+
+@if (loading) {
+  <p-progressSpinner [style]="{ width: '40px', height: '40px' }" />
+} @else {
+  <app-user-form
+    [companies]="companies"
+    [coaches]="coaches"
+    [errors]="errors"
+    (formChanged)="handleSubmit($event)" />
+}

@@ -4,35 +4,21 @@ import {
   DestroyRef,
   OnInit,
   OnDestroy,
+  EventEmitter,
+  Output,
+  Input,
 } from '@angular/core';
 import {
-  FormArray,
   FormBuilder,
   FormGroup,
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { forkJoin, Observable, Subject, switchMap, takeUntil } from 'rxjs';
-import { AsyncPipe } from '@angular/common';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { Subject } from 'rxjs';
 
-import { Company, GENDERS, ROLES, Routine, User } from 'app/interfaces';
-import { CompanyService } from 'app/services';
-import { UserService } from 'app/core';
+import { Company, GENDERS, ROLES, User } from 'app/interfaces';
 
 import { InputTextModule } from 'primeng/inputtext';
-import {
-  DialogService,
-  DynamicDialogConfig,
-  DynamicDialogRef,
-} from 'primeng/dynamicdialog';
-
-import {
-  CdkDragDrop,
-  CdkDropList,
-  CdkDrag,
-  moveItemInArray,
-} from '@angular/cdk/drag-drop';
 
 import {
   PrimeCheckboxComponent,
@@ -41,123 +27,81 @@ import {
   PrimePasswordComponent,
   PrimeSelectComponent,
 } from 'app/components';
-import { RoutineListComponent } from '../routine-list/routine-list.component';
+
+import { UserRoutineFormComponent } from '../user-routine-form/user-routine-form.component';
+import { UserService } from 'app/core';
+
+import { ProgressSpinner } from 'primeng/progressspinner';
 
 @Component({
   selector: 'app-user-form',
   standalone: true,
   imports: [
     ReactiveFormsModule,
-    AsyncPipe,
     InputTextModule,
     PrimeFileComponent,
     PrimeInputComponent,
     PrimeSelectComponent,
     PrimePasswordComponent,
     PrimeCheckboxComponent,
-    CdkDropList,
-    CdkDrag,
-    RouterLink,
+    ProgressSpinner,
+    UserRoutineFormComponent,
   ],
-  providers: [DialogService],
   templateUrl: './user-form.component.html',
   styleUrl: './user-form.component.scss',
 })
 export class UserFormComponent implements OnInit, OnDestroy {
-  private readonly _route = inject(ActivatedRoute);
-  private readonly _router = inject(Router);
   private readonly _formBuilder = inject(FormBuilder);
 
-  private readonly _dialogService = inject(DialogService);
-
   private readonly _userService = inject(UserService);
-  private readonly _companyService = inject(CompanyService);
+
   private readonly _unsubscribeAll: Subject<any> = new Subject<any>();
 
-  userForm: FormGroup;
-  user!: User;
+  @Input() user!: User;
+  @Input() companies!: Company[];
+  @Input() coaches!: User[];
+
+  @Input()
+  set errors(value: any) {
+    if (value && Object.keys(value).length > 0) {
+      this.setFormErrors(value);
+    }
+  }
+
+  @Output() formChanged: EventEmitter<any> = new EventEmitter<any>();
+
   destroyRef = inject(DestroyRef);
-
-  photoField!: File;
-  image = 'default.jpg';
-
-  companies!: Company[];
-  coaches!: User[];
 
   genders = GENDERS;
   roles = ROLES;
 
-  title = 'Crear Usuario';
+  photoField!: File;
+  avatar = '';
+  routines = [];
+  loading = false;
+
+  userForm: FormGroup = this._formBuilder.group({
+    username: ['', [Validators.required]],
+    first_name: ['', [Validators.required]],
+    last_name: ['', [Validators.required]],
+    company: ['', [Validators.required]],
+    password: ['', [Validators.required]],
+    role: ['', [Validators.required]],
+    coach: ['', []],
+    is_active: [true, []],
+    routines: this._formBuilder.array([]),
+  });
 
   constructor() {
-    this.userForm = this._formBuilder.group({
-      username: ['', [Validators.required]],
-      first_name: ['', [Validators.required]],
-      last_name: ['', [Validators.required]],
-      company: ['', [Validators.required]],
-      password: ['', [Validators.required]],
-      role: ['', [Validators.required]],
-      coach: ['', []],
-      is_active: [true, []],
-      routines: this._formBuilder.array([]),
-    });
-
     // this.userForm.patchValue({
     //   password: this.generatePin(),
     // });
   }
 
   ngOnInit(): void {
-    this.getData();
-
-    const userId = this._route.snapshot.paramMap.get('id');
-
-    if (userId) {
-      this.title = 'Editar Usuario';
-      this.getUser(Number(userId));
+    if (this.user) {
+      this.setFormFields(this.user);
     }
-  }
-
-  getData(): void {
-    const params = {
-      ordering: '-id',
-      paginator: null,
-    };
-    const companies$ = this._companyService.all(params);
-
-    const params2 = {
-      ordering: '-id',
-      paginator: null,
-      role: 'coach',
-    };
-    const coaches$ = this._userService.all(params2);
-
-    forkJoin([coaches$, companies$])
-      .pipe(takeUntil(this._unsubscribeAll))
-      .subscribe({
-        next: ([coaches, companies]) => {
-          this.companies = companies;
-          this.coaches = coaches;
-        },
-      });
-  }
-
-  getUser(userId: number): void {
-    this._userService
-      .get(userId)
-      .pipe(takeUntil(this._unsubscribeAll))
-      .pipe(
-        switchMap(user => {
-          this.user = user;
-          this.setFormFields(user);
-          return this._userService.routines(user.id);
-        })
-      )
-      .subscribe({
-        next: (routines: any) => {
-          this.setRoutines(routines);
-        },
-      });
   }
 
   setFormFields(user: User) {
@@ -177,24 +121,24 @@ export class UserFormComponent implements OnInit, OnDestroy {
     this.userForm.controls['password'].updateValueAndValidity();
 
     if (user.avatar) {
-      this.image = user.avatar;
+      this.avatar = user.avatar;
     }
+
+    const userId = this.user.id;
+
+    this.getUserRoutines(userId);
   }
 
-  setRoutines(data: any) {
-    for (const item of data) {
-      const formGroup = this._formBuilder.group({
-        routine: [item.routine.id, [Validators.required]],
-        order: [item.order, [Validators.required]],
-        title: [item.routine.title, []],
-      });
+  getUserRoutines(userId: number): void {
+    this.loading = true;
+    this._userService.routines(userId).subscribe({
+      next: (routines: any) => {
+        this.routines = routines;
 
-      this.routines.push(formGroup);
-    }
-  }
-
-  get routines(): FormArray {
-    return this.userForm.get('routines') as FormArray;
+        this.loading = false;
+      },
+      // error: errors => this.setFormErrors(errors),
+    });
   }
 
   generatePin() {
@@ -212,9 +156,13 @@ export class UserFormComponent implements OnInit, OnDestroy {
     }
 
     const form = this.userForm.value;
-    console.log(form);
+    const formData = this.buildFormData(form);
+    this.formChanged.emit(formData);
+  }
 
+  buildFormData(form: any) {
     const formData = new FormData();
+
     formData.append('first_name', form.first_name);
     formData.append('last_name', form.last_name);
     formData.append('role', form.role);
@@ -238,38 +186,7 @@ export class UserFormComponent implements OnInit, OnDestroy {
     const routines = form.routines;
     formData.append('routines', JSON.stringify(routines));
 
-    if (this.user) {
-      this.updateUser(this.user.id, formData);
-      return;
-    }
-
-    this.createUser(formData);
-  }
-
-  createUser(form: FormData) {
-    this._userService
-      .create(form)
-      .pipe(takeUntil(this._unsubscribeAll))
-      .subscribe({
-        next: () => {
-          const url = `/admin/users`;
-          this._router.navigateByUrl(url);
-        },
-        error: errors => this.setFormErrors(errors),
-      });
-  }
-
-  updateUser(id: number, form: FormData) {
-    this._userService
-      .update(id, form)
-      .pipe(takeUntil(this._unsubscribeAll))
-      .subscribe({
-        next: () => {
-          const url = `/admin/users`;
-          this._router.navigateByUrl(url);
-        },
-        error: errors => this.setFormErrors(errors),
-      });
+    return formData;
   }
 
   setFormErrors(errors: any) {
@@ -283,61 +200,8 @@ export class UserFormComponent implements OnInit, OnDestroy {
     this.userForm.markAllAsTouched();
   }
 
-  openRoutineModal(): void {
-    const ref = this._dialogService.open(RoutineListComponent, {
-      header: 'Rutinas',
-      modal: true,
-      position: 'top',
-      appendTo: 'body',
-      closable: true,
-      // contentStyle: { height: '300px' },
-    });
-
-    ref.onClose.subscribe((data: any) => {
-      if (data) {
-        this.addRoutine(data);
-      }
-    });
-  }
-
-  addRoutine(item: Routine): void {
-    const nextOrder =
-      this.routines.length > 0
-        ? Math.max(...this.routines.controls.map(c => c.get('order')?.value)) +
-          1
-        : 1;
-
-    const formGroup: FormGroup = this._formBuilder.group({
-      routine: [item.id, [Validators.required]],
-      order: [nextOrder, [Validators.required]],
-      title: [item.title, []],
-    });
-
-    this.routines.push(formGroup);
-  }
-
-  handleDragDrop(event: CdkDragDrop<any>) {
-    const previousIndex = event.previousIndex;
-    const currentIndex = event.currentIndex;
-
-    moveItemInArray(this.routines.controls, previousIndex, currentIndex);
-
-    this.handleOrder();
-  }
-
-  handleOrder(): void {
-    this.routines.controls.forEach((control, index) => {
-      control.get('order')?.setValue(index + 1);
-    });
-  }
-
   handleFile(file: File): void {
     this.photoField = file;
-  }
-
-  removeRoutine(index: number): void {
-    this.routines.removeAt(index);
-    this.handleOrder();
   }
 
   ngOnDestroy(): void {
